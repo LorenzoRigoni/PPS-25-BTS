@@ -1,6 +1,7 @@
 *.class
 *.log
 
+.bsp/
 target/
 out/
 .idea/

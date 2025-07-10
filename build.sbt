@@ -4,5 +4,27 @@ ThisBuild / scalaVersion := "3.3.6"
 
 lazy val root = (project in file("."))
   .settings(
-    name := "BTS"
+    name := "BTS",
+
+    //scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0",
+
+    wartremoverErrors ++= Seq(
+      Wart.Null,
+      Wart.PublicInference,
+      Wart.Var
+    ),
+
+    libraryDependencies ++= Seq(
+      "org.scalatest" %% "scalatest" % "3.2.18" % Test,
+      "junit" % "junit" % "4.13.2" % Test
+    ),
+
+    addCommandAlias("check", ";scalafmtCheckAll;compile;test")
   )
+
+// Commands for QA testing
+
+// sbt scalafmtCheckAll (Scalafmt tests)
+// sbt compile (Wartremover tests)
+// sbt scalafixAll --rules OrganizeImports (Scalafix tests)
+// sbt test (Scalatest)
