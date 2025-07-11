@@ -7,9 +7,9 @@ L'obiettivo infatti è mantenere il cervello attivo e in forma, potenzialmente p
 
 ## Componenti 
 
-Riccardo Moretti - riccardo.moretti6@studio.unibo.it
-Lorenzo Rigoni - lorenzo.rigoni2@studio.unibo.it
-Alessandra Versari - alessandra.versari2@studio.unibo.it 
+* Riccardo Moretti - riccardo.moretti6@studio.unibo.it
+* Lorenzo Rigoni - lorenzo.rigoni2@studio.unibo.it
+* Alessandra Versari - alessandra.versari2@studio.unibo.it 
 
 ## Indice
 [1 - Processo di sviluppo adottato](ProcessoDiSviluppoAdottato.md) 
