@@ -1,2 +1,6 @@
+import views.MenuView
+
+import javax.swing.SwingUtilities
+
 object Main extends App:
-  //TODO: create main menu GUI
+  SwingUtilities.invokeLater(() => MenuView.show())
