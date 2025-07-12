@@ -21,7 +21,8 @@ object MenuView:
     })
 
     brainTrainingButton.addActionListener(_ =>
-      JOptionPane.showMessageDialog(frame, "Brain Testing not implemented.")
+      frame.dispose()
+      BrainTraining.show(GamePanels)
     )
 
     panel.add(brainAgingButton)

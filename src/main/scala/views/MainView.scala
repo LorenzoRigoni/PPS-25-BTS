@@ -51,10 +51,10 @@ object MainView:
     val buttons = Seq(
       new JButton("Fast Calc") -> gamePanels.fastCalcPanel _,
       new JButton("Count Words") -> gamePanels.countWordsPanel _,
-      new JButton("Right Direction") -> gamePanels.rightDirections _
+      new JButton("Right Direction") -> gamePanels.rightDirectionsPanel _
     )
 
-    buttons.foreach { case (button, panelSupplier) =>
+    buttons.foreach((button, panelSupplier) => {
       button.addActionListener(_ => {
         centerPanel.removeAll()
         centerPanel.add(panelSupplier(), BorderLayout.CENTER)
@@ -63,7 +63,7 @@ object MainView:
         startTimer()
       })
       buttonPanel.add(button)
-    }
+    })
 
     mainPanel.add(buttonPanel, BorderLayout.SOUTH)
     frame.setContentPane(mainPanel)
