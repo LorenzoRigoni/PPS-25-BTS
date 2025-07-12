@@ -67,3 +67,5 @@ Questa sezione descrive i vincoli tecnici e le tecnologie utilizzate per lo svil
 Il gruppo ha individuato i seguenti requisiti opzionali, non essenziali per il funzionamento di base, ma potenzialmente utili per arricchire il sistema:
 * **Modalità Multiplayer (sfida 1 vs 1)**:  Il sistema potrebbe offrire, in futuro, una modalità multiplayer che consenta a due utenti di sfidarsi nello stesso minigioco, giocando in parallelo e confrontando i risultati (tempi, punteggio, errori). Sebbene questa funzionalità non sia prevista nella versione originale di Brain Training e non influenzi direttamente l’obiettivo principale del gioco, essa può aumentare il coinvolgimento dell’utente.
 * **Statistiche**: Il sistema potrebbe conservare uno storico dei risultati ottenuti dall’utente per ciascun minigioco. Queste informazioni permetterebbero all’utente di monitorare l’andamento delle proprie abilità cognitive nel tempo, identificando eventuali miglioramenti o regressi
+
+[Torna all'indice](index.md)

@@ -7,3 +7,5 @@
 
 
 ## Metodologia usata
+
+[Torna all'indice](index.md)

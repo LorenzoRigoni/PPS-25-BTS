@@ -5,3 +5,5 @@
 ## Pattern di progettazione
 
 ## Organizzazione del codice
+
+[Torna all'indice](index.md)

@@ -2,4 +2,6 @@
 
 ## Andamento dello sviluppo
 
-## Commenti finali 
+## Commenti finali
+
+[Torna all'indice](index.md)
