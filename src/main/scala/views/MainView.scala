@@ -5,7 +5,7 @@ import java.awt.*
 import java.util.{Timer, TimerTask}
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
-object MainView:
+object MainView extends BaseView:
 
   def show(gamePanels: GamePanels): Unit =
     val frame = new JFrame("Let's play!")
@@ -34,7 +34,7 @@ object MainView:
       val task = new TimerTask {
         override def run(): Unit = {
           val t = timeLeft.decrementAndGet()
-          SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: ${t} seconds"))
+          SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $t seconds"))
           if (t <= 0) {
             timer.cancel()
             currentTimer.set(new Timer())

@@ -8,7 +8,7 @@ sealed trait GamePanels:
   def countWordsPanel(): JPanel
   def rightDirectionsPanel(): JPanel
 
-object GamePanels extends GamePanels:
+object GamePanels extends GamePanels, BaseView:
   override def fastCalcPanel(): JPanel =
     val panel = new JPanel()
 
