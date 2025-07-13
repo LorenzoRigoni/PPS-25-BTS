@@ -47,23 +47,33 @@ object MainView:
       }
       timer.scheduleAtFixedRate(task, 1000, 1000)
 
-    val buttonPanel = new JPanel(new FlowLayout())
-    val buttons = Seq(
-      new JButton("Fast Calc") -> gamePanels.fastCalcPanel _,
-      new JButton("Count Words") -> gamePanels.countWordsPanel _,
-      new JButton("Right Direction") -> gamePanels.rightDirectionsPanel _
-    )
-
-    buttons.foreach((button, panelSupplier) => {
+    def attachGameButton(
+                          button: JButton,
+                          centerPanel: JPanel,
+                          panelSupplier: () => JPanel,
+                          rules: String,
+                          startTimer: () => Unit): Unit =
       button.addActionListener(_ => {
+        JOptionPane.showMessageDialog(centerPanel, rules, "Rules of the mini game", JOptionPane.INFORMATION_MESSAGE)
         centerPanel.removeAll()
         centerPanel.add(panelSupplier(), BorderLayout.CENTER)
         centerPanel.revalidate()
         centerPanel.repaint()
         startTimer()
       })
-      buttonPanel.add(button)
-    })
+
+    val buttonPanel = new JPanel(new FlowLayout())
+    val buttons = Seq(
+      new JButton("Fast Calc") -> (gamePanels.fastCalcPanel _, "Enter the result of the operation by press the 'Enter' button"),
+      new JButton("Count Words") -> (gamePanels.countWordsPanel _, "Enter the number of words of the sentence by press the 'Enter' button"),
+      new JButton("Right Directions") -> (gamePanels.rightDirectionsPanel _, "Enter the right directions suggested by press the arrow buttons")
+    )
+
+    buttons.foreach {
+      case (button, (panelSupplier, rules)) =>
+        attachGameButton(button, centerPanel, panelSupplier, rules, startTimer)
+        buttonPanel.add(button)
+    }
 
     mainPanel.add(buttonPanel, BorderLayout.SOUTH)
     frame.setContentPane(mainPanel)
