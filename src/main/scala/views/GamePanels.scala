@@ -9,72 +9,59 @@ sealed trait GamePanels:
   def rightDirectionsPanel(): JPanel
 
 object GamePanels extends GamePanels, BaseView:
-  override def fastCalcPanel(): JPanel =
-    val panel = new JPanel()
-
-    val expressionArea = new JTextArea("11 + (3 x 9) = ")
-    expressionArea.setEditable(false)
-    expressionArea.setFont(new Font("Arial", Font.PLAIN, 24))
-
+  /*function used to create simple panels for minigame which
+  only require showing a question and checking the input inserted*/
+  private def createSimpleQuestionAnswerGamePanel(question: String, inputLabel: String, validate: String => (String, Color)): JPanel =
+    val newPanel = new JPanel()
+    val questionArea = new JTextArea(question)
     val inputField = new JTextField(10)
     val feedbackLabel = new JLabel("", SwingConstants.CENTER) //TODO: use check image instead or string
+    feedbackLabel.setPreferredSize(new Dimension(150, 30))
+    questionArea.setEditable(false)
+    questionArea.setFont(pixelFontBig)
+
+    //pannello in alto in cui viene mostrato il quesito
+    val questionPanel = new JPanel(new BorderLayout())
+    questionPanel.add(questionArea, BorderLayout.CENTER)
+    newPanel.add(questionPanel, BorderLayout.NORTH)
 
     def submit(): Unit =
       val input = inputField.getText.trim
-      val correctCount = "38" //TODO: temporary, logic still to implement
-
-      val (message, color) =
-        Option(input).filter(_ == correctCount)
-          .map(_ => ("Correct!", Color.GREEN))
-          .getOrElse((s"Wrong! The result was $correctCount", Color.RED))
-
+      val (message, color) = validate(input)
       feedbackLabel.setText(message)
       feedbackLabel.setForeground(color)
 
     inputField.addActionListener(_ => submit())
 
-    val inputPanel = new JPanel(new FlowLayout())
-    inputPanel.add(new JLabel("Number of words:"))
+    //pannello per input utente e feedback (al momento stringa)
+    val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
+    inputPanel.add(new JLabel(inputLabel))
     inputPanel.add(inputField)
+    inputPanel.add(feedbackLabel)
 
-    panel.add(expressionArea, BorderLayout.NORTH)
-    panel.add(inputPanel, BorderLayout.CENTER)
-    panel.add(feedbackLabel, BorderLayout.SOUTH)
-    panel
+    newPanel.add(inputPanel, BorderLayout.CENTER)
+    newPanel
+
+  override def fastCalcPanel(): JPanel =
+    val correctAnswer = "38" //TODO: use game model (still to implement)
+    createSimpleQuestionAnswerGamePanel(
+      question = "11 + (3 x 9) = ",
+      inputLabel = "Your result: ",
+      validate = input =>
+        if input == correctAnswer then ("Correct!", Color.GREEN)
+        else (s"Wrong! The result was $correctAnswer", Color.RED)
+    )
 
   override def countWordsPanel(): JPanel =
-    val panel = new JPanel()
-
-    val sentenceArea = new JTextArea("This is a simple sentence")
-    sentenceArea.setEditable(false)
-    sentenceArea.setFont(new Font("Arial", Font.PLAIN, 16))
-
-    val inputField = new JTextField(10)
-    val feedbackLabel = new JLabel("", SwingConstants.CENTER)
-
-    def submit(): Unit  =
-      val input = inputField.getText.trim
-      val correctCount = sentenceArea.getText.split("\\s+").count(_.nonEmpty).toString
-
-      val (message, color) =
-        Option(input).filter(_ == correctCount)
-          .map(_ => ("Correct!", Color.GREEN))
-          .getOrElse((s"Wrong! It was $correctCount words", Color.RED))
-
-      feedbackLabel.setText(message)
-      feedbackLabel.setForeground(color)
-
-    inputField.addActionListener(_ => submit())
-
-    val inputPanel = new JPanel(new FlowLayout())
-    inputPanel.add(new JLabel("Number of words:"))
-    inputPanel.add(inputField)
-
-    panel.add(sentenceArea, BorderLayout.NORTH)
-    panel.add(inputPanel, BorderLayout.CENTER)
-    panel.add(feedbackLabel, BorderLayout.SOUTH)
-
-    panel
+    val sentence = "This is a simple sentence"
+    val correctAnswer = sentence.split("\\s+").count(_.nonEmpty).toString //TODO: use game model (still to implement)
+    createSimpleQuestionAnswerGamePanel(
+      question = sentence,
+      inputLabel = "Number of words: ",
+      validate = input =>
+        if input == correctAnswer then ("Correct!", Color.GREEN)
+        else (s"Wrong! The result was $correctAnswer", Color.RED)
+    )
 
   override def rightDirectionsPanel(): JPanel =
     val panel = new JPanel()
