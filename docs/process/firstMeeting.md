@@ -7,7 +7,7 @@ Il primo meeting ha avuto obiettivo principale quello di definire le modalità d
 - **Analisi dei requisiti in relazione con le modalità di sviluppo**: Discussione sui requisiti del progetto e sulle modalità di sviluppo previste, per garantire che tutti i membri del team siano allineati.
 - **Organizzazione del lavoro immediato post-meeting**: Definizione degli obiettivi comuni da raggiungere subito dopo il meeting, per garantire una partenza coordinata e produttiva.
 
-## Organizzazione del primo sprint con I relativi obiettivi.
+## Organizzazione del primo sprint con I relativi obiettivi
 
 Durante il corso del primo meeting, è stata definita l'organizzazione del primo sprint, che includeva, tra le altre cose la divisione dei ruoli del modello SCRUM tra i membri del team. Nello specifico, sono stati stabiliti i seguenti ruoli:
 - **Product Owner**: Rigoni Lorenzo.
@@ -19,4 +19,6 @@ Oltre a questo durante il primo sprint sono stati definiti gli obiettivi da ragg
 
 Analisi dei requisiti e delle modalità di sviluppo previste.
 
-Organizzazione del lavoro immediatamente successivo al meeting, principalmente obiettivi comuni e da raggiungere assieme come base comune da cui iniziare a virare con le proprie feature
+Organizzazione del lavoro immediatamente successivo al meeting, principalmente obiettivi comuni e da raggiungere assieme come base comune da cui iniziare a virare con le proprie feature.
+
+[Torna all'indice](../index.md)
