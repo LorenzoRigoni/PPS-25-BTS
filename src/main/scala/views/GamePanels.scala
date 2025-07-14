@@ -2,6 +2,7 @@ package views
 
 import javax.swing.*
 import java.awt.*
+import java.awt.event.{KeyAdapter, KeyEvent, KeyListener}
 
 sealed trait GamePanels:
   def fastCalcPanel(): JPanel
@@ -77,7 +78,48 @@ object GamePanels extends GamePanels, BaseView:
     panel
 
   override def rightDirectionsPanel(): JPanel =
-    val panel = new JPanel()
-    panel.add(new JLabel("Right Directions panel"))
-    //TODO: implement Right Directions panel here
-    panel
+    val mainPanel = new JPanel(new GridBagLayout()) {
+      setFocusable(true)
+      requestFocusInWindow()
+      addKeyListener(new KeyAdapter {
+        override def keyPressed(e: KeyEvent): Unit = e.getKeyCode match {
+          case KeyEvent.VK_W => println("Up (W) pressed")
+          case KeyEvent.VK_A => println("Left (A) pressed")
+          case KeyEvent.VK_S => println("Down (S) pressed")
+          case KeyEvent.VK_D => println("Right (D) pressed")
+          case _ =>
+        }
+      })
+    }
+
+    val squarePanel = new JPanel(new BorderLayout())
+    squarePanel.setBackground(Color.LIGHT_GRAY)
+
+    val directions = new JTextArea("NOT RIGHT AND NOT NOT LEFT") {
+      setOpaque(false)
+      setWrapStyleWord(true)
+      setLineWrap(true)
+      setEditable(false)
+      setFocusable(false)
+      setFont(new Font("Arial", Font.PLAIN, 40))
+      setMargin(new Insets(20, 20, 20, 20))
+    }
+
+    val textWrapper = new JPanel(new GridBagLayout()) {
+      setOpaque(false)
+      add(directions, new GridBagConstraints() {
+        gridx = 0
+        gridy = 0
+        weightx = 1.0
+        weighty = 1.0
+        fill = GridBagConstraints.BOTH
+        anchor = GridBagConstraints.CENTER
+      })
+    }
+
+    squarePanel.add(directions, BorderLayout.CENTER)
+
+    squarePanel.setPreferredSize(new Dimension(300, 300))
+
+    mainPanel.add(squarePanel)
+    mainPanel
