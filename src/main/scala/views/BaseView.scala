@@ -6,11 +6,14 @@ import javax.swing.*
 import java.awt.*
 
 trait BaseView:
-  val pixelFontBig: Font =
+  val pixelFont25: Font =
     Font.createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf")).deriveFont(25f)
 
-  val pixelFontSmall: Font =
+  val pixelFont15: Font =
     Font.createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf")).deriveFont(15f)
+
+  val pixelFont8: Font =
+    Font.createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf")).deriveFont(8f)
 
   val customBlueColor = new Color(120, 180, 210)
   val whiteColor: Color = Color.WHITE

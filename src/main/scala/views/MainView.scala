@@ -1,6 +1,7 @@
 package views
 
-import views.BrainTraining.{createStyledButton, customBlueColor, pixelFontSmall, whiteColor}
+import views.BrainTraining.*
+import views.panels.GamePanels
 
 import javax.swing.*
 import java.awt.*
@@ -25,7 +26,7 @@ object MainView extends BaseView:
     centerFrame(frame, frameWidth, frameHeight)
 
     val timeLabel = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
-    timeLabel.setFont(pixelFontSmall)
+    timeLabel.setFont(pixelFont15)
     mainPanel.add(timeLabel, BorderLayout.NORTH)
 
     val centerPanel = new JPanel(new BorderLayout())
@@ -73,9 +74,9 @@ object MainView extends BaseView:
 
 
     val buttons = Seq(
-      createStyledButton("Fast Calc", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> (gamePanels.fastCalcPanel _, "Enter the result of the operation by press the 'Enter' button"),
-      createStyledButton("Count Words", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> (gamePanels.countWordsPanel _, "Enter the number of words of the sentence by press the 'Enter' button"),
-      createStyledButton("Right Directions", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> (gamePanels.rightDirectionsPanel _, "Enter the right directions suggested by press the arrow buttons")
+      createStyledButton("Fast Calc", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> (gamePanels.fastCalcPanel _, "Enter the result of the operation by press the 'Enter' button"),
+      createStyledButton("Count Words", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> (gamePanels.countWordsPanel _, "Enter the number of words of the sentence by press the 'Enter' button"),
+      createStyledButton("Right Directions", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> (gamePanels.rightDirectionsPanel _, "Enter the right directions suggested by press the arrow buttons")
     )
 
     buttons.foreach {

@@ -1,5 +1,7 @@
 package views
 
+import views.panels.GamePanels
+
 import javax.swing.*
 import java.awt.*
 import java.awt.image.BufferedImage
@@ -37,8 +39,8 @@ object MenuView extends BaseView:
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
 
-    val brainAgingButton = createStyledButton("Age Test", buttonSize, pixelFontBig, customBlueColor, whiteColor)
-    val brainTrainingButton = createStyledButton("Brain Training", buttonSize, pixelFontBig, customBlueColor, whiteColor)
+    val brainAgingButton = createStyledButton("Age Test", buttonSize, pixelFont25, customBlueColor, whiteColor)
+    val brainTrainingButton = createStyledButton("Brain Training", buttonSize, pixelFont25, customBlueColor, whiteColor)
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()
