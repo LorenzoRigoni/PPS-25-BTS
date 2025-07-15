@@ -1,5 +1,7 @@
 package views
 
+import views.panels.GamePanels
+
 import javax.swing.*
 import java.awt.*
 
@@ -7,21 +9,18 @@ object BrainTraining extends BaseView:
 
   def show(gamePanels: GamePanels): Unit =
     val frame = new JFrame("Brain Testing")
-    val frameWidth = 500
-    val frameHeight = 600
     val buttonDimension = new Dimension(300,50)
     val mainPanel = new JPanel(new BorderLayout())
     val buttonPanel = new JPanel()
     val centerPanel = new JPanel()
 
-    frame.setSize(frameWidth, frameHeight)
     frame.setBackground(whiteColor)
-    centerFrame(frame, frameWidth, frameHeight)
+    centerFrame(frame, 1.5)
 
     val buttons = Seq(
-      createStyledButton("Fast Calc", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> gamePanels.fastCalcPanel _,
-      createStyledButton("Count Words", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> gamePanels.countWordsPanel _,
-      createStyledButton("Right Directions", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> gamePanels.rightDirectionsPanel _
+      createStyledButton("Fast Calc", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.fastCalcPanel _,
+      createStyledButton("Count Words", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.countWordsPanel _,
+      createStyledButton("Right Directions", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.rightDirectionsPanel _
     )
 
     centerPanel.setLayout(new BorderLayout())

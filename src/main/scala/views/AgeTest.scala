@@ -1,6 +1,7 @@
 package views
 
-import views.BrainTraining.{createStyledButton, customBlueColor, pixelFontSmall, whiteColor}
+import views.BrainTraining.*
+import views.panels.GamePanels
 
 import javax.swing.*
 import java.awt.*
@@ -8,24 +9,21 @@ import java.util.{Timer, TimerTask}
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
 //TODO: remove buttons here
-object MainView extends BaseView:
+object AgeTest extends BaseView:
 
   def show(gamePanels: GamePanels): Unit =
     val frame = new JFrame("Let's play!")
-    val frameWidth = 500
-    val frameHeight = 600
     val buttonDimension = new Dimension(300,50)
     val timeLeft = new AtomicInteger(120)
     val currentTimer = new AtomicReference[Timer]()
     val mainPanel = new JPanel(new BorderLayout())
     val buttonPanel = new JPanel(new FlowLayout())
 
-    frame.setSize(frameWidth, frameHeight)
     frame.setBackground(whiteColor)
-    centerFrame(frame, frameWidth, frameHeight)
+    centerFrame(frame, 1.5)
 
     val timeLabel = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
-    timeLabel.setFont(pixelFontSmall)
+    timeLabel.setFont(pixelFont15)
     mainPanel.add(timeLabel, BorderLayout.NORTH)
 
     val centerPanel = new JPanel(new BorderLayout())
@@ -73,9 +71,9 @@ object MainView extends BaseView:
 
 
     val buttons = Seq(
-      createStyledButton("Fast Calc", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> (gamePanels.fastCalcPanel _, "Enter the result of the operation by press the 'Enter' button"),
-      createStyledButton("Count Words", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> (gamePanels.countWordsPanel _, "Enter the number of words of the sentence by press the 'Enter' button"),
-      createStyledButton("Right Directions", buttonDimension, pixelFontSmall, customBlueColor, whiteColor) -> (gamePanels.rightDirectionsPanel _, "Enter the right directions suggested by press the arrow buttons")
+      createStyledButton("Fast Calc", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> (gamePanels.fastCalcPanel _, "Enter the result of the operation by press the 'Enter' button"),
+      createStyledButton("Count Words", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> (gamePanels.countWordsPanel _, "Enter the number of words of the sentence by press the 'Enter' button"),
+      createStyledButton("Right Directions", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> (gamePanels.rightDirectionsPanel _, "Enter the right directions suggested by press the arrow buttons")
     )
 
     buttons.foreach {
