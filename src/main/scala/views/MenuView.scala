@@ -1,7 +1,6 @@
 package views
 
 import views.panels.GamePanels
-
 import javax.swing.*
 import java.awt.*
 import java.awt.image.BufferedImage

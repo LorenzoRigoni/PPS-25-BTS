@@ -1,7 +1,6 @@
 package views.panels
 
-import views.{BaseView, BrainTraining, MenuView}
-
+import views.*
 import java.awt.*
 import javax.swing.*
 
