@@ -20,13 +20,12 @@ object MenuView extends BaseView:
 
     override def paintComponent(g: Graphics): Unit =
       super.paintComponent(g)
-      g.drawImage(image, 0,0, this)
+      g.drawImage(image, 0, 0, getWidth, getHeight, this)
 
   def show(): Unit =
-    val frameWidth = 1024
-    val frameHeight = 1024
-    val buttonSize = new Dimension(400, 80)
-    centerFrame(frame, frameWidth, frameHeight)
+
+    centerFrame(frame, 1)
+    val buttonSize = new Dimension((frame.getSize.width * 0.4).toInt, (frame.getSize.height * 0.08).toInt)
 
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
@@ -39,12 +38,12 @@ object MenuView extends BaseView:
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
 
-    val brainAgingButton = createStyledButton("Age Test", buttonSize, pixelFont25, customBlueColor, whiteColor)
-    val brainTrainingButton = createStyledButton("Brain Training", buttonSize, pixelFont25, customBlueColor, whiteColor)
+    val brainAgingButton = createStyledButton("Age Test", buttonSize, pixelFont15, customBlueColor, whiteColor)
+    val brainTrainingButton = createStyledButton("Brain Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()
-      MainView.show(GamePanels)
+      AgeTest.show(GamePanels)
     })
 
     brainTrainingButton.addActionListener(_ =>

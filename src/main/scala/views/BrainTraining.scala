@@ -9,16 +9,13 @@ object BrainTraining extends BaseView:
 
   def show(gamePanels: GamePanels): Unit =
     val frame = new JFrame("Brain Testing")
-    val frameWidth = 500
-    val frameHeight = 600
     val buttonDimension = new Dimension(300,50)
     val mainPanel = new JPanel(new BorderLayout())
     val buttonPanel = new JPanel()
     val centerPanel = new JPanel()
 
-    frame.setSize(frameWidth, frameHeight)
     frame.setBackground(whiteColor)
-    centerFrame(frame, frameWidth, frameHeight)
+    centerFrame(frame, 1.5)
 
     val buttons = Seq(
       createStyledButton("Fast Calc", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.fastCalcPanel _,

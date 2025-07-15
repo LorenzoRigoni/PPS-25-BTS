@@ -18,11 +18,14 @@ trait BaseView:
   val customBlueColor = new Color(120, 180, 210)
   val whiteColor: Color = Color.WHITE
 
-  def centerFrame(frame: JFrame, width: Int, height: Int): Unit =
-    val screenSize = Toolkit.getDefaultToolkit.getScreenSize
-    val x = (screenSize.width - width) / 2
-    val y = (screenSize.height - height) / 2
-    frame.setSize(width, height)
+  val screenWidth: Int = Toolkit.getDefaultToolkit.getScreenSize.width
+  val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
+
+  def centerFrame(frame: JFrame, divisor: Float): Unit =
+    val screenSize = (Math.min(screenWidth, screenHeight) / divisor).toInt
+    val x = (screenWidth - screenSize) / 2
+    val y = (screenHeight - screenSize) / 2
+    frame.setSize(screenSize, screenSize)
     frame.setLocation(x, y)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     frame.setResizable(false)

@@ -9,21 +9,18 @@ import java.util.{Timer, TimerTask}
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
 //TODO: remove buttons here
-object MainView extends BaseView:
+object AgeTest extends BaseView:
 
   def show(gamePanels: GamePanels): Unit =
     val frame = new JFrame("Let's play!")
-    val frameWidth = 500
-    val frameHeight = 600
     val buttonDimension = new Dimension(300,50)
     val timeLeft = new AtomicInteger(120)
     val currentTimer = new AtomicReference[Timer]()
     val mainPanel = new JPanel(new BorderLayout())
     val buttonPanel = new JPanel(new FlowLayout())
 
-    frame.setSize(frameWidth, frameHeight)
     frame.setBackground(whiteColor)
-    centerFrame(frame, frameWidth, frameHeight)
+    centerFrame(frame, 1.5)
 
     val timeLabel = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
     timeLabel.setFont(pixelFont15)

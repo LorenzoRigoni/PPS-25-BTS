@@ -10,7 +10,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     val panel = new JPanel(new BorderLayout())
 
     val centerWrapper = new JPanel(new GridBagLayout())
-    centerWrapper.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15))
+    centerWrapper.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2))
     val innerPanel = new JPanel()
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
 
