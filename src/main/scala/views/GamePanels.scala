@@ -65,48 +65,25 @@ object GamePanels extends GamePanels, BaseView:
     )
 
   override def rightDirectionsPanel(): JPanel =
-    val mainPanel = new JPanel(new GridBagLayout()) {
-      setFocusable(true)
-      requestFocusInWindow()
-      addKeyListener(new KeyAdapter {
-        override def keyPressed(e: KeyEvent): Unit = e.getKeyCode match {
-          case KeyEvent.VK_W => println("Up (W) pressed")
-          case KeyEvent.VK_A => println("Left (A) pressed")
-          case KeyEvent.VK_S => println("Down (S) pressed")
-          case KeyEvent.VK_D => println("Right (D) pressed")
-          case _ =>
-        }
-      })
-    }
-
+    val mainPanel = new JPanel(new GridBagLayout())
     val squarePanel = new JPanel(new BorderLayout())
     squarePanel.setBackground(Color.LIGHT_GRAY)
 
+    //TODO Mettere esterno e usufruibile da tutti i minigame (buidler?)
     val directions = new JTextArea("NOT RIGHT AND NOT NOT LEFT") {
       setOpaque(false)
       setWrapStyleWord(true)
       setLineWrap(true)
       setEditable(false)
       setFocusable(false)
+      //TODO togliere variabli magiche
       setFont(new Font("Arial", Font.PLAIN, 40))
       setMargin(new Insets(20, 20, 20, 20))
     }
 
-    val textWrapper = new JPanel(new GridBagLayout()) {
-      setOpaque(false)
-      add(directions, new GridBagConstraints() {
-        gridx = 0
-        gridy = 0
-        weightx = 1.0
-        weighty = 1.0
-        fill = GridBagConstraints.BOTH
-        anchor = GridBagConstraints.CENTER
-      })
-    }
-
     squarePanel.add(directions, BorderLayout.CENTER)
-
+    //TODO Mettiamo delle variabili universali in base alla dimensione dello schermo che poi scalano in percentuale
     squarePanel.setPreferredSize(new Dimension(300, 300))
-
     mainPanel.add(squarePanel)
+
     mainPanel
