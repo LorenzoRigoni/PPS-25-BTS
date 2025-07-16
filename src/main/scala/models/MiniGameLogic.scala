@@ -7,12 +7,12 @@ package models
 trait MiniGameLogic:
   /**
    * Generate the question for the mini-game.
-   * @param difficult
-   *   the difficult of the question
+   * @param difficulty
+   *   the difficulty of the question
    * @return
    *   the question generated
    */
-  def generateQuestion(difficult: Int): String
+  def generateQuestion(difficulty: Int): String
 
   /**
    * Check the answer of the user.
