@@ -5,22 +5,50 @@ import views.panels.GamePanels
 import javax.swing.*
 import java.awt.*
 
+/**
+ * This object represents the view of the training mode. In this mode, the user can train his mind
+ * with all the mini-games.
+ */
 object BrainTraining extends BaseView:
 
+  /**
+   * Show the brain training view with a mini-game.
+   *
+   * @param gamePanels
+   *   the panel of the mini-game chose
+   */
   def show(gamePanels: GamePanels): Unit =
-    val frame = new JFrame("Brain Testing")
-    val buttonDimension = new Dimension(300,50)
-    val mainPanel = new JPanel(new BorderLayout())
-    val buttonPanel = new JPanel()
-    val centerPanel = new JPanel()
+    val frame           = new JFrame("Brain Testing")
+    val buttonDimension = new Dimension(300, 50)
+    val mainPanel       = new JPanel(new BorderLayout())
+    val buttonPanel     = new JPanel()
+    val centerPanel     = new JPanel()
 
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
 
     val buttons = Seq(
-      createStyledButton("Fast Calc", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.fastCalcPanel _,
-      createStyledButton("Count Words", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.countWordsPanel _,
-      createStyledButton("Right Directions", buttonDimension, pixelFont15, customBlueColor, whiteColor) -> gamePanels.rightDirectionsPanel _
+      createStyledButton(
+        "Fast Calc",
+        buttonDimension,
+        pixelFont15,
+        customBlueColor,
+        whiteColor
+      ) -> gamePanels.fastCalcPanel _,
+      createStyledButton(
+        "Count Words",
+        buttonDimension,
+        pixelFont15,
+        customBlueColor,
+        whiteColor
+      ) -> gamePanels.countWordsPanel _,
+      createStyledButton(
+        "Right Directions",
+        buttonDimension,
+        pixelFont15,
+        customBlueColor,
+        whiteColor
+      ) -> gamePanels.rightDirectionsPanel _
     )
 
     centerPanel.setLayout(new BorderLayout())
