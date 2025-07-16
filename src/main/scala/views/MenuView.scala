@@ -7,24 +7,36 @@ import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 
+/**
+ * This object represents the initial menu where the player can choose between Age Test and Brain
+ * Training mode.
+ */
 object MenuView extends BaseView:
   private val frame = new JFrame("Menù")
 
+  /**
+   * This class is a helper for set the background image from resources.
+   * @param imagePath
+   *   the path of the background image
+   */
   private class BackgroundImagePanel(imagePath: String) extends JPanel:
     private val image: BufferedImage =
       val file = new File(imagePath)
-      if !file.exists() then
-        throw new RuntimeException(s"File not found: ${file.getAbsolutePath}")
+      if !file.exists() then throw new RuntimeException(s"File not found: ${file.getAbsolutePath}")
       ImageIO.read(file)
 
     override def paintComponent(g: Graphics): Unit =
       super.paintComponent(g)
       g.drawImage(image, 0, 0, getWidth, getHeight, this)
 
+  /**
+   * Show the Menu view.
+   */
   def show(): Unit =
 
     centerFrame(frame, 1)
-    val buttonSize = new Dimension((frame.getSize.width * 0.4).toInt, (frame.getSize.height * 0.08).toInt)
+    val buttonSize =
+      new Dimension((frame.getSize.width * 0.4).toInt, (frame.getSize.height * 0.08).toInt)
 
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
@@ -37,8 +49,10 @@ object MenuView extends BaseView:
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
 
-    val brainAgingButton = createStyledButton("Age Test", buttonSize, pixelFont15, customBlueColor, whiteColor)
-    val brainTrainingButton = createStyledButton("Brain Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
+    val brainAgingButton    =
+      createStyledButton("Age Test", buttonSize, pixelFont15, customBlueColor, whiteColor)
+    val brainTrainingButton =
+      createStyledButton("Brain Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()

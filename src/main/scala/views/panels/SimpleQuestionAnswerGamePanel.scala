@@ -4,16 +4,35 @@ import views.*
 import java.awt.*
 import javax.swing.*
 
+/**
+ * This trait represents the views of the mini-games that have a question and an answer.
+ */
 trait SimpleQuestionAnswerGamePanel extends BaseView:
-  def createSimpleQuestionAnswerGamePanel(question: String, textInputLabel: String, validate: String => (String, Color)): JPanel =
+
+  /**
+   * Create the panel with a question and an answer.
+   * @param question
+   *   the question of the mini-game
+   * @param textInputLabel
+   *   the label of the input
+   * @param validate
+   *   the function to validate the answer
+   * @return
+   *   the panel created
+   */
+  def createSimpleQuestionAnswerGamePanel(
+      question: String,
+      textInputLabel: String,
+      validate: String => (String, Color)
+  ): JPanel =
     val panel = new JPanel(new BorderLayout())
 
     val centerWrapper = new JPanel(new GridBagLayout())
     centerWrapper.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2))
-    val innerPanel = new JPanel()
+    val innerPanel    = new JPanel()
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
 
-    //Question area
+    // Question area
     val questionArea = new JTextArea(question)
     questionArea.setEditable(false)
     questionArea.setFont(pixelFont25)
@@ -28,13 +47,13 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     questionPanel.add(questionArea, BorderLayout.CENTER)
 
     // Input + Feedback
-    val inputField = new JTextField(10)
+    val inputField    = new JTextField(10)
     val feedbackLabel = new JLabel("", SwingConstants.CENTER)
     feedbackLabel.setFont(pixelFont8)
-    feedbackLabel.setPreferredSize(new Dimension(150, 30)) //TODO: avoid fixed size
+    feedbackLabel.setPreferredSize(new Dimension(150, 30)) // TODO: avoid fixed size
 
     def submit(): Unit =
-      val input = inputField.getText.trim
+      val input            = inputField.getText.trim
       val (message, color) = validate(input)
       feedbackLabel.setText(message)
       feedbackLabel.setForeground(color)
@@ -56,13 +75,12 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     centerWrapper.add(innerPanel, new GridBagConstraints())
     panel.add(centerWrapper, BorderLayout.CENTER)
 
-    //Bottom panel with Back button
-    val backButton = createStyledButton("← Home", new Dimension(100,30), pixelFont8, customBlueColor, whiteColor)
+    // Bottom panel with Back button
+    val backButton =
+      createStyledButton("← Home", new Dimension(100, 30), pixelFont8, customBlueColor, whiteColor)
     backButton.addActionListener(_ => BrainTraining.show(GamePanels))
 
     val bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT))
     bottomPanel.add(backButton)
     panel.add(bottomPanel, BorderLayout.SOUTH)
     panel
-
-
