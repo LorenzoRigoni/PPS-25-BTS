@@ -20,6 +20,35 @@ object FastCalcLogic extends MiniGameLogic:
     case (n1::n2::nextNumbers, op1::nextOperators) => n1::op1::buildExpression(n2::nextNumbers, nextOperators)
     case _ => Nil
 
+  def getListFromExpression(expression: String): List[String] =
+    expression.split(" ").toList
+
+  def calculateResult(expressionList: List[String]): Int =
+    def calculate(expressionList: List[String]) : Int = expressionList match
+      case n::Nil => n.toInt
+      case _ =>
+        val index = expressionList.lastIndexWhere(e => e == "+" || e == "-")
+        if index != -1 then
+          val (left, operator::right) = expressionList.splitAt(index)
+          val l = calculate(left)
+          val r = calculate(right)
+          operator match
+            case "+" => l + r
+            case "-" => l - r
+        else
+          val index = expressionList.lastIndexWhere(e => e == "*" || e == "/")
+          if index != -1 then
+            val (left, operator :: right) = expressionList.splitAt(index)
+            val l = calculate(left)
+            val r = calculate(right)
+            operator match
+              case "*" => l * r
+              case "/" => l / r
+          else
+            throw new IllegalArgumentException(s"Malformed expression!")
+    calculate(expressionList)
+
+  //TODO: ridurre difficoltà, i livelli alti sono troppo difficili da fare a mente
   /** L'indice di difficoltà influisce su:
    * - numero di termini dell'espressione
    * - range di numeri utilizzabili
@@ -33,4 +62,6 @@ object FastCalcLogic extends MiniGameLogic:
     val expression = buildExpression(numbers, operators)
     expression.mkString(" ") //method used to add a separator between list elements
 
-  override def validateAnswer(question: String, answer: Int): Boolean = ???
+
+  override def validateAnswer(question: String, answer: Int): Boolean =
+    calculateResult(getListFromExpression(question)) == answer
