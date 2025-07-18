@@ -1,6 +1,7 @@
 package views
 
-import views.panels.GamePanels
+import controllers.GameController
+import views.panels.{GamePanels, GamePanelsImpl}
 
 import javax.swing.*
 import java.awt.*
@@ -9,15 +10,14 @@ import java.awt.*
  * This object represents the view of the training mode. In this mode, the user can train his mind
  * with all the mini-games.
  */
-object BrainTraining extends BaseView:
-
+case class BrainTraining(controller: GameController) extends BaseView:
   /**
    * Show the brain training view with a mini-game.
    *
    * @param gamePanels
    *   the panel of the mini-game chose
    */
-  def show(gamePanels: GamePanels): Unit =
+  def show(controller: GameController, gamePanels: GamePanels): Unit =
     val frame           = new JFrame("Brain Testing")
     val buttonDimension = new Dimension(300, 50)
     val mainPanel       = new JPanel(new BorderLayout())
@@ -55,9 +55,16 @@ object BrainTraining extends BaseView:
 
     buttons.foreach((button, panelSupplier) => {
       button.addActionListener(_ => {
+        val updatedController = controller.chooseCurrentGame(button.getText)
+        val updatedGamePanels = GamePanelsImpl(updatedController)
+        val updatedPanel = button.getText match
+          case "Fast Calc"        => updatedGamePanels.fastCalcPanel()
+          case "Count Words"      => updatedGamePanels.countWordsPanel()
+          case "Right Directions" => updatedGamePanels.rightDirectionsPanel()
+          case _                  => new JPanel()
         mainPanel.remove(buttonPanel)
         centerPanel.removeAll()
-        centerPanel.add(panelSupplier(), BorderLayout.CENTER)
+        centerPanel.add(updatedPanel, BorderLayout.CENTER)
         centerPanel.revalidate()
         centerPanel.repaint()
       })

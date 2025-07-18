@@ -1,7 +1,10 @@
 package views.panels
 
+import controllers.GameController
 import views.*
+
 import java.awt.*
+import java.lang.ModuleLayer.Controller
 import javax.swing.*
 
 /**
@@ -23,7 +26,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
   def createSimpleQuestionAnswerGamePanel(
       question: String,
       textInputLabel: String,
-      validate: String => (String, Color)
+      validate: String => (String, Color),
+      controller: GameController
   ): JPanel =
     val panel = new JPanel(new BorderLayout())
 
@@ -78,8 +82,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     // Bottom panel with Back button
     val backButton =
       createStyledButton("← Home", new Dimension(100, 30), pixelFont8, customBlueColor, whiteColor)
-    backButton.addActionListener(_ => BrainTraining.show(GamePanels))
-
+    backButton.addActionListener(_ => BrainTraining(controller).show(controller, GamePanelsImpl(controller)))
+    
     val bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT))
     bottomPanel.add(backButton)
     panel.add(bottomPanel, BorderLayout.SOUTH)

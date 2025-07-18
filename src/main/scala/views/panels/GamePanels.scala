@@ -1,5 +1,7 @@
 package views.panels
 
+import controllers.GameController
+
 import javax.swing.*
 
 /**
@@ -29,7 +31,13 @@ sealed trait GamePanels:
    */
   def rightDirectionsPanel(): JPanel
 
-object GamePanels extends GamePanels:
-  override def fastCalcPanel(): JPanel        = FastCalcPanel.panel()
-  override def countWordsPanel(): JPanel      = CountWordsPanel.panel()
-  override def rightDirectionsPanel(): JPanel = RightDirectionsPanel.panel()
+class GamePanelsImpl(controller: GameController) extends GamePanels:
+  override def fastCalcPanel(): JPanel =
+    val question = controller.getQuestion
+    FastCalcPanel(controller.copy(lastQuestion = Some(question)), question).panel()
+  override def countWordsPanel(): JPanel =
+    val question = controller.getQuestion
+    CountWordsPanel(controller.copy(lastQuestion = Some(question)), question).panel()
+  override def rightDirectionsPanel(): JPanel =
+    val question = controller.getQuestion
+    RightDirectionsPanel(controller.copy(lastQuestion = Some(question)), question).panel()

@@ -1,6 +1,8 @@
 package views
 
-import views.panels.GamePanels
+import controllers.GameController
+import views.panels.{GamePanels, GamePanelsImpl}
+
 import javax.swing.*
 import java.awt.*
 import java.awt.image.BufferedImage
@@ -11,7 +13,7 @@ import javax.imageio.ImageIO
  * This object represents the initial menu where the player can choose between Age Test and Brain
  * Training mode.
  */
-object MenuView extends BaseView:
+class MenuView(controller: GameController) extends BaseView:
   private val frame = new JFrame("Menù")
 
   /**
@@ -56,12 +58,12 @@ object MenuView extends BaseView:
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()
-      AgeTest.show(GamePanels)
+      AgeTest.show(GamePanelsImpl(controller))
     })
 
     brainTrainingButton.addActionListener(_ =>
       frame.dispose()
-      BrainTraining.show(GamePanels)
+      BrainTraining.apply(controller).show(controller,GamePanelsImpl(controller))
     )
 
     verticalPanel.add(brainAgingButton)

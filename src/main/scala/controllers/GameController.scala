@@ -12,9 +12,9 @@ case class GameController( currentGame: Option[MiniGameLogic] = None,
 
   def chooseCurrentGame(gameMode: String): GameController =
     val game = gameMode match
-      case "FastCalc" => Some(FastCalcLogic)
-      case "CountWords" => Some(CountWordsLogic)
-      case "RightDirections" => None //TODO: modify with RightDirectionsLogic
+      case "Fast Calc" => Some(FastCalcLogic)
+      case "Count Words" => Some(CountWordsLogic)
+      case "Right Directions" => None //TODO: modify with RightDirectionsLogic
       case _ => None
     this.copy(currentGame = game)
 
