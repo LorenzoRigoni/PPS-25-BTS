@@ -1,0 +1,33 @@
+package controllers
+
+import models.*
+import scala.util.Random
+
+case class GameController( currentGame: Option[MiniGameLogic] = None,
+                           lastQuestion: Option[String] = None,
+                           difficulty: Int = 1,
+                           rand: Random = new Random()):
+
+  private val gameList = List(FastCalcLogic, CountWordsLogic)
+
+  def chooseCurrentGame(gameMode: String): GameController =
+    val game = gameMode match
+      case "FastCalc" => Some(FastCalcLogic)
+      case "CountWords" => Some(CountWordsLogic)
+      case "RightDirections" => None //TODO: modify with RightDirectionsLogic
+      case _ => None
+    this.copy(currentGame = game)
+
+  def getQuestion: String =
+    currentGame.get.generateQuestion(difficulty) //TODO: handle difficulty increase
+
+  def checkAnswer(answer: String): Boolean =
+    currentGame.get.validateAnswer(lastQuestion.get, answer.toInt)
+
+  def selectRandomGame(): GameController =
+    val selected = gameList(rand.between(0, gameList.length))
+    this.copy(currentGame = Some(selected))
+
+  def increaseDifficulty(): GameController =
+    this.copy(difficulty = difficulty + 1)
+
