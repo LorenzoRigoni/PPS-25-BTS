@@ -1,20 +1,20 @@
 package models.rightDirections.structure
 
-enum Symbols(val complexity: Int):
-  private case And extends Symbols(2)
-  private case Or extends Symbols(2)
-  private case Not extends Symbols(1)
-  private case X extends Symbols(Integer.MAX_VALUE)
-  private case Up extends Symbols(0)
-  private case Down extends Symbols(0)
-  private case Left extends Symbols(0)
-  private case Right extends Symbols(0)
+enum Symbol(val complexity: Int):
+  private case And extends Symbol(2)
+  private case Or extends Symbol(2)
+  private case Not extends Symbol(1)
+  private case X extends Symbol(Integer.MAX_VALUE)
+  private case Up extends Symbol(0)
+  private case Down extends Symbol(0)
+  private case Left extends Symbol(0)
+  private case Right extends Symbol(0)
 
-object Symbols:
-  def allOperators: List[Symbols] = List(And, Or, Not)
-  def allDirections: List[Symbols] = List(Up, Left, Right, Down)
+object Symbol:
+  def allOperators: List[Symbol] = List(And, Or, Not)
+  def allDirections: List[Symbol] = List(Up, Left, Right, Down)
 
-  def fromString(s: String): Option[Symbols] = s.toLowerCase match
+  def fromString(s: String): Option[Symbol] = s.toLowerCase match
     case "and" => Some(And)
     case "or" => Some(Or)
     case "not"  => Some(Not)
@@ -27,6 +27,6 @@ object Symbols:
   def getMaximumComplexity:Int=
     allOperators.concat(allDirections).map(_.complexity).max
 
-  def getAnyOperatorBelowCertainComplexity(complexity:Int) : Option[Symbols] =
+  def getAnyOperatorBelowCertainComplexity(complexity:Int) : Option[Symbol] =
     val candidates = allOperators.concat(allDirections).filter(_.complexity < complexity)
     scala.util.Random.shuffle(candidates).headOption
