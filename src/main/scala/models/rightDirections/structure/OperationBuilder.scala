@@ -1,8 +1,9 @@
 package models.rightDirections.structure
 
-import scala.util.Try
+import models.rightDirections.structure.treeLogic.BinaryTree
 
-trait OperationBuilder:
+
+trait OperationBuilder[A]:
   /**
    * Build an operation from an input.
    * Operation can fail if the input string doesn't
@@ -14,27 +15,22 @@ trait OperationBuilder:
    * @return
    *  the inputted string or a failure
    */
-  def buildOperationFromString(input: String, formatter: (String)=>String): Try[String]
+  def buildOperationFromString(input: String, formatter: (String)=>String): Option[BinaryTree[A]]
   /**
    * Build an operation from a given complexity.
-   * Operation can fail if the input string doesn't
-   * respect syntactical rules
-   * @param base
-   *  the starting point of the operation extraction
    * @param complexity
    *  each operation has a given complexity: the result
    *  should try to expand the base
    * @return
-   * the expanded operation as string or a failure if base wasn't
-   * well-formed
+   * the expanded operation as a Binary Tree
    */ 
-  def buildOperationFromComplexity(base: String, complexity: Int): Try[String]
+  def buildOperationFromComplexity(complexity: Int): BinaryTree[A]
 
   /**
-   * checks if a string is well-formed 
+   * checks if a string is well-formed
    * @param input
    *  the string which may or may not be well-formed
    * @return
-   *  whether input is well-formed
+   *  a well-formed version of input
    */
-  def checkValidity(input: String): Boolean
+  protected def formatString(input: String): String
