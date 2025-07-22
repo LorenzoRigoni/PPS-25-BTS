@@ -23,4 +23,4 @@ trait MiniGameLogic:
    * @return
    *   true if the answer is correct, false otherwise
    */
-  def validateAnswer(question: String, answer: Int): Boolean
+  def validateAnswer[A](question: String, answer: A): Boolean
