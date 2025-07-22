@@ -47,5 +47,5 @@ object CountWordsLogic extends MiniGameLogic:
       else minNumOfWords + (minimumRandom + Random.nextInt((difficult - minimumRandom) + 1))
     Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
 
-  override def validateAnswer(question: String, answer: Int): Boolean =
+  override def validateAnswer[Int](question: String, answer: Int): Boolean =
     answer == question.split("\\s+").count(_.nonEmpty)
