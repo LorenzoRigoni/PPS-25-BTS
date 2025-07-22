@@ -49,10 +49,6 @@ object FastCalcLogic extends MiniGameLogic:
     calculate(expressionList)
 
   //TODO: ridurre difficoltà, i livelli alti sono troppo difficili da fare a mente
-  /** L'indice di difficoltà influisce su:
-   * - numero di termini dell'espressione
-   * - range di numeri utilizzabili
-   * - tipi di operatori (divisione per livello più difficile) */
   override def generateQuestion(difficultyLevel: Int): String =
     val numTerms = Math.min(1 + difficultyLevel, 6) //per ora massimo 6 termini
     val maxNumber = 10 * difficultyLevel //nell'ipotesi che ci siano 10 livelli
@@ -63,5 +59,5 @@ object FastCalcLogic extends MiniGameLogic:
     expression.mkString(" ") //method used to add a separator between list elements
 
 
-  override def validateAnswer(question: String, answer: Int): Boolean =
+  override def validateAnswer[Int](question: String, answer: Int): Boolean =
     calculateResult(getListFromExpression(question)) == answer
