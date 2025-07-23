@@ -56,12 +56,13 @@ case class BrainTraining(controller: GameController) extends BaseView:
     buttons.foreach((button, panelSupplier) => {
       button.addActionListener(_ => {
         val updatedController = controller.chooseCurrentGame(button.getText)
-        val updatedGamePanels = GamePanelsImpl(updatedController)
-        val updatedPanel = button.getText match
-          case "Fast Calc"        => updatedGamePanels.fastCalcPanel()
-          case "Count Words"      => updatedGamePanels.countWordsPanel()
-          case "Right Directions" => updatedGamePanels.rightDirectionsPanel()
-          case _                  => new JPanel()
+        val updatedGamePanels = GamePanelsImpl()
+        val updatedPanel = new JPanel()
+        /*val updatedPanel = button.getText match
+          case "Fast Calc"        => updatedGamePanels.fastCalcPanel(updatedController)
+          case "Count Words"      => updatedGamePanels.countWordsPanel(updatedController)
+          case "Right Directions" => updatedGamePanels.rightDirectionsPanel(updatedController)
+          case _                  => new JPanel()*/
         mainPanel.remove(buttonPanel)
         centerPanel.removeAll()
         centerPanel.add(updatedPanel, BorderLayout.CENTER)
