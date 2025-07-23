@@ -1,14 +1,22 @@
 import models.rightDirections.DirectionsLogic
-import models.rightDirections.structure.{Symbol, SyntaxTreeBuilder}
+import models.rightDirections.structure.{Symbol, *}
+import models.rightDirections.structure.Symbol.{And, Not, Or, X}
+import models.rightDirections.structure.treeLogic.{Leaf, Node}
 import org.scalatest.funsuite.AnyFunSuite
 
 class RightDirectionsTests extends AnyFunSuite:
-  private val COMPLETE_LOGICAL_OPERATION = "(NOT UP) AND (NOT NOT DOWN)"
-  private val INCOMPLETE_LOGICAL_OPERATION = "NOT UP     and NOT NOT DoWN"
-  private val MULTIPLE_ANSWER_LOGICAL_OPERATION = "Not UP"
+  val tree = new Leaf(X)
+  tree.expand(X, Symbol.Left, Option(Not), None)
 
-  test("test"){
-    val a = SyntaxTreeBuilder.buildOperationFromComplexity(3)
-    print(a)
-    assert(a.depth == 3)
+  test("Check Not operator") {
+    assert(tree.depth == 2)
+    assert(List(Symbol.Up,Symbol.Right,Symbol.Down).equals(EvaluateOperation.evaluateOperationFromTree(tree)))
+  }
+  test("Check more binary operators"){
+    val andTreeIncorrect = new Node(Symbol.And,tree,Option(new Leaf(Symbol.Left)))
+    val andTreeCorrect = new Node(Symbol.And,tree,Option(new Leaf(Symbol.Right)))
+
+    assert(List().empty.equals(EvaluateOperation.evaluateOperationFromTree(andTreeIncorrect)))
+    assert(List(Symbol.Right).equals(EvaluateOperation.evaluateOperationFromTree(andTreeCorrect)))
+
   }

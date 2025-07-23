@@ -1,5 +1,6 @@
 package models.rightDirections.structure
 
+import models.rightDirections.structure.Symbol.X
 import models.rightDirections.structure.treeLogic.{BinaryTree, Leaf}
 
 import scala.annotation.tailrec
@@ -10,7 +11,7 @@ object SyntaxTreeBuilder extends OperationBuilder[Symbol] {
     None
 
   override def buildOperationFromComplexity(complexity: Int): BinaryTree[Symbol] =
-    expandTree(new Leaf(Symbol.fromString("x").get), complexity)
+    expandTree(new Leaf(X), complexity)
 
   override protected def formatString(input: String): String = {
     val explodedString = input.split(" ")
@@ -21,16 +22,16 @@ object SyntaxTreeBuilder extends OperationBuilder[Symbol] {
 
   @tailrec
   private def expandTree(tree: BinaryTree[Symbol], complexity: Int): BinaryTree[Symbol] = {
-    if(!tree.contains(Symbol.fromString("x").get)) tree
+    if(!tree.contains(X)) tree
     else{
       val treeComplexity = calculateTreeComplexity(tree)
       if (treeComplexity > complexity) tree
       else {
           val symbolToAdd = Symbol.getAnyOperatorBelowCertainComplexity(complexity - treeComplexity)
           symbolToAdd.complexity match {
-            case 2 => expandTree(tree.expand(Symbol.fromString("x").get, symbolToAdd, Symbol.fromString("X"), Symbol.fromString("X")),complexity)
-            case 1 => expandTree(tree.expand(Symbol.fromString("x").get, Symbol.fromString("X").get, Option(symbolToAdd), None),complexity)
-            case 0 => expandTree(tree.expand(Symbol.fromString("x").get, symbolToAdd, None, None),complexity)
+            case 2 => expandTree(tree.expand(X, symbolToAdd, Option(X), Option(X)),complexity)
+            case 1 => expandTree(tree.expand(X, X, Option(symbolToAdd), None),complexity)
+            case 0 => expandTree(tree.expand(X, symbolToAdd, None, None),complexity)
             case _ => tree
           }
         }
