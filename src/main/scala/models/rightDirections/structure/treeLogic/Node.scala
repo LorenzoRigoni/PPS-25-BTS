@@ -3,7 +3,10 @@ import models.rightDirections.structure.Symbol
 class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTree[A]]) extends BinaryTree[A] {
   val left: Option[BinaryTree[A]] = Some(leftNode)
   val right: Option[BinaryTree[A]] = rightNode
-  val depth: Int = 1 + math.max(leftNode.depth, right.fold(0)(_.depth))
+  val depth: Int = 1 + math.max(
+    left.map(_.depth).getOrElse(0),
+    right.map(_.depth).getOrElse(0)
+  )
 
   override def expand(target: A, newValue: A, leftValue: Option[A], rightValue: Option[A]): BinaryTree[A] = {
     if (value == target && left.isEmpty) {
@@ -18,21 +21,23 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
           )
       }
     } else {
+      if(value == target)  {
+        return Node(newValue,left.get ,None)
+      }
       val expandedLeft = left.get.expand(target, newValue, leftValue, rightValue)
-      if (expandedLeft != left.get) {
-        new Node(value, expandedLeft, right)
-      } else if(value == target)  {
-        new Node(newValue,left.get ,None)
-      }
-      else if(right.isDefined){
-        val expandedRight = right.map(_.expand(target, newValue, leftValue, rightValue)).get
-        new Node(value, left.get, Option(expandedRight))
-      }
-      else{
-        this
+      val expandedRight = right.map(_.expand(target, newValue, leftValue, rightValue)).orElse(None)
+      left match {
+        case Some(valueLeft) if expandedLeft != valueLeft =>
+          Node(value, expandedLeft, right)
+        case _ =>
+          right match
+            case Some(valueRight) if expandedRight.get != valueRight =>
+              Node(value, left.get, expandedRight)
+            case _ => this
       }
     }
   }
+
 
   override def contains(value: A): Boolean =
     this.value == value || left.exists(_.contains(value)) || right.exists(_.contains(value))
