@@ -1,5 +1,7 @@
 package views.panels
 
+import controllers.GameController
+
 import javax.swing.*
 
 /**
@@ -11,7 +13,7 @@ sealed trait GamePanels:
    * @return
    *   the created panel
    */
-  def fastCalcPanel(): JPanel
+  def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel
 
   /**
    * Create a panel for Count Words mini-game.
@@ -19,7 +21,7 @@ sealed trait GamePanels:
    * @return
    *   the created panel
    */
-  def countWordsPanel(): JPanel
+  def countWordsPanel(controller: GameController, onNext: GameController => Unit): JPanel
 
   /**
    * Create a panel for Right Directions mini-game.
@@ -27,9 +29,15 @@ sealed trait GamePanels:
    * @return
    *   the created panel
    */
-  def rightDirectionsPanel(): JPanel
+  def rightDirectionsPanel(controller: GameController, onNext: GameController => Unit): JPanel
 
-object GamePanels extends GamePanels:
-  override def fastCalcPanel(): JPanel        = FastCalcPanel.panel()
-  override def countWordsPanel(): JPanel      = CountWordsPanel.panel()
-  override def rightDirectionsPanel(): JPanel = RightDirectionsPanel.panel()
+class GamePanelsImpl extends GamePanels:
+  override def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel =
+    val question = controller.getQuestion
+    FastCalcPanel(controller.copy(lastQuestion = Some(question)), onNext).panel()
+  override def countWordsPanel(controller: GameController, onNext: GameController => Unit): JPanel =
+    val question = controller.getQuestion
+    CountWordsPanel(controller.copy(lastQuestion = Some(question)), onNext).panel()
+  override def rightDirectionsPanel(controller: GameController, onNext: GameController => Unit): JPanel =
+    val question = controller.getQuestion
+    RightDirectionsPanel(controller.copy(lastQuestion = Some(question)), onNext).panel()

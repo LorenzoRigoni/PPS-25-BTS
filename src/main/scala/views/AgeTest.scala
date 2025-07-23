@@ -1,132 +1,95 @@
 package views
 
-import views.BrainTraining.*
-import views.panels.GamePanels
+import controllers.{GameController, GameViewCallback}
+import models.{CountWordsLogic, FastCalcLogic}
+import utils.MiniGames
+import utils.MiniGames.{CountWords, FastCalc, RightDirections}
+import views.panels.{GamePanels, GamePanelsImpl}
 
 import javax.swing.*
 import java.awt.*
 import java.util.{Timer, TimerTask}
 import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
-//TODO: remove buttons here
-
 /**
- * This object represents the view of the age test. The user will play 3 random mini-games.
+ * This class represents the view of the age test. The user will play 3 random mini-games.
  */
-object AgeTest extends BaseView:
+case class AgeTest(gamePanels: GamePanels) extends BaseView with GameViewCallback:
+  private val frame       = new JFrame("Let's play!")
+  private val mainPanel   = new JPanel(new BorderLayout())
+  private val timeLabel   = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
+  private val centerPanel = new JPanel(new BorderLayout())
 
   /**
    * Show the age test view with a mini-game.
    * @param gamePanels
    *   the mini-game to play
    */
-  def show(gamePanels: GamePanels): Unit =
-    val frame           = new JFrame("Let's play!")
-    val buttonDimension = new Dimension(300, 50)
-    val timeLeft        = new AtomicInteger(120)
-    val currentTimer    = new AtomicReference[Timer]()
-    val mainPanel       = new JPanel(new BorderLayout())
-    val buttonPanel     = new JPanel(new FlowLayout())
-
+  def show(): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
 
-    val timeLabel = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
     timeLabel.setFont(pixelFont15)
     mainPanel.add(timeLabel, BorderLayout.NORTH)
 
-    val centerPanel = new JPanel(new BorderLayout())
     mainPanel.add(centerPanel, BorderLayout.CENTER)
 
-    def startTimer(): Unit =
-      Option(currentTimer.getAndSet(new Timer())).foreach(_.cancel())
-      timeLeft.set(120)
-      timeLabel.setText("Time left: 120 seconds")
-
-      val timer = new Timer()
-      currentTimer.set(timer)
-
-      val task = new TimerTask {
-        override def run(): Unit = {
-          val t = timeLeft.decrementAndGet()
-          SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $t seconds"))
-          if (t <= 0) {
-            timer.cancel()
-            currentTimer.set(new Timer())
-            SwingUtilities.invokeLater(() => {
-              JOptionPane.showMessageDialog(frame, "Time's up!")
-              frame.dispose()
-            })
-          }
-        }
-      }
-      timer.scheduleAtFixedRate(task, 1000, 1000)
-
-    def attachGameButton(
-        button: JButton,
-        centerPanel: JPanel,
-        panelSupplier: () => JPanel,
-        rules: String,
-        startTimer: () => Unit
-    ): Unit =
-      button.addActionListener(_ => {
-        JOptionPane.showMessageDialog(
-          centerPanel,
-          rules,
-          "Rules of the mini game",
-          JOptionPane.INFORMATION_MESSAGE
-        )
-        centerPanel.removeAll()
-        mainPanel.remove(buttonPanel)
-        centerPanel.add(panelSupplier(), BorderLayout.CENTER)
-        centerPanel.revalidate()
-        centerPanel.repaint()
-        startTimer()
-      })
-
-    val buttons = Seq(
-      createStyledButton(
-        "Fast Calc",
-        buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
-      ) -> (
-        gamePanels.fastCalcPanel _,
-        "Enter the result of the operation by press the 'Enter' button"
-      ),
-      createStyledButton(
-        "Count Words",
-        buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
-      ) -> (
-        gamePanels.countWordsPanel _,
-        "Enter the number of words of the sentence by press the 'Enter' button"
-      ),
-      createStyledButton(
-        "Right Directions",
-        buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
-      ) -> (
-        gamePanels.rightDirectionsPanel _,
-        "Enter the right directions suggested by press the arrow buttons"
-      )
-    )
-
-    buttons.foreach { case (button, (panelSupplier, rules)) =>
-      attachGameButton(button, centerPanel, panelSupplier, rules, startTimer)
-      button.setAlignmentX(Component.CENTER_ALIGNMENT)
-      buttonPanel.add(Box.createVerticalStrut(40))
-      buttonPanel.add(button)
-    }
-
-    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
-    mainPanel.add(buttonPanel, BorderLayout.SOUTH)
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
 
-    startTimer()
+    GameController(viewCallback = Some(this)).nextGame
+    
+  private def showFastCalc(controller: GameController): JPanel =
+    gamePanels.fastCalcPanel(controller, nextController => {
+      SwingUtilities.invokeLater(() => {
+        centerPanel.removeAll()
+        val panel = showFastCalc(nextController)
+        centerPanel.add(panel, BorderLayout.CENTER)
+        centerPanel.revalidate()
+        centerPanel.repaint()
+      })
+    })
+
+  private def showCountWords(controller: GameController): JPanel =
+    gamePanels.countWordsPanel(controller, nextController => {
+      SwingUtilities.invokeLater(() => {
+        centerPanel.removeAll()
+        val panel = showCountWords(nextController)
+        centerPanel.add(panel, BorderLayout.CENTER)
+        centerPanel.revalidate()
+        centerPanel.repaint()
+      })
+    })
+
+  private def showRightDirections(controller: GameController): JPanel =
+    gamePanels.rightDirectionsPanel(controller, nextController => {
+      SwingUtilities.invokeLater(() => {
+        centerPanel.removeAll()
+        val panel = showRightDirections(nextController)
+        centerPanel.add(panel, BorderLayout.CENTER)
+        centerPanel.revalidate()
+        centerPanel.repaint()
+      })
+    })
+
+  override def onTimerUpdate(secondsLeft: Int): Unit =
+    SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $secondsLeft seconds"))
+
+  override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
+    SwingUtilities.invokeLater(() => {
+      centerPanel.removeAll()
+      val panel = miniGame match
+        case FastCalc        => showFastCalc(controller)
+        case CountWords      => showCountWords(controller)
+        case RightDirections => showRightDirections(controller)
+
+      centerPanel.add(panel, BorderLayout.CENTER)
+      centerPanel.revalidate()
+      centerPanel.repaint()
+    })
+
+  override def onGameFinished(): Unit =
+    SwingUtilities.invokeLater(() =>
+      JOptionPane.showMessageDialog(frame, "All mini-games completed!")
+      frame.dispose()
+    )

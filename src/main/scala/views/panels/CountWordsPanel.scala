@@ -1,20 +1,24 @@
 package views.panels
 
+import controllers.GameController
+
 import javax.swing.*
 import java.awt.*
 
 /**
  * This objects represents the view of the mini-game Count Words.
  */
-object CountWordsPanel extends SimpleQuestionAnswerGamePanel:
+class CountWordsPanel(controller: GameController, onNext: GameController => Unit)
+    extends SimpleQuestionAnswerGamePanel:
   def panel(): JPanel =
-    val sentence      = "This is a simple sentence"
-    val correctAnswer =
-      sentence.split("\\s+").count(_.nonEmpty).toString // TODO: use game model (still to implement)
     createSimpleQuestionAnswerGamePanel(
-      question = sentence,
+      question = controller.lastQuestion.get,
       textInputLabel = "Number of words: ",
       validate = input =>
-        if input == correctAnswer then ("Correct!", Color.GREEN)
-        else (s"Wrong! The result was $correctAnswer", Color.RED)
+        if controller.checkAnswer(input) then
+          val increased = controller.increaseDifficulty()
+          onNext(increased)
+          ("Correct!", Color.GREEN)
+        else (s"Wrong!", Color.RED),
+      controller = controller
     )
