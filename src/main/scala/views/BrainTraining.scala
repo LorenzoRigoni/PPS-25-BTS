@@ -17,57 +17,60 @@ case class BrainTraining(controller: GameController) extends BaseView:
    * @param gamePanels
    *   the panel of the mini-game chose
    */
-  def show(controller: GameController, gamePanels: GamePanels): Unit =
+  def show(initialController: GameController, gamePanels: GamePanels): Unit =
     val frame           = new JFrame("Brain Testing")
     val buttonDimension = new Dimension(300, 50)
     val mainPanel       = new JPanel(new BorderLayout())
     val buttonPanel     = new JPanel()
     val centerPanel     = new JPanel()
+    val bottomPanel     = new JPanel(new FlowLayout(FlowLayout.LEFT))
 
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
 
+    def loadGamePanel(controller: GameController, miniGameName: String): Unit =
+      centerPanel.removeAll()
+      val panel = miniGameName match
+        case "Fast Calc"        =>
+          gamePanels.fastCalcPanel(
+            controller,
+            nextController => loadGamePanel(nextController, miniGameName)
+          )
+        case "Count Words"      =>
+          gamePanels.countWordsPanel(
+            controller,
+            nextController => loadGamePanel(nextController, miniGameName)
+          )
+        case "Right Directions" =>
+          gamePanels.rightDirectionsPanel(
+            controller,
+            nextController => loadGamePanel(nextController, miniGameName)
+          )
+        case _                  => new JPanel()
+      centerPanel.add(panel, BorderLayout.CENTER)
+      centerPanel.revalidate()
+      centerPanel.repaint()
+      mainPanel.remove(buttonPanel)
+
     val buttons = Seq(
-      createStyledButton(
-        "Fast Calc",
-        buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
-      ) -> gamePanels.fastCalcPanel _,
-      createStyledButton(
-        "Count Words",
-        buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
-      ) -> gamePanels.countWordsPanel _,
-      createStyledButton(
-        "Right Directions",
-        buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
-      ) -> gamePanels.rightDirectionsPanel _
+      "Fast Calc",
+      "Count Words",
+      "Right Directions"
     )
 
     centerPanel.setLayout(new BorderLayout())
 
-    buttons.foreach((button, panelSupplier) => {
+    buttons.foreach(name => {
+      val button = createStyledButton(
+        name,
+        buttonDimension,
+        pixelFont15,
+        customBlueColor,
+        whiteColor
+      )
       button.addActionListener(_ => {
-        val updatedController = controller.chooseCurrentGame(button.getText)
-        val updatedGamePanels = GamePanelsImpl()
-        val updatedPanel = new JPanel()
-        /*val updatedPanel = button.getText match
-          case "Fast Calc"        => updatedGamePanels.fastCalcPanel(updatedController)
-          case "Count Words"      => updatedGamePanels.countWordsPanel(updatedController)
-          case "Right Directions" => updatedGamePanels.rightDirectionsPanel(updatedController)
-          case _                  => new JPanel()*/
-        mainPanel.remove(buttonPanel)
-        centerPanel.removeAll()
-        centerPanel.add(updatedPanel, BorderLayout.CENTER)
-        centerPanel.revalidate()
-        centerPanel.repaint()
+        val updatedController = initialController.chooseCurrentGame(name)
+        loadGamePanel(updatedController, name)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
       buttonPanel.add(Box.createVerticalStrut(40))
@@ -76,7 +79,19 @@ case class BrainTraining(controller: GameController) extends BaseView:
 
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
 
+    val backButton =
+      createStyledButton("← Home", new Dimension(100, 30), pixelFont8, customBlueColor, whiteColor)
+    backButton.addActionListener(_ => {
+      frame.dispose()
+      if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
+      else BrainTraining.apply(GameController()).show(GameController(), GamePanelsImpl())
+    })
+
+    bottomPanel.add(backButton)
+
     mainPanel.add(buttonPanel, BorderLayout.NORTH)
     mainPanel.add(centerPanel, BorderLayout.CENTER)
+    mainPanel.add(bottomPanel, BorderLayout.SOUTH)
+
     frame.setContentPane(mainPanel)
     frame.setVisible(true)

@@ -27,8 +27,8 @@ trait BaseView:
   val customBlueColor   = new Color(120, 180, 210)
   val whiteColor: Color = Color.WHITE
 
-  val screenWidth: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
-  val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
+  private val screenWidth: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
+  private val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
 
   /**
    * Set the frame in the center of the panel.
