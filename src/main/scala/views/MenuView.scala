@@ -63,7 +63,7 @@ class MenuView(controller: GameController) extends BaseView:
 
     brainTrainingButton.addActionListener(_ =>
       frame.dispose()
-      BrainTraining.apply(controller).show(controller,GamePanelsImpl())
+      BrainTraining.apply(controller).show(controller, GamePanelsImpl())
     )
 
     verticalPanel.add(brainAgingButton)

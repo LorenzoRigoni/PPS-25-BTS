@@ -4,7 +4,6 @@ import controllers.GameController
 import views.*
 
 import java.awt.*
-import java.lang.ModuleLayer.Controller
 import javax.swing.*
 
 /**
@@ -87,13 +86,4 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
 
     centerWrapper.add(innerPanel, new GridBagConstraints())
     panel.add(centerWrapper, BorderLayout.CENTER)
-
-    // Bottom panel with Back button
-    val backButton =
-      createStyledButton("← Home", new Dimension(100, 30), pixelFont8, customBlueColor, whiteColor)
-    backButton.addActionListener(_ => BrainTraining(controller).show(controller, GamePanelsImpl()))
-
-    val bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT))
-    bottomPanel.add(backButton)
-    panel.add(bottomPanel, BorderLayout.SOUTH)
     panel

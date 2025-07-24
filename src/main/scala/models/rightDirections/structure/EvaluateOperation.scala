@@ -7,16 +7,16 @@ import java.util
 
 object EvaluateOperation:
   def evaluateOperationFromTree(tree: BinaryTree[Symbol]): List[Symbol] = {
-    val leftResult = tree.left.map(evaluateOperationFromTree)
+    val leftResult  = tree.left.map(evaluateOperationFromTree)
     val rightResult = tree.right.map(evaluateOperationFromTree)
 
     tree.value match {
-      case And => leftResult.get.intersect(rightResult.get)
-      case Or => leftResult.get.concat(rightResult.get)
+      case And   => leftResult.get.intersect(rightResult.get)
+      case Or    => leftResult.get.concat(rightResult.get)
       case value =>
-        leftResult match{
+        leftResult match {
           case None => List(value)
-          case _ =>
+          case _    =>
             Symbol.allDirections.filterNot(_ == value)
         }
     }
