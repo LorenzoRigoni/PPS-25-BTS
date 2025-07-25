@@ -9,6 +9,11 @@ import java.awt.*
  * This trait represents the base view. It is extended by AgeTest view and BrainTrainingView
  */
 trait BaseView:
+  val pixelFont70: Font =
+    Font
+      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
+      .deriveFont(70f)
+
   val pixelFont25: Font =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))

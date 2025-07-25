@@ -1,7 +1,7 @@
 package views
 
 import controllers.GameController
-import views.panels.{GamePanels, GamePanelsImpl}
+import views.panels.{GamePanels, GamePanelsImpl, ResultPanelsImpl}
 
 import javax.swing.*
 import java.awt.*
@@ -58,12 +58,12 @@ class MenuView(controller: GameController) extends BaseView:
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()
-      AgeTest.apply(GamePanelsImpl()).show()
+      AgeTest.apply(GamePanelsImpl(), ResultPanelsImpl()).show()
     })
 
     brainTrainingButton.addActionListener(_ =>
       frame.dispose()
-      BrainTraining.apply(controller).show(controller, GamePanelsImpl())
+      BrainTraining.apply(controller).show(controller, GamePanelsImpl(), ResultPanelsImpl())
     )
 
     verticalPanel.add(brainAgingButton)

@@ -1,7 +1,7 @@
 package views
 
 import controllers.GameController
-import views.panels.{GamePanels, GamePanelsImpl}
+import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
 
 import javax.swing.*
 import java.awt.*
@@ -17,7 +17,7 @@ case class BrainTraining(controller: GameController) extends BaseView:
    * @param gamePanels
    *   the panel of the mini-game chose
    */
-  def show(initialController: GameController, gamePanels: GamePanels): Unit =
+  def show(initialController: GameController, gamePanels: GamePanels, resultPanels: ResultPanels): Unit =
     val frame           = new JFrame("Brain Testing")
     val buttonDimension = new Dimension(300, 50)
     val mainPanel       = new JPanel(new BorderLayout())
@@ -84,7 +84,7 @@ case class BrainTraining(controller: GameController) extends BaseView:
     backButton.addActionListener(_ => {
       frame.dispose()
       if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
-      else BrainTraining.apply(GameController()).show(GameController(), GamePanelsImpl())
+      else BrainTraining.apply(GameController()).show(GameController(), GamePanelsImpl(), ResultPanelsImpl())
     })
 
     bottomPanel.add(backButton)
