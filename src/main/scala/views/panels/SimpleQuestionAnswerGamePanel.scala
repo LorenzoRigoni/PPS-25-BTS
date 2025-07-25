@@ -1,6 +1,8 @@
 package views.panels
 
+import controllers.GameController
 import views.*
+
 import java.awt.*
 import javax.swing.*
 
@@ -23,7 +25,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
   def createSimpleQuestionAnswerGamePanel(
       question: String,
       textInputLabel: String,
-      validate: String => (String, Color)
+      validate: String => (String, Color),
+      controller: GameController
   ): JPanel =
     val panel = new JPanel(new BorderLayout())
 
@@ -46,6 +49,10 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     questionPanel.setLayout(new BorderLayout())
     questionPanel.add(questionArea, BorderLayout.CENTER)
 
+    def showNewQuestion(): Unit =
+      val newQuestion = controller.lastQuestion.get
+      questionArea.setText(newQuestion)
+
     // Input + Feedback
     val inputField    = new JTextField(10)
     val feedbackLabel = new JLabel("", SwingConstants.CENTER)
@@ -55,8 +62,13 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     def submit(): Unit =
       val input            = inputField.getText.trim
       val (message, color) = validate(input)
+      feedbackLabel.setVisible(true)
       feedbackLabel.setText(message)
       feedbackLabel.setForeground(color)
+      if message == "Correct!" then
+        showNewQuestion()
+        inputField.setText("")
+        feedbackLabel.setVisible(false)
 
     inputField.addActionListener(_ => submit())
 
@@ -74,13 +86,4 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
 
     centerWrapper.add(innerPanel, new GridBagConstraints())
     panel.add(centerWrapper, BorderLayout.CENTER)
-
-    // Bottom panel with Back button
-    val backButton =
-      createStyledButton("← Home", new Dimension(100, 30), pixelFont8, customBlueColor, whiteColor)
-    backButton.addActionListener(_ => BrainTraining.show(GamePanels))
-
-    val bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT))
-    bottomPanel.add(backButton)
-    panel.add(bottomPanel, BorderLayout.SOUTH)
     panel
