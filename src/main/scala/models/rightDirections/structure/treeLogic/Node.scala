@@ -9,32 +9,33 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
   )
 
   override def expand(target: A, newValue: A, leftValue: Option[A], rightValue: Option[A]): BinaryTree[A] = {
-    if (value == target && left.isEmpty) {
-      (leftValue, rightValue) match {
-        case (None, None) =>
-          new Leaf(newValue)
-        case _ =>
-          new Node(
-            newValue,
-            leftValue.map(new Leaf(_)).getOrElse(left.get),
-            Option(rightValue.map(new Leaf(_)).getOrElse(right.get))
-          )
-      }
-    } else {
-      if(value == target)  {
-        return Node(newValue,left.get ,None)
-      }
-      val expandedLeft = left.get.expand(target, newValue, leftValue, rightValue)
-      val expandedRight = right.map(_.expand(target, newValue, leftValue, rightValue)).orElse(None)
-      left match {
-        case Some(valueLeft) if expandedLeft != valueLeft =>
+    if( value==target)
+      return new Node(newValue, this, None)
+
+    val expandedLeft = left.get.expand(target, newValue, leftValue, rightValue)
+
+    if (right.isDefined) {
+      val expandedRight = right.get.expand(target, newValue, leftValue, rightValue)
+      expandBothBranchNode(expandedLeft, expandedRight)
+    }
+    else
+      Node(value, expandedLeft, None)
+  }
+
+  private def expandBothBranchNode(expandedLeft: BinaryTree[A], expandedRight: BinaryTree[A]): BinaryTree[A] = {
+
+    (expandedLeft, expandedRight) match {
+      case (l, r) if !l.equals(left.get) && !r.equals(right.get) =>
+        if (scala.util.Random.nextBoolean())
           Node(value, expandedLeft, right)
-        case _ =>
-          right match
-            case Some(valueRight) if expandedRight.get != valueRight =>
-              Node(value, left.get, expandedRight)
-            case _ => this
-      }
+        else
+          Node(value, left.get, Option(expandedRight))
+
+      case (l, r) if l != left.get =>
+        Node(value, expandedLeft, right)
+
+      case _ =>
+        Node(value, left.get, Option(expandedRight))
     }
   }
 
