@@ -40,12 +40,12 @@ object CountWordsLogic extends MiniGameLogic:
   )
   private val minNumOfWords = 3
 
-  override def generateQuestion(difficult: Int): String =
-    val minimumRandom = difficult - 2
-    val numOfWords =
-      if difficult <= 2 then minNumOfWords + Random.nextInt(difficult)
-      else minNumOfWords + (minimumRandom + Random.nextInt((difficult - minimumRandom) + 1))
+  override def generateQuestion(difficultyLevel: Int): String =
+    val minimumRandom = difficultyLevel - 2
+    val numOfWords    =
+      if difficultyLevel <= 2 then minNumOfWords + Random.nextInt(difficultyLevel)
+      else minNumOfWords + (minimumRandom + Random.nextInt((difficultyLevel - minimumRandom) + 1))
     Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
 
-  override def validateAnswer(question: String, answer: Int): Boolean =
+  override def validateAnswer[Int](question: String, answer: Int): Boolean =
     answer == question.split("\\s+").count(_.nonEmpty)

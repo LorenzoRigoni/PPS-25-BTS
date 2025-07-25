@@ -10,11 +10,15 @@ class RightDirectionsTests extends AnyFunSuite:
 
   test("Check Not operator") {
     assert(tree.depth == 2)
-    assert(List(Symbol.Up,Symbol.Right,Symbol.Down).equals(EvaluateOperation.evaluateOperationFromTree(tree)))
+    assert(
+      List(Symbol.Up, Symbol.Right, Symbol.Down).equals(
+        EvaluateOperation.evaluateOperationFromTree(tree)
+      )
+    )
   }
-  test("Check more binary operators"){
-    val andTreeIncorrect = new Node(Symbol.And,tree,Option(new Leaf(Symbol.Left)))
-    val andTreeCorrect = new Node(Symbol.And,tree,Option(new Leaf(Symbol.Right)))
+  test("Check more binary operators") {
+    val andTreeIncorrect = new Node(Symbol.And, tree, Option(new Leaf(Symbol.Left)))
+    val andTreeCorrect   = new Node(Symbol.And, tree, Option(new Leaf(Symbol.Right)))
 
     assert(List().empty.equals(EvaluateOperation.evaluateOperationFromTree(andTreeIncorrect)))
     assert(List(Symbol.Right).equals(EvaluateOperation.evaluateOperationFromTree(andTreeCorrect)))

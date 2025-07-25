@@ -3,15 +3,18 @@ ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.3.6"
 
 lazy val root = (project in file("."))
+  .enablePlugins()
   .settings(
     name := "BTS",
 
     //scalafixDependencies += "com.github.liancheng" %% "organize-imports" % "0.6.0",
 
+    mainClass := Some("Main"),
+    assembly / assemblyJarName := "Brain-Training-Scala.jar",
+
     wartremoverErrors ++= Seq(
       Wart.Null,
-      Wart.PublicInference,
-      Wart.Var
+      Wart.PublicInference
     ),
 
     libraryDependencies ++= Seq(
