@@ -21,16 +21,21 @@ object SyntaxTreeBuilder extends OperationBuilder[Symbol] {
   }
 
   @tailrec
-  private def expandTree(tree: BinaryTree[Symbol], complexity: Int): BinaryTree[Symbol] = {
+  def expandTree(tree: BinaryTree[Symbol], complexity: Int): BinaryTree[Symbol] = {
     if(!tree.contains(X)) tree
     else{
       val treeComplexity = calculateTreeComplexity(tree)
       if (treeComplexity > complexity) tree
       else {
-          val symbolToAdd = Symbol.getAnyOperatorBelowCertainComplexity(complexity - treeComplexity)
+          val symbolsNextComplexity = (treeComplexity, complexity) match {
+            case (0, c) if c >= 2 => 2
+            case (c1,c2) if c1 !=c2 => 1
+            case _ => 0
+          }
+          val symbolToAdd = Symbol.getAnyOperatorBelowCertainComplexity(symbolsNextComplexity)
           symbolToAdd.complexity match {
             case 2 => expandTree(tree.expand(X, symbolToAdd, Option(X), Option(X)),complexity)
-            case 1 => expandTree(tree.expand(X, X, Option(symbolToAdd), None),complexity)
+            case 1 => expandTree(tree.expand(X, symbolToAdd,Option(X),None),complexity)
             case 0 => expandTree(tree.expand(X, symbolToAdd, None, None),complexity)
             case _ => tree
           }
