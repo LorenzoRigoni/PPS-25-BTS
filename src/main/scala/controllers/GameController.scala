@@ -9,6 +9,10 @@ import java.util.{Timer, TimerTask}
 import javax.swing.SwingUtilities
 import scala.util.Random
 
+case class QuestionResult(responseTime: Long, isCorrect: Boolean)
+
+case class GameStats(results: List[QuestionResult])
+
 /**
  * This case class represents the controller of the game. It manages the game loop and the
  * communications between logics and views.
@@ -37,8 +41,11 @@ case class GameController(
     rand: Random = new Random(),
     timer: Option[Timer] = None,
     timeLeft: Int = 120,
-    viewCallback: Option[GameViewCallback] = None
+    viewCallback: Option[GameViewCallback] = None,
+    startTime: Long = 0
 ):
+
+  private var results: List[QuestionResult] = List()
 
   private def startTimer(): GameController =
     timer.foreach(_.cancel())
@@ -66,8 +73,9 @@ case class GameController(
   def nextGame: GameController =
     if remainingMiniGames.isEmpty then
       timer.foreach(_.cancel())
-      viewCallback.foreach(_.onGameFinished())
-      this.copy(currentGame = None)
+      val finalController = this.copy(currentGame = None)
+      viewCallback.foreach(_.onGameFinished(finalController))
+      finalController
     else
       val nextMiniGame   = remainingMiniGames(rand.between(0, remainingMiniGames.length))
       val updatedList    = remainingMiniGames.filter(m => m != nextMiniGame)
@@ -94,13 +102,25 @@ case class GameController(
       case _                  => None
     this.copy(currentGame = game, timeLeft = 120)
 
-  def getQuestion: String =
-    currentGame.get.generateQuestion(difficulty)
+  def getQuestion: (String, Long) =
+    val generatedQuestion = currentGame.get.generateQuestion(difficulty)
+    val startTime = System.currentTimeMillis()
+    (generatedQuestion, startTime)
 
   def checkAnswer(answer: String): Boolean =
-    currentGame.get.validateAnswer(lastQuestion.get, answer.toInt)
+    val parsedAnswer = currentGame match
+      case Some(FastCalcLogic) => answer.toInt
+      case Some(CountWordsLogic) => answer.toInt
+      //case Some(DirectionsLogic) => TODO: parse answer for directions game
+      case _ => answer
+    val isAnswerCorrect = currentGame.get.validateAnswer(lastQuestion.get, parsedAnswer)
+    val elapsedTime = System.currentTimeMillis() - startTime
+    results = QuestionResult(elapsedTime, isAnswerCorrect) :: results
+    isAnswerCorrect
 
   def increaseDifficulty(): GameController =
     val newDifficulty = difficulty + 1
     val newQuestion   = currentGame.get.generateQuestion(newDifficulty)
     this.copy(difficulty = newDifficulty, lastQuestion = Some(newQuestion))
+
+  def calculateBrainAge: Int = BrainAgeCalculator.calcBrainAge(GameStats(results.reverse))
