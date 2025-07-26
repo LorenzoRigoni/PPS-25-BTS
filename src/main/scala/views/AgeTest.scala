@@ -97,9 +97,13 @@ case class AgeTest(gamePanels: GamePanels) extends BaseView with GameViewCallbac
       centerPanel.repaint()
     })
 
-  override def onGameFinished(): Unit =
+  override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
-      JOptionPane.showMessageDialog(frame, "All mini-games completed!")
+      val brainAge = controller.calculateBrainAge
+      JOptionPane.showMessageDialog(
+        frame,
+        s"All mini-games completed! Your brain age is $brainAge years old!"
+      )
       frame.dispose()
       MenuView.apply(GameController()).show()
     )
