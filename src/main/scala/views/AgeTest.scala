@@ -4,7 +4,7 @@ import controllers.{GameController, GameViewCallback}
 import models.{CountWordsLogic, FastCalcLogic}
 import utils.MiniGames
 import utils.MiniGames.{CountWords, FastCalc, RightDirections}
-import views.panels.{GamePanels, GamePanelsImpl}
+import views.panels.{GamePanels, GamePanelsImpl, ResultPanels}
 
 import javax.swing.*
 import java.awt.*
@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 /**
  * This class represents the view of the age test. The user will play 3 random mini-games.
  */
-case class AgeTest(gamePanels: GamePanels) extends BaseView with GameViewCallback:
+case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends BaseView with GameViewCallback:
   private val frame       = new JFrame("Let's play!")
   private val mainPanel   = new JPanel(new BorderLayout())
   private val timeLabel   = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
@@ -99,11 +99,12 @@ case class AgeTest(gamePanels: GamePanels) extends BaseView with GameViewCallbac
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
+      mainPanel.remove(timeLabel)
+      centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
-      JOptionPane.showMessageDialog(
-        frame,
-        s"All mini-games completed! Your brain age is $brainAge years old!"
-      )
-      frame.dispose()
-      MenuView.apply(GameController()).show()
+      val panel = resultPanels.TestResultPanel(controller, brainAge)
+      //val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
+      centerPanel.add(panel, BorderLayout.CENTER)
+      mainPanel.revalidate()
+      mainPanel.repaint()
     )
