@@ -57,4 +57,53 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
 
     panel
 
-  override def GameResultPanel(controller: GameController, correctAnswers: Int, wrongAnswers: Int, time: Int): JPanel = ???
+  override def GameResultPanel(controller: GameController, correctAnswers: Int, wrongAnswers: Int, time: Int): JPanel =
+    val iconSize = getResponsiveIconSize(20)
+    val panel = new JPanel()
+    panel.setLayout(new BorderLayout())
+    panel.setBackground(whiteColor)
+    panel.setBorder(new EmptyBorder(50, 50, 50, 50))
+
+    val title = new JLabel("Your results:")
+    title.setFont(pixelFont25)
+    title.setHorizontalAlignment(SwingConstants.CENTER)
+
+    def loadIcon(name: String, size: Int): ImageIcon =
+      val url = getClass.getResource(s"/" + name)
+      val image = new ImageIcon(url).getImage
+      val resized = image.getScaledInstance(size, size, Image.SCALE_SMOOTH)
+      new ImageIcon(resized)
+
+    def resultRow(iconName: String, text: String): JPanel =
+      val rowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER))
+      rowPanel.setBackground(whiteColor)
+
+      val iconLabel = new JLabel(loadIcon(iconName, iconSize))
+      val textLabel = new JLabel(text)
+      textLabel.setFont(pixelFont15)
+      rowPanel.add(iconLabel)
+      rowPanel.add(Box.createRigidArea(new Dimension(10, 0)))
+      rowPanel.add(textLabel)
+
+      rowPanel
+
+    val resultsPanel = new JPanel()
+    resultsPanel.setBackground(whiteColor)
+    resultsPanel.setLayout(new GridLayout(3, 1, 10, 20))
+
+    resultsPanel.add(resultRow("greenCheck.png", s"Correct Answers: $correctAnswers"))
+    resultsPanel.add(resultRow("redCross.png", s"Wrong Answers: $wrongAnswers"))
+    resultsPanel.add(resultRow("clock.png", s"Time: $time seconds"))
+
+    val homeButton = createStyledButton("Home", Dimension(200, 40), pixelFont15, customBlueColor, whiteColor)
+    homeButton.addActionListener(_  => MenuView(controller).show())
+
+    val bottomPanel = new JPanel()
+    bottomPanel.setBackground(whiteColor)
+    bottomPanel.add(homeButton)
+
+    panel.add(title, BorderLayout.NORTH)
+    panel.add(resultsPanel, BorderLayout.CENTER)
+    panel.add(bottomPanel, BorderLayout.SOUTH)
+
+    panel

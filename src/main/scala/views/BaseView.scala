@@ -83,3 +83,12 @@ trait BaseView:
     button.setBackground(background)
     button.setForeground(foreground)
     button
+
+  /**
+   * Calculate the right size for icon considering screenwidth
+   * @param divisor
+   * @return
+   */
+  def getResponsiveIconSize(divisor: Int): Int =
+    (screenWidth / divisor.toDouble).toInt
+

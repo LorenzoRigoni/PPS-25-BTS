@@ -102,7 +102,8 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends B
       mainPanel.remove(timeLabel)
       centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
-      val panel = resultPanels.TestResultPanel(controller, brainAge)
+      //val panel = resultPanels.TestResultPanel(controller, brainAge)
+      val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
       centerPanel.add(panel, BorderLayout.CENTER)
       mainPanel.revalidate()
       mainPanel.repaint()
