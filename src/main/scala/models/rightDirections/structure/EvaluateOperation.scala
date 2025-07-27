@@ -7,7 +7,7 @@ import java.util
 import scala.annotation.tailrec
 
 object EvaluateOperation:
-  def evaluateOperationFromTree(tree: BinaryTree[Symbol]): List[Symbol] = {
+  private def evaluateOperationFromTree(tree: BinaryTree[Symbol]): List[Symbol] = {
     val leftResult  = tree.left.map(evaluateOperationFromTree)
     val rightResult = tree.right.map(evaluateOperationFromTree)
 
@@ -41,7 +41,7 @@ object EvaluateOperation:
 
     val newList: List[Symbol] =
       if (nextOperation.contains("x")) currentList
-      else List(Symbol.fromString(nextOperation.split(" ")(0)).get)
+      else List(Symbol.fromString(nextOperation.split(" ")(1)).get)
 
     evaluateOperationFromString(newString,Symbol.allDirections.filterNot(newList.contains(_)))
   }
