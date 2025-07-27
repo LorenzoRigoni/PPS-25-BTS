@@ -40,7 +40,7 @@ case class GameController(
     difficulty: Int = 1,
     rand: Random = new Random(),
     timer: Option[Timer] = None,
-    timeLeft: Int = 120,
+    timeLeft: Int = 10, //TODO: 120
     viewCallback: Option[GameViewCallback] = None,
     startTime: Long = 0
 ):
@@ -50,7 +50,7 @@ case class GameController(
   private def startTimer(): GameController =
     timer.foreach(_.cancel())
     val t       = new Timer()
-    val seconds = new AtomicInteger(120)
+    val seconds = new AtomicInteger(10) //TODO: 120
     val task    = new TimerTask {
       override def run(): Unit =
         val remaining = seconds.decrementAndGet()
@@ -63,7 +63,7 @@ case class GameController(
           })
     }
     t.scheduleAtFixedRate(task, 1000, 1000)
-    this.copy(timer = Some(t), timeLeft = 120)
+    this.copy(timer = Some(t), timeLeft = 10) //TODO: 120
 
   /**
    * Choose in a random way the next mini-game.
@@ -100,7 +100,7 @@ case class GameController(
       case "Count Words"      => Some(CountWordsLogic)
       case "Right Directions" => Some(DirectionsLogic)
       case _                  => None
-    this.copy(currentGame = game, timeLeft = 120)
+    this.copy(currentGame = game, timeLeft = 10) //TODO: 120
 
   def getQuestion: (String, Long) =
     val generatedQuestion = currentGame.get.generateQuestion(difficulty)
