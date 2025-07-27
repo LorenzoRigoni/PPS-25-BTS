@@ -1,47 +1,56 @@
+import models.WordMemoryLogic
 import org.scalatest.funsuite.AnyFunSuite
 
 class WordMemoryTests extends AnyFunSuite:
+  private val gameLogic = WordMemoryLogic(rounds = 3, currentRound = 0, difficulty = 1, lastQuestion = None)
+  
   private val TEST_EXPRESSION_EASY = "cow rainbow cat pillow"
   private val TEST_EXPRESSION_DIFFICULT = "cow rainbow cat pillow dog"
-  private val TEST_DIFFICULTY_INDEX = 1
+
   private val COMPLETE_ANSWER_SAME_ORDER = "cow rainbow cat pillow"
   private val COMPLETE_ANSWER_DIFFERENT_ORDER = "cow rainbow cat pillow"
   private val PARTIAL_ANSWER_SAME_ORDER = "cow"
   private val PARTIAL_ANSWER_DIFFERENT_ORDER = "rainbow cow"
-  private val WRONG_SPELL_ANSWER = "rainbw "
+  private val WRONG_SPELL_ANSWER = "cow rainbw cat pillow "
   private val WRONG_EMPTY_ANSWER = ""
 
-  //TODO: add method evaluateAnswer in game logic
   test("The validator returns 1.0 for complete answer in same order") {
-    assert(true)
+    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, COMPLETE_ANSWER_SAME_ORDER)
+    assert(score == 1.0)
   }
 
   test("The validator returns 1.0 for complete answer in different order") {
-    assert(true)
+    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, COMPLETE_ANSWER_DIFFERENT_ORDER)
+    assert(score == 1.0)
   }
 
   test("The validator returns partial score for partial correct answers (same order)") {
-    assert(true)
+    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, PARTIAL_ANSWER_SAME_ORDER)
+    assert(score < 1.0)
   }
 
   test("The validator returns partial score for partial correct answers (different order)") {
-    assert(true)
+    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, PARTIAL_ANSWER_DIFFERENT_ORDER)
+    assert(score < 1.0)
   }
 
   test("The validator does not count wrong spelled answer") {
-    assert(true)
+    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, WRONG_SPELL_ANSWER)
+    assert(score < 1.0)
   }
 
   test("The validator returns 0.0 for empty answer") {
-    assert(true)
+    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, WRONG_EMPTY_ANSWER)
+    assert(score == 0.0)
   }
 
   test("generateQuestion should return a non-empty string") {
-    assert(true)
+    assert(gameLogic.generateQuestion._2 != WRONG_EMPTY_ANSWER)
   }
 
   test("generateQuestion should return more words as difficulty increases") {
-    val countEasy = TEST_EXPRESSION_EASY.split(" ").length
-    val countDifficult = TEST_EXPRESSION_DIFFICULT.split(" ").length
+    val (gameLogicCopy, easyQuestion) = gameLogic.generateQuestion
+    val countEasy = easyQuestion.split(" ").length
+    val countDifficult = gameLogicCopy.generateQuestion._2.split(" ").length
     assert(countEasy < countDifficult)
   }
