@@ -13,7 +13,7 @@ class ColoredCountTests extends AnyFunSuite:
     val numbers       = List(1, 2, 3, 4)
     val colors        = List("RED", "RED", "YELLOW", "BLUE")
     val colorRequired = "RED"
-    numbers.zip(colors).toString() + "|" + colorRequired
+    numbers.zip(colors).map((n, c) => s"$n:$c").mkString(" ") + "|" + colorRequired
 
   private def getCountOfNumbers(question: String): Int =
     val parts = question.split("\\|").map(_.trim)
