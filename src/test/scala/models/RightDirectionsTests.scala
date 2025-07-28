@@ -1,7 +1,8 @@
-import models.rightDirections.DirectionsLogic
-import models.rightDirections.structure.{Symbol, *}
-import models.rightDirections.structure.Symbol.{And, Not, Or, X}
+package models
+
+import models.rightDirections.structure.Symbol.{Not, X}
 import models.rightDirections.structure.treeLogic.{Leaf, Node}
+import models.rightDirections.structure.{Symbol, *}
 import org.scalatest.funsuite.AnyFunSuite
 
 class RightDirectionsTests extends AnyFunSuite:
@@ -16,6 +17,7 @@ class RightDirectionsTests extends AnyFunSuite:
       )
     )
   }
+
   test("Check more binary operators") {
     val andTreeIncorrect = new Node(Symbol.And, tree, Option(new Leaf(Symbol.Left)))
     val andTreeCorrect   = new Node(Symbol.And, tree, Option(new Leaf(Symbol.Right)))
