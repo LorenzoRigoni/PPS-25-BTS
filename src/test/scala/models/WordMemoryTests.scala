@@ -1,4 +1,5 @@
-import models.WordMemoryLogic
+package models
+
 import org.scalatest.funsuite.AnyFunSuite
 
 class WordMemoryTests extends AnyFunSuite:
