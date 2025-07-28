@@ -1,6 +1,7 @@
 package views
 
 import controllers.GameController
+import utils.MiniGames.{CountWords, FastCalc, RightDirections}
 import views.panels.{GamePanels, GamePanelsImpl}
 
 import javax.swing.*
@@ -15,15 +16,15 @@ case class BrainTraining(controller: GameController) extends BaseView:
    * Show the brain training view with a mini-game.
    *
    * @param gamePanels
-   *   the panel of the mini-game chose
+   * the panel of the mini-game chose
    */
   def show(initialController: GameController, gamePanels: GamePanels): Unit =
-    val frame           = new JFrame("Brain Testing")
+    val frame = new JFrame("Brain Testing")
     val buttonDimension = new Dimension(300, 50)
-    val mainPanel       = new JPanel(new BorderLayout())
-    val buttonPanel     = new JPanel()
-    val centerPanel     = new JPanel()
-    val bottomPanel     = new JPanel(new FlowLayout(FlowLayout.LEFT))
+    val mainPanel = new JPanel(new BorderLayout())
+    val buttonPanel = new JPanel()
+    val centerPanel = new JPanel()
+    val bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT))
 
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
@@ -31,12 +32,12 @@ case class BrainTraining(controller: GameController) extends BaseView:
     def loadGamePanel(controller: GameController, miniGameName: String): Unit =
       centerPanel.removeAll()
       val panel = miniGameName match
-        case "Fast Calc"        =>
+        case "Fast Calc" =>
           gamePanels.fastCalcPanel(
             controller,
             nextController => loadGamePanel(nextController, miniGameName)
           )
-        case "Count Words"      =>
+        case "Count Words" =>
           gamePanels.countWordsPanel(
             controller,
             nextController => loadGamePanel(nextController, miniGameName)
@@ -46,7 +47,7 @@ case class BrainTraining(controller: GameController) extends BaseView:
             controller,
             nextController => loadGamePanel(nextController, miniGameName)
           )
-        case _                  => new JPanel()
+        case _ => new JPanel()
       centerPanel.add(panel, BorderLayout.CENTER)
       centerPanel.revalidate()
       centerPanel.repaint()
@@ -69,7 +70,10 @@ case class BrainTraining(controller: GameController) extends BaseView:
         whiteColor
       )
       button.addActionListener(_ => {
-        val updatedController = initialController.chooseCurrentGame(name)
+        val updatedController = name match
+          case "Fast Calc" => initialController.chooseCurrentGame(FastCalc)
+          case "Count Words" => initialController.chooseCurrentGame(CountWords)
+          case "Right Directions" => initialController.chooseCurrentGame(RightDirections)
         loadGamePanel(updatedController, name)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
