@@ -1,4 +1,5 @@
-import models.FastCalcLogic
+package models
+
 import models.FastCalcLogic.getListFromExpression
 import org.scalatest.funsuite.AnyFunSuite
 

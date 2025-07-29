@@ -1,4 +1,5 @@
-import models.CountWordsLogic
+package models
+
 import org.scalatest.funsuite.AnyFunSuite
 
 class CountWordsTests extends AnyFunSuite:

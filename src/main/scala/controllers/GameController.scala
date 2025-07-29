@@ -3,6 +3,7 @@ package controllers
 import models.*
 import models.rightDirections.RightDirectionsLogic
 import utils.MiniGames
+import utils.MiniGames.{CountWords, FastCalc, RightDirections}
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.{Timer, TimerTask}
@@ -94,12 +95,11 @@ case class GameController(
         viewCallback.foreach(_.onGameChanged(gameEnum, this))
       case None       =>
 
-  def chooseCurrentGame(gameMode: String): GameController =
+  def chooseCurrentGame(gameMode: MiniGames): GameController =
     val game = gameMode match
-      case "Fast Calc"        => Some(FastCalcLogic)
-      case "Count Words"      => Some(CountWordsLogic)
-      case "Right Directions" => Some(RightDirectionsLogic)
-      case _                  => None
+      case FastCalc        => Some(FastCalcLogic)
+      case CountWords      => Some(CountWordsLogic)
+      case RightDirections => Some(RightDirectionsLogic)
     this.copy(currentGame = game, timeLeft = 10) //TODO: 120
 
   def getQuestion: (String, Long) =
