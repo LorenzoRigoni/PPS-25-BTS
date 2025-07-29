@@ -10,5 +10,5 @@ object RightDirectionsLogic extends MiniGameLogic:
     case s: String =>
       val normalizedAnswer = s.toLowerCase.trim
       val correctAnswer = EvaluateOperation.evaluateOperationFromString(question, List())
-      correctAnswer.contains(Symbol.fromString(normalizedAnswer).get)
+      correctAnswer.contains(Symbol.fromString(normalizedAnswer).get) || (correctAnswer.isEmpty && normalizedAnswer.equals(""))
   }
