@@ -1,7 +1,8 @@
-import models.rightDirections.RightDirectionsLogic
-import models.rightDirections.structure.{Symbol, *}
+package models.rightDirections
+
 import models.rightDirections.structure.Symbol.{And, Not, Or, X}
 import models.rightDirections.structure.treeLogic.{BinaryTree, Leaf, Node}
+import models.rightDirections.structure.{Symbol, *}
 import org.scalatest.funsuite.AnyFunSuite
 
 class RightDirectionsTests extends AnyFunSuite:
