@@ -21,7 +21,7 @@ object SyntaxTreeBuilder extends OperationBuilder[Symbol] {
   }
 
   @tailrec
-  def expandTree(tree: BinaryTree[Symbol], complexity: Int): BinaryTree[Symbol] = {
+  private def expandTree(tree: BinaryTree[Symbol], complexity: Int): BinaryTree[Symbol] = {
     if(!tree.contains(X)) tree
     else{
       val treeComplexity = calculateTreeComplexity(tree)

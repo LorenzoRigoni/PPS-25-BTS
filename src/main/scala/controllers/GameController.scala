@@ -1,7 +1,7 @@
 package controllers
 
 import models.*
-import models.rightDirections.DirectionsLogic
+import models.rightDirections.RightDirectionsLogic
 import utils.MiniGames
 import utils.MiniGames.{CountWords, FastCalc, RightDirections}
 
@@ -35,7 +35,7 @@ case class GameStats(results: List[QuestionResult])
  *   The methods to call when an event occurs
  */
 case class GameController(
-    remainingMiniGames: List[MiniGameLogic] = List(FastCalcLogic, CountWordsLogic, DirectionsLogic),
+    remainingMiniGames: List[MiniGameLogic] = List(FastCalcLogic, CountWordsLogic, RightDirectionsLogic),
     currentGame: Option[MiniGameLogic] = None,
     lastQuestion: Option[String] = None,
     difficulty: Int = 1,
@@ -91,7 +91,7 @@ case class GameController(
         val gameEnum = game match
           case FastCalcLogic   => MiniGames.FastCalc
           case CountWordsLogic => MiniGames.CountWords
-          case DirectionsLogic => MiniGames.RightDirections
+          case RightDirectionsLogic => MiniGames.RightDirections
         viewCallback.foreach(_.onGameChanged(gameEnum, this))
       case None       =>
 
@@ -99,8 +99,7 @@ case class GameController(
     val game = gameMode match
       case FastCalc        => Some(FastCalcLogic)
       case CountWords      => Some(CountWordsLogic)
-      case RightDirections => Some(DirectionsLogic)
-      case _                  => None
+      case RightDirections => Some(RightDirectionsLogic)
     this.copy(currentGame = game, timeLeft = 10) //TODO: 120
 
   def getQuestion: (String, Long) =
@@ -112,7 +111,7 @@ case class GameController(
     val parsedAnswer = currentGame match
       case Some(FastCalcLogic) => answer.toInt
       case Some(CountWordsLogic) => answer.toInt
-      //case Some(DirectionsLogic) => TODO: parse answer for directions game
+      case Some(RightDirectionsLogic) => answer
       case _ => answer
     val isAnswerCorrect = currentGame.get.validateAnswer(lastQuestion.get, parsedAnswer)
     val elapsedTime = System.currentTimeMillis() - startTime

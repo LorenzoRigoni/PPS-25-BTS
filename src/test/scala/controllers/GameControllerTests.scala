@@ -1,6 +1,6 @@
 package controllers
 
-import models.rightDirections.DirectionsLogic
+import models.rightDirections.RightDirectionsLogic
 import models.{BrainAgeCalculator, CountWordsLogic, FastCalcLogic, MiniGameLogic}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
@@ -26,7 +26,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
     controllerForCountWords.currentGame shouldBe Some(CountWordsLogic)
 
     val controllerForRightDirections = GameController().chooseCurrentGame(MiniGames.RightDirections)
-    controllerForRightDirections.currentGame shouldBe Some(DirectionsLogic)
+    controllerForRightDirections.currentGame shouldBe Some(RightDirectionsLogic)
   }
 
   test("Controller should generate question and record start time") {

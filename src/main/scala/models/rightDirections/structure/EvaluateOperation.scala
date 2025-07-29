@@ -7,7 +7,7 @@ import java.util
 import scala.annotation.tailrec
 
 object EvaluateOperation:
-  def evaluateOperationFromTree(tree: BinaryTree[Symbol]): List[Symbol] = {
+  private def evaluateOperationFromTree(tree: BinaryTree[Symbol]): List[Symbol] = {
     val leftResult  = tree.left.map(evaluateOperationFromTree)
     val rightResult = tree.right.map(evaluateOperationFromTree)
 
@@ -24,24 +24,45 @@ object EvaluateOperation:
   }
 
   def evaluateOperationFromString(input: String, currentList: List[Symbol]): List[Symbol] = {
-    if(input.contains("and"))
-      return evaluateOperationFromString(input.split("and")(0),List()).intersect(evaluateOperationFromString(input.split("and")(1),List())).distinct
-    if (input.contains("or"))
-      return evaluateOperationFromString(input.split("or")(0),List()).concat(evaluateOperationFromString(input.split("or")(1),List())).distinct
+    val trimmed = input.trim
 
-    if(!(input.contains("x") || input.contains("not")))
-      return List(Symbol.fromString(input.replace("(","").replace(")","").trim()).get)
+    def stripParentheses(s: String): String =
+      s.replace("(", "").replace(")", "").trim
 
-    val partialExtraction = input.split('(').find(_.contains(")"))
-    if (partialExtraction.isEmpty || !input.contains('('))
-      return currentList
+    trimmed match {
+      case s if s.contains("and") =>
+        val Array(left, right) = s.split("and", 2)
+        evaluateOperationFromString(left, Nil)
+          .intersect(evaluateOperationFromString(right, Nil))
+          .distinct
 
-    val nextOperation = partialExtraction.get.split(')')(0)
-    val newString = input.replace("("+nextOperation+")".trim(),"x")
+      case s if s.contains("or") =>
+        val Array(left, right) = s.split("or", 2)
+        evaluateOperationFromString(left, Nil)
+          .concat(evaluateOperationFromString(right, Nil))
+          .distinct
 
-    val newList: List[Symbol] =
-      if (nextOperation.contains("x")) currentList
-      else List(Symbol.fromString(nextOperation.split(" ")(0)).get)
+      case s if !(s.contains("x") || s.contains("not")) =>
+        List(Symbol.fromString(stripParentheses(s)).get)
 
-    evaluateOperationFromString(newString,Symbol.allDirections.filterNot(newList.contains(_)))
+      case s =>
+        val partialExtractionOpt = s.split('(').find(_.contains(')'))
+
+        partialExtractionOpt match {
+          case Some(nextOperationRaw) if s.contains('(') =>
+            val nextOperation = nextOperationRaw.split(')')(0)
+            val replaced = s.replace(s"($nextOperation)", "x").trim
+
+            val newList: List[Symbol] =
+              if (nextOperation.contains("x")) currentList
+              else List(Symbol.fromString(nextOperation.split(" ")(1)).get)
+
+            val filtered = Symbol.allDirections.filterNot(newList.contains)
+            evaluateOperationFromString(replaced, filtered)
+
+          case _ =>
+            if currentList.nonEmpty then currentList
+            else List(Symbol.fromString("").get)
+        }
+    }
   }

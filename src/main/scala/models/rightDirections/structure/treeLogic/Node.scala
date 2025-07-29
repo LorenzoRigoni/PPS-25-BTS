@@ -49,6 +49,7 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
 
     (leftStr, rightStr) match {
       case ("", "") => value.toString
+      case (_, "") => s"($value $leftStr)"
       case _ => s"($leftStr $value $rightStr)"
     }
   }
