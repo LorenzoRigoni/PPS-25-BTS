@@ -91,4 +91,3 @@ trait BaseView:
    */
   def getResponsiveIconSize(divisor: Int): Int =
     (screenWidth / divisor.toDouble).toInt
-

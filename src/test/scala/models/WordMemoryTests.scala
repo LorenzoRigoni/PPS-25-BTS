@@ -3,17 +3,18 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 
 class WordMemoryTests extends AnyFunSuite:
-  private val gameLogic = WordMemoryLogic(rounds = 3, currentRound = 0, difficulty = 1, lastQuestion = None)
-  
-  private val TEST_EXPRESSION_EASY = "cow rainbow cat pillow"
+  private val gameLogic =
+    WordMemoryLogic(rounds = 3, currentRound = 0, difficulty = 1, lastQuestion = None)
+
+  private val TEST_EXPRESSION_EASY      = "cow rainbow cat pillow"
   private val TEST_EXPRESSION_DIFFICULT = "cow rainbow cat pillow dog"
 
-  private val COMPLETE_ANSWER_SAME_ORDER = "cow rainbow cat pillow"
+  private val COMPLETE_ANSWER_SAME_ORDER      = "cow rainbow cat pillow"
   private val COMPLETE_ANSWER_DIFFERENT_ORDER = "cow rainbow cat pillow"
-  private val PARTIAL_ANSWER_SAME_ORDER = "cow"
-  private val PARTIAL_ANSWER_DIFFERENT_ORDER = "rainbow cow"
-  private val WRONG_SPELL_ANSWER = "cow rainbw cat pillow "
-  private val WRONG_EMPTY_ANSWER = ""
+  private val PARTIAL_ANSWER_SAME_ORDER       = "cow"
+  private val PARTIAL_ANSWER_DIFFERENT_ORDER  = "rainbow cow"
+  private val WRONG_SPELL_ANSWER              = "cow rainbw cat pillow "
+  private val WRONG_EMPTY_ANSWER              = ""
 
   test("The validator returns 1.0 for complete answer in same order") {
     val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, COMPLETE_ANSWER_SAME_ORDER)
@@ -51,7 +52,7 @@ class WordMemoryTests extends AnyFunSuite:
 
   test("generateQuestion should return more words as difficulty increases") {
     val (gameLogicCopy, easyQuestion) = gameLogic.generateQuestion
-    val countEasy = easyQuestion.split(" ").length
-    val countDifficult = gameLogicCopy.generateQuestion._2.split(" ").length
+    val countEasy                     = easyQuestion.split(" ").length
+    val countDifficult                = gameLogicCopy.generateQuestion._2.split(" ").length
     assert(countEasy < countDifficult)
   }

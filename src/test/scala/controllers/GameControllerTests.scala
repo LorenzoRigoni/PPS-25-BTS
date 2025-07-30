@@ -9,8 +9,8 @@ import utils.MiniGames.CountWords
 
 class GameControllerTests extends AnyFunSuite with Matchers:
   private val TEST_QUESTION = "This is a test sentence"
-  private val RIGHT_ANSWER = "5"
-  private val WRONG_ANSWER = "6"
+  private val RIGHT_ANSWER  = "5"
+  private val WRONG_ANSWER  = "6"
 
   test("Controller should initialize with all mini-games") {
     val controller = GameController()
@@ -30,7 +30,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
   }
 
   test("Controller should generate question and record start time") {
-    val controller = GameController().chooseCurrentGame(CountWords)
+    val controller            = GameController().chooseCurrentGame(CountWords)
     val (question, startTime) = controller.getQuestion
     question should not be empty
     startTime should be <= System.currentTimeMillis()
@@ -53,7 +53,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
       QuestionResult(2000, false),
       QuestionResult(800, true)
     )
-    val gameStats = GameStats(questionResults)
+    val gameStats       = GameStats(questionResults)
 
     val brainAge = BrainAgeCalculator.calcBrainAge(gameStats)
     brainAge shouldBe a[Int]
@@ -62,7 +62,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should manage the end of the game") {
     var isFinished = false
-    val callback = new GameViewCallback:
+    val callback   = new GameViewCallback:
       override def onTimerUpdate(secondsLeft: Int): Unit = {}
 
       override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit = {}

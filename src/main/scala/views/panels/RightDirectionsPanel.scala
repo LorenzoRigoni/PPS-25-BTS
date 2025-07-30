@@ -7,7 +7,7 @@ import java.awt.*
 import java.awt.event.{KeyAdapter, KeyEvent}
 
 class RightDirectionsPanel(controller: GameController, onNext: GameController => Unit)
-  extends SimpleQuestionAnswerGamePanel:
+    extends SimpleQuestionAnswerGamePanel:
 
   def panel(): JPanel =
 
@@ -16,8 +16,7 @@ class RightDirectionsPanel(controller: GameController, onNext: GameController =>
         val increased = controller.increaseDifficulty()
         onNext(increased)
         ("Correct!", Color.GREEN)
-      else
-        ("Wrong!", Color.RED)
+      else ("Wrong!", Color.RED)
 
     val panel = createSimpleQuestionAnswerGamePanel(
       question = controller.lastQuestion.get,
@@ -34,11 +33,11 @@ class RightDirectionsPanel(controller: GameController, onNext: GameController =>
           case KeyEvent.VK_S => Some("down")
           case KeyEvent.VK_D => Some("right")
           case KeyEvent.VK_J => Some("")
-          case _ => None
+          case _             => None
 
-          answerOpt.foreach { answer =>
-            val (message, color) = validateAnswer(answer)
-          }
+        answerOpt.foreach { answer =>
+          val (message, color) = validateAnswer(answer)
+        }
       }
     })
 

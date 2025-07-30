@@ -14,7 +14,9 @@ import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 /**
  * This class represents the view of the age test. The user will play 3 random mini-games.
  */
-case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends BaseView with GameViewCallback:
+case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
+    extends BaseView
+    with GameViewCallback:
   private val frame       = new JFrame("Let's play!")
   private val mainPanel   = new JPanel(new BorderLayout())
   private val timeLabel   = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
@@ -102,8 +104,8 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends B
       mainPanel.remove(timeLabel)
       centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
-      val panel = resultPanels.TestResultPanel(controller, brainAge)
-      //val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
+      val panel    = resultPanels.TestResultPanel(controller, brainAge)
+      // val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
       centerPanel.add(panel, BorderLayout.CENTER)
       mainPanel.revalidate()
       mainPanel.repaint()

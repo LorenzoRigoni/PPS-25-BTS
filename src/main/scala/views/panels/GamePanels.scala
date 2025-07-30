@@ -32,7 +32,7 @@ sealed trait GamePanels:
   def rightDirectionsPanel(controller: GameController, onNext: GameController => Unit): JPanel
 
 class GamePanelsImpl extends GamePanels:
-  override def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel   =
+  override def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel =
     val (question, startTime) = controller.getQuestion
     FastCalcPanel(controller.copy(lastQuestion = Some(question), startTime = startTime), onNext)
       .panel()

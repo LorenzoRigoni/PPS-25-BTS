@@ -51,7 +51,7 @@ object EvaluateOperation:
         partialExtractionOpt match {
           case Some(nextOperationRaw) if s.contains('(') =>
             val nextOperation = nextOperationRaw.split(')')(0)
-            val replaced = s.replace(s"($nextOperation)", "x").trim
+            val replaced      = s.replace(s"($nextOperation)", "x").trim
 
             val newList: List[Symbol] =
               if (nextOperation.contains("x")) currentList
