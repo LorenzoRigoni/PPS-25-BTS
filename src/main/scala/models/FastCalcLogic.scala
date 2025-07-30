@@ -52,10 +52,10 @@ object FastCalcLogic extends MiniGameLogic:
     calculate(expressionList)
 
   // TODO: ridurre difficoltà, i livelli alti sono troppo difficili da fare a mente
-  override def generateQuestion(difficultyLevel: Int): String =
-    val numTerms      = Math.min(1 + difficultyLevel, 6) // per ora massimo 6 termini
-    val maxNumber     = 10 * difficultyLevel             // nell'ipotesi che ci siano 10 livelli
-    val operatorsList = getOperatorsForDifficultyLevel(difficultyLevel)
+  override def generateQuestion: String =
+    val numTerms      = Math.min(1 /*+ difficultyLevel*/, 6) // per ora massimo 6 termini
+    val maxNumber     = /*10 * difficultyLevel*/10             // nell'ipotesi che ci siano 10 livelli
+    val operatorsList = getOperatorsForDifficultyLevel(1/*TODO: Gestire difficoltà*/)
     val numbers       = List.fill(numTerms)(getRandomNumber(maxNumber).toString)
     val operators     = List.fill(numTerms - 1)(getRandomOperator(operatorsList))
     val expression    = buildExpression(numbers, operators)
@@ -63,3 +63,5 @@ object FastCalcLogic extends MiniGameLogic:
 
   override def validateAnswer[Int](question: String, answer: Int): Boolean =
     calculateResult(getListFromExpression(question)) == answer
+
+  override def isMiniGameFinished: Boolean = ???

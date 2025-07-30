@@ -12,7 +12,7 @@ trait MiniGameLogic:
    * @return
    *   the question generated
    */
-  def generateQuestion(difficultyLevel: Int): String
+  def generateQuestion: String
 
   /**
    * Check the answer of the user.
@@ -24,3 +24,10 @@ trait MiniGameLogic:
    *   true if the answer is correct, false otherwise
    */
   def validateAnswer[A](question: String, answer: A): Boolean
+
+  /**
+   * Check if the mini-game is finished.
+   * 
+   * @return true if the game is finished, false otherwise 
+   */
+  def isMiniGameFinished: Boolean
