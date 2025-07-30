@@ -6,6 +6,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import utils.MiniGames
 import utils.MiniGames.CountWords
+import utils.CountWordsConstants.{AGE_TEST_TURNS, DIFFICULTY_STEP}
 
 class GameControllerTests extends AnyFunSuite with Matchers:
   private val TEST_QUESTION = "This is a test sentence"
@@ -38,7 +39,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should check answer correctly") {
     val controller = GameController(
-      currentGame = Some(CountWordsLogic),
+      currentGame = Some(CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP)),
       lastQuestion = Some(TEST_QUESTION),
       startTime = System.currentTimeMillis()
     )
