@@ -11,25 +11,18 @@ class Leaf[A](val value: A) extends BinaryTree[A] {
       leftValue: Option[A],
       rightValue: Option[A]
   ): BinaryTree[A] =
-    if (value == target) {
+    if (target != value) this
+    else {
       (leftValue, rightValue) match {
         case (None, None) =>
           new Leaf(newValue)
-        case (_, None)    =>
-          new Node(
-            newValue,
-            leftValue.map(v => new Leaf(v)).getOrElse(new Leaf(value)),
-            None
-          )
-        case _            =>
-          new Node(
-            newValue,
-            leftValue.map(v => new Leaf(v)).getOrElse(new Leaf(value)),
-            Option(rightValue.map(v => new Leaf(v)).getOrElse(new Leaf(value)))
-          )
+
+        case (_, None) =>
+          new Node(newValue, new Leaf(target), None)
+
+        case _ =>
+          new Node(newValue, new Leaf(target), Option(new Leaf(target)))
       }
-    } else {
-      this
     }
 
   override def contains(value: A): Boolean = this.value == value

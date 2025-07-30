@@ -1,6 +1,7 @@
 package views
 
 import controllers.GameController
+import utils.MiniGames.{CountWords, FastCalc, RightDirections}
 import views.panels.{GamePanels, GamePanelsImpl}
 
 import javax.swing.*
@@ -69,7 +70,10 @@ case class BrainTraining(controller: GameController) extends BaseView:
         whiteColor
       )
       button.addActionListener(_ => {
-        val updatedController = initialController.chooseCurrentGame(name)
+        val updatedController = name match
+          case "Fast Calc"        => initialController.chooseCurrentGame(FastCalc)
+          case "Count Words"      => initialController.chooseCurrentGame(CountWords)
+          case "Right Directions" => initialController.chooseCurrentGame(RightDirections)
         loadGamePanel(updatedController, name)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
