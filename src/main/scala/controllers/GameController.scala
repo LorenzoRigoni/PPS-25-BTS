@@ -40,7 +40,7 @@ case class GameController(
     remainingMiniGames: List[MiniGameLogic] = List(
       FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP),
       CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP),
-      RightDirectionsLogic(1, 1) // TODO: create file with constants for RightDirections game
+      //RightDirectionsLogic(1, 1) // TODO: create file with constants for RightDirections game
     ),
     currentGame: Option[MiniGameLogic] = None,
     lastQuestion: Option[String] = None,
@@ -96,8 +96,8 @@ case class GameController(
       case Some(game) =>
         val gameEnum = game match
           case FastCalcLogic(_, _, _, _)  => MiniGames.FastCalc
-          case CountWordsLogic(_, _)      => MiniGames.CountWords
-          case RightDirectionsLogic(_, _) => MiniGames.RightDirections
+          case CountWordsLogic(_, _, _, _)      => MiniGames.CountWords
+          case RightDirectionsLogic(_, _, _, _) => MiniGames.RightDirections
         viewCallback.foreach(_.onGameChanged(gameEnum, this))
       case None       =>
 
@@ -105,7 +105,7 @@ case class GameController(
     val game = gameMode match
       case FastCalc        => Some(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP))
       case CountWords      => Some(CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP))
-      case RightDirections => Some(RightDirectionsLogic(1, 1)) // TODO: use constants from utils
+      //case RightDirections => Some(RightDirectionsLogic(1, 1)) // TODO: use constants from utils
     this.copy(currentGame = game, timeLeft = 60) // TODO: 120
 
   def getQuestion: (String, Long) =
@@ -116,8 +116,8 @@ case class GameController(
   def checkAnswer(answer: String): Boolean =
     val parsedAnswer    = currentGame match
       case Some(FastCalcLogic(_, _, _, _))  => answer.toInt
-      case Some(CountWordsLogic(_, _))      => answer.toInt
-      case Some(RightDirectionsLogic(_, _)) => answer
+      case Some(CountWordsLogic(_, _, _, _))      => answer.toInt
+      case Some(RightDirectionsLogic(_, _, _, _)) => answer
       case _                                => answer
     val isAnswerCorrect = currentGame.get.validateAnswer(lastQuestion.get, parsedAnswer)
     val elapsedTime     = System.currentTimeMillis() - startTime

@@ -7,10 +7,12 @@ import utils.CountWordsConstants.{MIN_NUMBER_WORDS, DIFFICULTY_STEP}
  * This object manage the logic of the Count Words mini-game.
  */
 case class CountWordsLogic(
-    turns: Int,
-    difficultyStep: Int = DIFFICULTY_STEP
+    rounds: Int,
+    currentRound: Int = 0,
+    difficulty: Int = 1,
+    lastQuestion: Option[String] = None
 ) extends MiniGameLogic:
-  private val words             = Seq(
+  private val words         = Seq(
     "apple",
     "bridge",
     "cloud",
@@ -42,25 +44,25 @@ case class CountWordsLogic(
     "energy",
     "future"
   )
-  private val minNumOfWords     = MIN_NUMBER_WORDS
-  private var currentTurn       = 0
-  private var currentDifficulty = 1
+  private val minNumOfWords = MIN_NUMBER_WORDS
 
   override def generateQuestion: (MiniGameLogic, String) =
-    currentTurn += 1
-    currentDifficulty += difficultyStep
-
-    val minRand    = math.max(1, currentDifficulty - 1)
+    val minRand    = math.max(1, difficulty - 1)
     val numOfWords =
-      if currentDifficulty <= 2 then minNumOfWords + Random.between(0, currentDifficulty + 1)
-      else minNumOfWords + Random.between(minRand, currentDifficulty + 1)
+      if difficulty <= 2 then minNumOfWords + Random.between(0, difficulty + 1)
+      else minNumOfWords + Random.between(minRand, difficulty + 1)
+    val question   = Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
 
     (
-      this.copy(), // TODO: Increase difficulty here
-      Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
+      this.copy(
+        currentRound = currentRound + 1,
+        difficulty = difficulty + DIFFICULTY_STEP,
+        lastQuestion = Some(question)
+      ),
+      question
     )
 
-  override def validateAnswer[Int](question: String, answer: Int): Boolean =
-    answer == question.split("\\s+").count(_.nonEmpty)
+  override def validateAnswer[Int](answer: Int): Boolean =
+    answer == lastQuestion.get.split("\\s+").count(_.nonEmpty)
 
-  override def isMiniGameFinished: Boolean = currentTurn >= turns
+  override def isMiniGameFinished: Boolean = currentRound >= rounds

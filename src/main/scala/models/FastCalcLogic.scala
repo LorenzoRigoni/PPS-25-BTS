@@ -77,8 +77,8 @@ case class FastCalcLogic(
       expression
     )
 
-  override def validateAnswer[Int](question: String, answer: Int): Boolean =
-    calculateResult(getListFromExpression(question)) == answer
+  override def validateAnswer[Int](answer: Int): Boolean =
+    calculateResult(getListFromExpression(lastQuestion.get)) == answer
 
   override def isMiniGameFinished: Boolean =
     !hasNextRound

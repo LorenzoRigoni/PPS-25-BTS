@@ -22,7 +22,7 @@ trait MiniGameLogic:
    * @return
    *   true if the answer is correct, false otherwise
    */
-  def validateAnswer[A](question: String, answer: A): Boolean
+  def validateAnswer[A](answer: A): Boolean
 
   /**
    * Check if the mini-game is finished.

@@ -53,7 +53,7 @@ case class WordMemoryLogic(
         newQuestion
       )
 
-  override def evaluateAnswers(question: String, answer: String): Double =
-    val expectedWordsNumber = question.split(" ").toSet
+  override def evaluateAnswers(answer: String): Double =
+    val expectedWordsNumber = lastQuestion.get.split(" ").toSet
     val answerWordsNumber   = answer.split(" ").filter(_.nonEmpty).toSet
     answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
