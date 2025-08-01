@@ -46,7 +46,7 @@ case class CountWordsLogic(
   private var currentTurn       = 0
   private var currentDifficulty = 1
 
-  override def generateQuestion: String =
+  override def generateQuestion: (MiniGameLogic, String) =
     currentTurn += 1
     currentDifficulty += difficultyStep
 
@@ -55,7 +55,10 @@ case class CountWordsLogic(
       if currentDifficulty <= 2 then minNumOfWords + Random.between(0, currentDifficulty + 1)
       else minNumOfWords + Random.between(minRand, currentDifficulty + 1)
 
-    Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
+    (
+      this.copy(), // TODO: Increase difficulty here
+      Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
+    )
 
   override def validateAnswer[Int](question: String, answer: Int): Boolean =
     answer == question.split("\\s+").count(_.nonEmpty)

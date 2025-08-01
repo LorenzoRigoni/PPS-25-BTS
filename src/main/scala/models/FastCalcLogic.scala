@@ -1,67 +1,84 @@
 package models
 
-object FastCalcLogic extends MiniGameLogic:
-  private val rand = new scala.util.Random()
+import utils.FastCalcConstants.*
+import scala.util.Random
 
-  private def getOperatorsForDifficultyLevel(difficulty: Int): List[String] = difficulty match
-    case 1          => List("+")
-    case d if d < 3 => List("+", "-")
-    case d if d < 6 => List("+", "-", "*")
-    case _          => List("+", "-", "*", "/")
+case class FastCalcLogic(
+    rounds: Int,
+    currentRound: Int = 0,
+    difficulty: Int,
+    lastQuestion: Option[String] = None
+) extends MiniGameLogic:
+
+  private def hasNextRound: Boolean =
+    currentRound < rounds
+
+  private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] = difficulty match
+    case 1          => Seq("+")
+    case d if d < 4 => Seq("+", "-")
+    case _          => Seq("+", "-", "*")
 
   private def getRandomNumber(maxNumber: Int): Int =
-    rand.between(1, maxNumber + 1)
+    Random.nextInt(maxNumber) + 1
 
-  private def getRandomOperator(operatorsList: List[String]): String =
-    operatorsList(rand.nextInt(operatorsList.length))
+  private def getRandomOperator(operators: Seq[String]): String =
+    val operatorIndex = Random.nextInt(operators.length)
+    operators(operatorIndex)
 
   private def buildExpression(
-      numbersList: List[String],
-      operatorsList: List[String]
-  ): List[String] = (numbersList, operatorsList) match
+      numbers: List[String],
+      operators: List[String]
+  ): List[String] = (numbers, operators) match
     case (n1 :: Nil, Nil)                                => List(n1)
     case (n1 :: n2 :: nextNumbers, op1 :: nextOperators) =>
       n1 :: op1 :: buildExpression(n2 :: nextNumbers, nextOperators)
     case _                                               => Nil
 
-  def getListFromExpression(expression: String): List[String] =
+  def getListFromExpression(expression: String): Seq[String] =
     expression.split(" ").toList
 
-  def calculateResult(expressionList: List[String]): Int =
-    def calculate(expressionList: List[String]): Int = expressionList match
+  def calculateResult(expression: Seq[String]): Int =
+    def calculate(expression: Seq[String]): Int = expression match
       case n :: Nil => n.toInt
       case _        =>
-        val index = expressionList.lastIndexWhere(e => e == "+" || e == "-")
+        val index = expression.lastIndexWhere(e => e == "+" || e == "-")
         if index != -1 then
-          val (left, operator :: right) = expressionList.splitAt(index)
+          val (left, operator :: right) = expression.splitAt(index)
           val l                         = calculate(left)
           val r                         = calculate(right)
           operator match
             case "+" => l + r
             case "-" => l - r
         else
-          val index = expressionList.lastIndexWhere(e => e == "*" || e == "/")
+          val index = expression.lastIndexWhere(e => e == "*" || e == "/")
           if index != -1 then
-            val (left, operator :: right) = expressionList.splitAt(index)
+            val (left, operator :: right) = expression.splitAt(index)
             val l                         = calculate(left)
             val r                         = calculate(right)
             operator match
               case "*" => l * r
-              case "/" => l / r
           else throw new IllegalArgumentException(s"Malformed expression!")
-    calculate(expressionList)
+    calculate(expression)
 
-  // TODO: ridurre difficoltà, i livelli alti sono troppo difficili da fare a mente
-  override def generateQuestion: String =
-    val numTerms      = Math.min(1 /*+ difficultyLevel*/, 6) // per ora massimo 6 termini
-    val maxNumber     = /*10 * difficultyLevel*/10             // nell'ipotesi che ci siano 10 livelli
-    val operatorsList = getOperatorsForDifficultyLevel(1/*TODO: Gestire difficoltà*/)
-    val numbers       = List.fill(numTerms)(getRandomNumber(maxNumber).toString)
-    val operators     = List.fill(numTerms - 1)(getRandomOperator(operatorsList))
-    val expression    = buildExpression(numbers, operators)
-    expression.mkString(" ") // method used to add a separator between list elements
+  override def generateQuestion: (MiniGameLogic, String) =
+    val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
+    val maxNumber    = MAX_NUMBER
+    val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
+
+    val numbers    = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
+    val operators  = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
+    val expression = buildExpression(numbers, operators).mkString(" ")
+    (
+      this.copy(
+        currentRound = currentRound + 1,
+        difficulty = difficulty + FAST_CALC_DIFFICULTY_STEP,
+        lastQuestion = Some(expression)
+      ),
+      expression
+    )
 
   override def validateAnswer[Int](question: String, answer: Int): Boolean =
     calculateResult(getListFromExpression(question)) == answer
 
-  override def isMiniGameFinished: Boolean = ???
+  override def isMiniGameFinished: Boolean =
+    !hasNextRound

@@ -2,6 +2,7 @@ package models
 
 import org.scalatest.funsuite.AnyFunSuite
 
+//TODO: refactor ColorCount Tests
 class ColoredCountTests extends AnyFunSuite:
   private val TEST_QUESTION   = generateTestQuestion
   private val RIGHT_ANSWER    = 2
@@ -20,11 +21,13 @@ class ColoredCountTests extends AnyFunSuite:
     parts(0).split(" ").map(_.trim).length
 
   test("The validator of the mini-game should return true for the correct answers") {
-    assert(ColoredCountLogic.validateAnswer(TEST_QUESTION, RIGHT_ANSWER))
+    // assert(ColoredCountLogic.validateAnswer(TEST_QUESTION, RIGHT_ANSWER))
+    assert(false)
   }
 
   test("The validator of the mini-game should return false for the wrong answers") {
-    assert(!ColoredCountLogic.validateAnswer(TEST_QUESTION, WRONG_ANSWER))
+    // assert(!ColoredCountLogic.validateAnswer(TEST_QUESTION, WRONG_ANSWER))
+    assert(false)
   }
 
   test("The question generator should increase the numbers with the difficulty") {

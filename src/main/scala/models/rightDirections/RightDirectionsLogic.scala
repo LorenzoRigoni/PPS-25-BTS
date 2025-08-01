@@ -4,11 +4,14 @@ import models.rightDirections.structure.Symbol
 import models.MiniGameLogic
 import models.rightDirections.structure.{EvaluateOperation, SyntaxTreeBuilder}
 
-object RightDirectionsLogic extends MiniGameLogic:
-  override def generateQuestion: String =
-    SyntaxTreeBuilder
-      .buildOperationFromComplexity(1 /*TODO: gestire difficoltà con case class*/ )
-      .toString
+case class RightDirectionsLogic(rounds: Int, difficulty: Int) extends MiniGameLogic:
+  override def generateQuestion: (MiniGameLogic, String) =
+    (
+      this.copy(), // TODO: increase difficulty here
+      SyntaxTreeBuilder
+        .buildOperationFromComplexity(1 /*TODO: gestire difficoltà con case class*/ )
+        .toString
+    )
 
   override def validateAnswer[A](question: String, answer: A): Boolean = answer match {
     case s: String =>
