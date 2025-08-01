@@ -3,8 +3,9 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 import utils.CountWordsConstants.{AGE_TEST_TURNS, DIFFICULTY_STEP}
 
+//TODO: refactor CountWords Tests
 class CountWordsTests extends AnyFunSuite:
-  private val countWordsLogic = CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP)
+  private val countWordsLogic      = CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP)
   private val TEST_SENTENCE        = "This is a test sentence"
   private val CORRECT_NUM_OF_WORDS = getNumOfWords(TEST_SENTENCE)
   private val WRONG_NUM_OF_WORDS   = CORRECT_NUM_OF_WORDS + 1
@@ -22,5 +23,6 @@ class CountWordsTests extends AnyFunSuite:
   }
 
   test("The generator of the mini-game should generate questions based on difficulty") {
-    assert(getNumOfWords(countWordsLogic.generateQuestion) >= TEST_DIFFICULT)
+    // assert(getNumOfWords(countWordsLogic.generateQuestion) >= TEST_DIFFICULT)
+    assert(false)
   }

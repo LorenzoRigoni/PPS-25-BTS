@@ -7,12 +7,11 @@ package models
 trait MiniGameLogic:
   /**
    * Generate the question for the mini-game.
-   * @param difficultyLevel
-   *   the difficulty of the question
+   *
    * @return
-   *   the question generated
+   *   a copy of the game logic and the question generated
    */
-  def generateQuestion: String
+  def generateQuestion: (MiniGameLogic, String)
 
   /**
    * Check the answer of the user.
@@ -27,7 +26,8 @@ trait MiniGameLogic:
 
   /**
    * Check if the mini-game is finished.
-   * 
-   * @return true if the game is finished, false otherwise 
+   *
+   * @return
+   *   true if the game is finished, false otherwise
    */
   def isMiniGameFinished: Boolean
