@@ -21,4 +21,4 @@ trait MultipleAnswersMiniGameLogic:
    * @return
    *   a score from 0.0 (completely wrong) to 1.0 (completely correct)
    */
-  def evaluateAnswers(question: String, answer: String): Double
+  def evaluateAnswers(answer: String): Double

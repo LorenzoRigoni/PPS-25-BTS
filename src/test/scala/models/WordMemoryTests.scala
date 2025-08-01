@@ -3,11 +3,11 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 
 class WordMemoryTests extends AnyFunSuite:
-  private val gameLogic =
-    WordMemoryLogic(rounds = 3, currentRound = 0, difficulty = 1, lastQuestion = None)
-
   private val TEST_EXPRESSION_EASY      = "cow rainbow cat pillow"
   private val TEST_EXPRESSION_DIFFICULT = "cow rainbow cat pillow dog"
+
+  private val gameLogic =
+    WordMemoryLogic(rounds = 3, currentRound = 0, difficulty = 1, lastQuestion = Some(TEST_EXPRESSION_EASY))
 
   private val COMPLETE_ANSWER_SAME_ORDER      = "cow rainbow cat pillow"
   private val COMPLETE_ANSWER_DIFFERENT_ORDER = "cow rainbow cat pillow"
@@ -17,32 +17,32 @@ class WordMemoryTests extends AnyFunSuite:
   private val WRONG_EMPTY_ANSWER              = ""
 
   test("The validator returns 1.0 for complete answer in same order") {
-    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, COMPLETE_ANSWER_SAME_ORDER)
+    val score = gameLogic.evaluateAnswers(COMPLETE_ANSWER_SAME_ORDER)
     assert(score == 1.0)
   }
 
   test("The validator returns 1.0 for complete answer in different order") {
-    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, COMPLETE_ANSWER_DIFFERENT_ORDER)
+    val score = gameLogic.evaluateAnswers(COMPLETE_ANSWER_DIFFERENT_ORDER)
     assert(score == 1.0)
   }
 
   test("The validator returns partial score for partial correct answers (same order)") {
-    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, PARTIAL_ANSWER_SAME_ORDER)
+    val score = gameLogic.evaluateAnswers(PARTIAL_ANSWER_SAME_ORDER)
     assert(score < 1.0)
   }
 
   test("The validator returns partial score for partial correct answers (different order)") {
-    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, PARTIAL_ANSWER_DIFFERENT_ORDER)
+    val score = gameLogic.evaluateAnswers(PARTIAL_ANSWER_DIFFERENT_ORDER)
     assert(score < 1.0)
   }
 
   test("The validator does not count wrong spelled answer") {
-    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, WRONG_SPELL_ANSWER)
+    val score = gameLogic.evaluateAnswers(WRONG_SPELL_ANSWER)
     assert(score < 1.0)
   }
 
   test("The validator returns 0.0 for empty answer") {
-    val score = gameLogic.evaluateAnswers(TEST_EXPRESSION_EASY, WRONG_EMPTY_ANSWER)
+    val score = gameLogic.evaluateAnswers(WRONG_EMPTY_ANSWER)
     assert(score == 0.0)
   }
 
