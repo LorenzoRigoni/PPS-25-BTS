@@ -47,6 +47,16 @@ case class BrainTraining(controller: GameController) extends BaseView:
             controller,
             nextController => loadGamePanel(nextController, miniGameName)
           )
+        case "Word Memory"      =>
+          gamePanels.wordMemoryPanel(
+            controller,
+            nextController => loadGamePanel(nextController, miniGameName)
+          )
+        case "Colored Count"    =>
+          gamePanels.coloredCountPanel(
+            controller,
+            nextController => loadGamePanel(nextController, miniGameName)
+          )
         case _                  => new JPanel()
       centerPanel.add(panel, BorderLayout.CENTER)
       centerPanel.revalidate()
@@ -56,7 +66,9 @@ case class BrainTraining(controller: GameController) extends BaseView:
     val buttons = Seq(
       "Fast Calc",
       "Count Words",
-      "Right Directions"
+      "Right Directions",
+      "Word Memory",
+      "Colored Count"
     )
 
     centerPanel.setLayout(new BorderLayout())
@@ -74,6 +86,8 @@ case class BrainTraining(controller: GameController) extends BaseView:
           case "Fast Calc"        => initialController.chooseCurrentGame(FastCalc)
           case "Count Words"      => initialController.chooseCurrentGame(CountWords)
           case "Right Directions" => initialController.chooseCurrentGame(RightDirections)
+          case "Word Memory"      => ???
+          case "Colored Count"    => ???
         loadGamePanel(updatedController, name)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)

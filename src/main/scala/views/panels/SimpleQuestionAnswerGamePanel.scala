@@ -22,10 +22,12 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
    * @param onNext
    *   callback to notify when the mini-game ends
    * @param updateLogicAndQuestion
-   *   callback that takes the controller and returns (updatedController, newQuestion)
-   *   (i.e., similar to `getQuestion`)
+   *   callback that takes the controller and returns (updatedController, newQuestion) (i.e.,
+   *   similar to `getQuestion`)
    * @param validate
    *   the function that returns (updatedController, isCorrect)
+   * @param renderQuestionContent
+   *
    * @return
    *   the panel created
    */
@@ -35,7 +37,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
       controller: GameController,
       onNext: GameController => Unit,
       updateLogicAndQuestion: GameController => (GameController, String),
-      validate: (GameController, String) => (GameController, Boolean)
+      validate: (GameController, String) => (GameController, Boolean),
+      renderQuestionContent: Option[JPanel => Unit] = None
   ): JPanel =
     val panel = new JPanel(new BorderLayout())
 
@@ -47,16 +50,30 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     // Question area
     val questionArea = new JTextArea(question)
     questionArea.setEditable(false)
-    questionArea.setFont(pixelFont25)
-    questionArea.setWrapStyleWord(true)
-    questionArea.setLineWrap(true)
-    questionArea.setAlignmentX(Component.CENTER_ALIGNMENT)
+    questionArea.setFont(pixelFont15)
     questionArea.setOpaque(false)
 
-    val questionPanel = new JPanel()
-    questionPanel.setOpaque(false)
-    questionPanel.setLayout(new BorderLayout())
-    questionPanel.add(questionArea, BorderLayout.CENTER)
+    val questionWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER))
+    questionWrapper.setOpaque(false)
+    questionWrapper.add(questionArea)
+    panel.add(questionWrapper, BorderLayout.NORTH)
+
+    val customPanelWrapper = new JPanel()
+    customPanelWrapper.setLayout(new GridBagLayout())
+    customPanelWrapper.setOpaque(false)
+
+    val gbc = new GridBagConstraints()
+    gbc.fill = GridBagConstraints.HORIZONTAL
+    gbc.weightx = 1.0
+    gbc.gridx = 0
+    gbc.gridy = 0
+
+    // if necessary a custom panel for rich questions (ex. ColoredCount)
+    val customPanel = new JPanel()
+    customPanel.setOpaque(false)
+    renderQuestionContent.foreach(renderer => renderer(customPanel))
+    customPanelWrapper.add(customPanel, gbc)
+    panel.add(customPanelWrapper, BorderLayout.CENTER)
 
     // Input + Feedback
     val inputField    = new JTextField(10)
@@ -68,20 +85,23 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
       questionArea.setText(newQuestion)
       inputField.setText("")
       feedbackLabel.setVisible(false)
-    
+      customPanel.removeAll()
+      renderQuestionContent.foreach(renderer => renderer(customPanel))
+      customPanel.revalidate()
+      customPanel.repaint()
+
     var currentController = controller
 
     def submit(): Unit =
-      val input            = inputField.getText.trim
+      val input                          = inputField.getText.trim
       val (updatedController, isCorrect) = validate(currentController, input)
       currentController = updatedController
-      
+
       feedbackLabel.setVisible(true)
       feedbackLabel.setText(if isCorrect then "Correct!" else "Wrong!")
       feedbackLabel.setForeground(if isCorrect then Color.GREEN else Color.RED)
-      
-      if updatedController.isCurrentGameFinished then
-        onNext(updatedController)
+
+      if updatedController.isCurrentGameFinished then onNext(updatedController)
       else
         val (nextController, nextQuestion) = updateLogicAndQuestion(updatedController)
         currentController = nextController
@@ -95,12 +115,6 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     inputPanel.add(inputLabel)
     inputPanel.add(inputField)
     inputPanel.add(feedbackLabel)
-    inputPanel.setAlignmentX(Component.CENTER_ALIGNMENT)
+    panel.add(inputPanel, BorderLayout.SOUTH)
 
-    innerPanel.add(questionPanel)
-    innerPanel.add(Box.createVerticalStrut(20))
-    innerPanel.add(inputPanel)
-
-    centerWrapper.add(innerPanel, new GridBagConstraints())
-    panel.add(centerWrapper, BorderLayout.CENTER)
     panel

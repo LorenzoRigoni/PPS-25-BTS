@@ -54,7 +54,7 @@ class MenuView(controller: GameController) extends BaseView:
     val brainAgingButton    =
       createStyledButton("Age Test", buttonSize, pixelFont15, customBlueColor, whiteColor)
     val brainTrainingButton =
-      createStyledButton("Brain Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
+      createStyledButton("Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()

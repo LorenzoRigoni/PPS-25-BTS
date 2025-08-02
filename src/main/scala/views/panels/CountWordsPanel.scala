@@ -12,10 +12,16 @@ class CountWordsPanel(controller: GameController, question: String, onNext: Game
     extends SimpleQuestionAnswerGamePanel:
   def panel(): JPanel =
     createSimpleQuestionAnswerGamePanel(
-      question,
+      "Count the words",
       "Number of words:",
       controller,
       onNext,
       _.getQuestion,
-      (ctrl, input) => ctrl.checkAnswer(input)
+      (ctrl, input) => ctrl.checkAnswer(input),
+      Some(container => {
+        container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
+        val lbl = new JLabel(question)
+        lbl.setFont(pixelFont25)
+        container.add(lbl)
+      })
     )
