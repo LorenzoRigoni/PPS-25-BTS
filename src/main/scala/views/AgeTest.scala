@@ -39,65 +39,43 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
 
-    GameController(viewCallback = Some(this)).nextGame
+    val initialController = GameController(viewCallback = Some(this)).nextGame
+    initialController.chooseNextGame()
+
+  private def updatePanel(panel: JPanel): Unit =
+    SwingUtilities.invokeLater(() => {
+      centerPanel.removeAll()
+      centerPanel.add(panel, BorderLayout.CENTER)
+      centerPanel.revalidate()
+      centerPanel.repaint()
+    })
 
   private def showFastCalc(controller: GameController): JPanel =
     gamePanels.fastCalcPanel(
       controller,
-      nextController => {
-        SwingUtilities.invokeLater(() => {
-          centerPanel.removeAll()
-          val panel = showFastCalc(nextController)
-          centerPanel.add(panel, BorderLayout.CENTER)
-          centerPanel.revalidate()
-          centerPanel.repaint()
-        })
-      }
+      nextController => updatePanel(showFastCalc(nextController))
     )
 
   private def showCountWords(controller: GameController): JPanel =
     gamePanels.countWordsPanel(
       controller,
-      nextController => {
-        SwingUtilities.invokeLater(() => {
-          centerPanel.removeAll()
-          val panel = showCountWords(nextController)
-          centerPanel.add(panel, BorderLayout.CENTER)
-          centerPanel.revalidate()
-          centerPanel.repaint()
-        })
-      }
+      nextController => updatePanel(showCountWords(nextController))
     )
 
   private def showRightDirections(controller: GameController): JPanel =
     gamePanels.rightDirectionsPanel(
       controller,
-      nextController => {
-        SwingUtilities.invokeLater(() => {
-          centerPanel.removeAll()
-          val panel = showRightDirections(nextController)
-          centerPanel.add(panel, BorderLayout.CENTER)
-          centerPanel.revalidate()
-          centerPanel.repaint()
-        })
-      }
+      nextController => updatePanel(showRightDirections(nextController))
     )
 
   override def onTimerUpdate(secondsLeft: Int): Unit =
     SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $secondsLeft seconds"))
 
   override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
-    SwingUtilities.invokeLater(() => {
-      centerPanel.removeAll()
-      val panel = miniGame match
-        case FastCalc        => showFastCalc(controller)
-        case CountWords      => showCountWords(controller)
-        case RightDirections => showRightDirections(controller)
-
-      centerPanel.add(panel, BorderLayout.CENTER)
-      centerPanel.revalidate()
-      centerPanel.repaint()
-    })
+    miniGame match
+      case FastCalc        => updatePanel(showFastCalc(controller))
+      case CountWords      => updatePanel(showCountWords(controller))
+      case RightDirections => updatePanel(showRightDirections(controller))
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>

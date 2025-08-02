@@ -40,24 +40,20 @@ case class GameController(
     remainingMiniGames: List[MiniGameLogic] = List(
       FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP),
       CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP),
-      //RightDirectionsLogic(1, 1) // TODO: create file with constants for RightDirections game
+      RightDirectionsLogic(1, 1, 1) // TODO: create file with constants for RightDirections game
     ),
     currentGame: Option[MiniGameLogic] = None,
-    lastQuestion: Option[String] = None,
-    difficulty: Int = 1,
-    rand: Random = new Random(),
+    results: List[QuestionResult] = List(),
     timer: Option[Timer] = None,
     timeLeft: Int = 60, // TODO: 120
     viewCallback: Option[GameViewCallback] = None,
-    startTime: Long = 0
+    startTime: Option[Long] = None
 ):
-
-  private var results: List[QuestionResult] = List()
 
   private def startTimer(): GameController =
     timer.foreach(_.cancel())
     val t       = new Timer()
-    val seconds = new AtomicInteger(60) // TODO: 120
+    val seconds = new AtomicInteger(timeLeft) // TODO: 120
     val task    = new TimerTask {
       override def run(): Unit =
         val remaining = seconds.decrementAndGet()
@@ -84,49 +80,55 @@ case class GameController(
       viewCallback.foreach(_.onGameFinished(finalController))
       finalController
     else
-      val nextMiniGame   = remainingMiniGames(rand.between(0, remainingMiniGames.length))
-      val updatedList    = remainingMiniGames.filter(m => m != nextMiniGame)
+      val nextMiniGame   = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
+      val updatedList    = remainingMiniGames.filterNot(_ == nextMiniGame)
       val controllerCopy =
         this.copy(currentGame = Some(nextMiniGame), remainingMiniGames = updatedList)
-      controllerCopy.chooseNextGame()
       controllerCopy.startTimer()
 
-  private def chooseNextGame(): Unit =
+  def chooseNextGame(): Unit =
     currentGame match
       case Some(game) =>
         val gameEnum = game match
-          case FastCalcLogic(_, _, _, _)  => MiniGames.FastCalc
-          case CountWordsLogic(_, _, _, _)      => MiniGames.CountWords
-          case RightDirectionsLogic(_, _, _, _) => MiniGames.RightDirections
+          case _: FastCalcLogic        => MiniGames.FastCalc
+          case _: CountWordsLogic      => MiniGames.CountWords
+          case _: RightDirectionsLogic => MiniGames.RightDirections
         viewCallback.foreach(_.onGameChanged(gameEnum, this))
-      case None       =>
+      case None       => ()
 
   def chooseCurrentGame(gameMode: MiniGames): GameController =
     val game = gameMode match
-      case FastCalc        => Some(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP))
-      case CountWords      => Some(CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP))
-      //case RightDirections => Some(RightDirectionsLogic(1, 1)) // TODO: use constants from utils
+      case FastCalc   => Some(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP))
+      case CountWords => Some(CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP))
+      case RightDirections => Some(RightDirectionsLogic(1, 1, 1)) // TODO: use constants from utils
     this.copy(currentGame = game, timeLeft = 60) // TODO: 120
 
-  def getQuestion: (String, Long) =
-    val (gameLogic, generatedQuestion) = currentGame.get.generateQuestion
-    val startTime                      = System.currentTimeMillis()
-    (generatedQuestion, startTime)
+  def getQuestion: (GameController, String) =
+    val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
+    val updatedController                 = this.copy(
+      currentGame = Some(updatedLogic),
+      startTime = Some(System.currentTimeMillis())
+    )
+    (updatedController, generatedQuestion)
 
-  def checkAnswer(answer: String): Boolean =
+  def checkAnswer(answer: String): (GameController, Boolean) =
     val parsedAnswer    = currentGame match
-      case Some(FastCalcLogic(_, _, _, _))  => answer.toInt
-      case Some(CountWordsLogic(_, _, _, _))      => answer.toInt
-      case Some(RightDirectionsLogic(_, _, _, _)) => answer
-      case _                                => answer
-    val isAnswerCorrect = currentGame.get.validateAnswer(lastQuestion.get, parsedAnswer)
-    val elapsedTime     = System.currentTimeMillis() - startTime
-    results = QuestionResult(elapsedTime, isAnswerCorrect) :: results
-    isAnswerCorrect
+      case Some(_: FastCalcLogic)   => answer.toInt
+      case Some(_: CountWordsLogic) => answer.toInt
+      case _                        => answer
 
-  def increaseDifficulty(): GameController =
-    val newDifficulty            = difficulty + 1
-    val (gameLogic, newQuestion) = currentGame.get.generateQuestion
-    this.copy(difficulty = newDifficulty, lastQuestion = Some(newQuestion))
+    val logic = currentGame.get
+    val isAnswerCorrect = logic.validateAnswer(parsedAnswer)
+    val elapsedTime     = System.currentTimeMillis() - startTime.getOrElse(System.currentTimeMillis())
+    val newResult = QuestionResult(elapsedTime, isAnswerCorrect)
+    
+    val updatedController = this.copy(
+      currentGame = Some(logic),
+      results = newResult :: results
+    )
+
+    (updatedController, isAnswerCorrect)
+
+  def isCurrentGameFinished: Boolean = currentGame.exists(_.isMiniGameFinished)
 
   def calculateBrainAge: Int = BrainAgeCalculator.calcBrainAge(GameStats(results.reverse))
