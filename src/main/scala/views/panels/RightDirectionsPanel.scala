@@ -6,23 +6,17 @@ import javax.swing.*
 import java.awt.*
 import java.awt.event.{KeyAdapter, KeyEvent}
 
-class RightDirectionsPanel(controller: GameController, onNext: GameController => Unit)
+class RightDirectionsPanel(controller: GameController, question: String, onNext: GameController => Unit)
     extends SimpleQuestionAnswerGamePanel:
 
   def panel(): JPanel =
-
-    def validateAnswer(input: String): (String, Color) =
-      if controller.checkAnswer(input) then
-        val increased = controller.increaseDifficulty()
-        onNext(increased)
-        ("Correct!", Color.GREEN)
-      else ("Wrong!", Color.RED)
-
     val panel = createSimpleQuestionAnswerGamePanel(
-      question = controller.lastQuestion.get,
-      textInputLabel = "Your answer: ",
-      validate = validateAnswer,
-      controller = controller
+      question,
+      "Your answer:",
+      controller,
+      onNext,
+      _.getQuestion,
+      (ctrl, input) => ctrl.checkAnswer(input)
     )
 
     panel.addKeyListener(new KeyAdapter {
@@ -35,9 +29,9 @@ class RightDirectionsPanel(controller: GameController, onNext: GameController =>
           case KeyEvent.VK_J => Some("")
           case _             => None
 
-        answerOpt.foreach { answer =>
+        /*answerOpt.foreach { answer =>
           val (message, color) = validateAnswer(answer)
-        }
+        }*/
       }
     })
 

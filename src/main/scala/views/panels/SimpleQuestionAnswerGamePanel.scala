@@ -14,19 +14,28 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
   /**
    * Create the panel with a question and an answer.
    * @param question
-   *   the question of the mini-game
+   *   the initial question of the mini-game
    * @param textInputLabel
    *   the label of the input
+   * @param controller
+   *   the game controller
+   * @param onNext
+   *   callback to notify when the mini-game ends
+   * @param updateLogicAndQuestion
+   *   callback that takes the controller and returns (updatedController, newQuestion)
+   *   (i.e., similar to `getQuestion`)
    * @param validate
-   *   the function to validate the answer
+   *   the function that returns (updatedController, isCorrect)
    * @return
    *   the panel created
    */
   def createSimpleQuestionAnswerGamePanel(
       question: String,
       textInputLabel: String,
-      validate: String => (String, Color),
-      controller: GameController
+      controller: GameController,
+      onNext: GameController => Unit,
+      updateLogicAndQuestion: GameController => (GameController, String),
+      validate: (GameController, String) => (GameController, Boolean)
   ): JPanel =
     val panel = new JPanel(new BorderLayout())
 
@@ -49,26 +58,34 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     questionPanel.setLayout(new BorderLayout())
     questionPanel.add(questionArea, BorderLayout.CENTER)
 
-    def showNewQuestion(): Unit =
-      val newQuestion = controller.lastQuestion.get
-      questionArea.setText(newQuestion)
-
     // Input + Feedback
     val inputField    = new JTextField(10)
     val feedbackLabel = new JLabel("", SwingConstants.CENTER)
     feedbackLabel.setFont(pixelFont8)
     feedbackLabel.setPreferredSize(new Dimension(150, 30)) // TODO: avoid fixed size
 
+    def showNewQuestion(newQuestion: String): Unit =
+      questionArea.setText(newQuestion)
+      inputField.setText("")
+      feedbackLabel.setVisible(false)
+    
+    var currentController = controller
+
     def submit(): Unit =
       val input            = inputField.getText.trim
-      val (message, color) = validate(input)
+      val (updatedController, isCorrect) = validate(currentController, input)
+      currentController = updatedController
+      
       feedbackLabel.setVisible(true)
-      feedbackLabel.setText(message)
-      feedbackLabel.setForeground(color)
-      if message == "Correct!" then
-        showNewQuestion()
-        inputField.setText("")
-        feedbackLabel.setVisible(false)
+      feedbackLabel.setText(if isCorrect then "Correct!" else "Wrong!")
+      feedbackLabel.setForeground(if isCorrect then Color.GREEN else Color.RED)
+      
+      if updatedController.isCurrentGameFinished then
+        onNext(updatedController)
+      else
+        val (nextController, nextQuestion) = updateLogicAndQuestion(updatedController)
+        currentController = nextController
+        showNewQuestion(nextQuestion)
 
     inputField.addActionListener(_ => submit())
 
