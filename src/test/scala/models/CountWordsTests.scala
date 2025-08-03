@@ -1,12 +1,12 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
-import utils.CountWordsConstants.{AGE_TEST_TURNS, DIFFICULTY_STEP}
+import utils.CountWordsConstants.{COUNT_WORDS_TURNS, COUNT_WORDS_DIFFICULTY_STEP}
 
 class CountWordsTests extends AnyFunSuite:
   private val TEST_SENTENCE        = "This is a test sentence"
   private val countWordsLogic = CountWordsLogic(
-    AGE_TEST_TURNS,
+    COUNT_WORDS_TURNS,
     lastQuestion = Some(TEST_SENTENCE)
   )
   private val CORRECT_NUM_OF_WORDS = getNumOfWords(TEST_SENTENCE)

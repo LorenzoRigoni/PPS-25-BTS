@@ -31,6 +31,10 @@ sealed trait GamePanels:
    */
   def rightDirectionsPanel(controller: GameController, onNext: GameController => Unit): JPanel
 
+  def wordMemoryPanel(controller: GameController, onNext: GameController => Unit): JPanel
+
+  def coloredCountPanel(controller: GameController, onNext: GameController => Unit): JPanel
+
 class GamePanelsImpl extends GamePanels:
   override def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel =
     val (updatedController, question) = controller.getQuestion
@@ -40,6 +44,17 @@ class GamePanelsImpl extends GamePanels:
     val (updatedController, question) = controller.getQuestion
     CountWordsPanel(updatedController, question, onNext).panel()
 
-  override def rightDirectionsPanel(controller: GameController, onNext: GameController => Unit): JPanel =
+  override def rightDirectionsPanel(
+      controller: GameController,
+      onNext: GameController => Unit
+  ): JPanel =
     val (updatedController, question) = controller.getQuestion
     RightDirectionsPanel(updatedController, question, onNext).panel()
+
+  override def wordMemoryPanel(controller: GameController, onNext: GameController => Unit): JPanel =
+    val (updatedController, question) = controller.getQuestion
+    WordMemoryPanel(updatedController, question, onNext).panel()
+
+  override def coloredCountPanel(controller: GameController, onNext: GameController => Unit): JPanel =
+    val (updatedController, question) = controller.getQuestion
+    ColoredCountPanel(updatedController, question, onNext).panel()

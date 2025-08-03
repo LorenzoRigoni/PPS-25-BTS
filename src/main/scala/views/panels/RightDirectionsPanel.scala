@@ -6,17 +6,26 @@ import javax.swing.*
 import java.awt.*
 import java.awt.event.{KeyAdapter, KeyEvent}
 
-class RightDirectionsPanel(controller: GameController, question: String, onNext: GameController => Unit)
-    extends SimpleQuestionAnswerGamePanel:
+class RightDirectionsPanel(
+    controller: GameController,
+    question: String,
+    onNext: GameController => Unit
+) extends SimpleQuestionAnswerGamePanel:
 
   def panel(): JPanel =
     val panel = createSimpleQuestionAnswerGamePanel(
-      question,
+      "Follow directions",
       "Your answer:",
       controller,
       onNext,
       _.getQuestion,
-      (ctrl, input) => ctrl.checkAnswer(input)
+      (ctrl, input) => ctrl.checkAnswer(input),
+      Some(container => {
+        container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
+        val lbl = new JLabel(question)
+        lbl.setFont(pixelFont25)
+        container.add(lbl)
+      })
     )
 
     panel.addKeyListener(new KeyAdapter {

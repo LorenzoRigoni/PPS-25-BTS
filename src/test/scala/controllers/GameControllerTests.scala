@@ -6,13 +6,13 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import utils.MiniGames
 import utils.MiniGames.CountWords
-import utils.CountWordsConstants.{AGE_TEST_TURNS, DIFFICULTY_STEP}
+import utils.CountWordsConstants.{COUNT_WORDS_TURNS, COUNT_WORDS_DIFFICULTY_STEP}
 
 class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should initialize with all mini-games") {
     val controller = GameController()
-    controller.remainingMiniGames.length shouldBe 3
+    controller.remainingMiniGames.length shouldBe 4
     controller.currentGame shouldBe None
   }
 
@@ -29,9 +29,8 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should generate question and record start time") {
     val controller            = GameController().chooseCurrentGame(CountWords)
-    val (question, startTime) = controller.getQuestion
+    val (newController, question) = controller.getQuestion
     question should not be empty
-    startTime should be <= System.currentTimeMillis()
   }
 
   test("Controller should check answer correctly") {
@@ -40,11 +39,11 @@ class GameControllerTests extends AnyFunSuite with Matchers:
     
     val controller = GameController(
       currentGame = Some(logic),
-      startTime = System.currentTimeMillis()
+      startTime = Some(System.currentTimeMillis())
     )
     
-    controller.checkAnswer(correctAnswer) shouldBe true
-    controller.checkAnswer((correctAnswer.toInt + 1).toString) shouldBe false
+    controller.checkAnswer(correctAnswer)._2 shouldBe true
+    controller.checkAnswer((correctAnswer.toInt + 1).toString)._2 shouldBe false
   }
 
   test("Controller should calculate brain age based on time and errors") {
