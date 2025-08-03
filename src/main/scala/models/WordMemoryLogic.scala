@@ -4,11 +4,11 @@ import scala.util.Random
 
 case class WordMemoryLogic(
     rounds: Int,
-    currentRound: Int,
-    difficulty: Int,
-    lastQuestion: Option[String]
-) extends MultipleAnswersMiniGameLogic:
-  private val words                 = Seq(
+    currentRound: Int = 0,
+    difficulty: Int = 1,
+    lastQuestion: Option[String] = None
+) extends MiniGameLogic[String, Double]:
+  private val words = Seq(
     "apple",
     "bridge",
     "cloud",
@@ -40,11 +40,9 @@ case class WordMemoryLogic(
     "energy",
     "future"
   )
-  private def hasNextRound: Boolean =
-    currentRound < rounds
 
-  override def generateQuestion: (MultipleAnswersMiniGameLogic, String) =
-    if !hasNextRound then throw new IllegalStateException("No more rounds")
+  override def generateQuestion: (MiniGameLogic[String, Double], String) =
+    if isMiniGameFinished then throw new IllegalStateException("No more rounds")
     else
       val wordsNumber = 3 + difficulty
       val newQuestion = Random.shuffle(words).take(wordsNumber).mkString(" ")
@@ -53,7 +51,9 @@ case class WordMemoryLogic(
         newQuestion
       )
 
-  override def evaluateAnswers(answer: String): Double =
+  override def validateAnswer(answer: String): Double =
     val expectedWordsNumber = lastQuestion.get.split(" ").toSet
     val answerWordsNumber   = answer.split(" ").filter(_.nonEmpty).toSet
     answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
+
+  override def isMiniGameFinished: Boolean = currentRound >= rounds

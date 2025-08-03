@@ -2,10 +2,11 @@ package controllers
 
 import models.*
 import models.rightDirections.RightDirectionsLogic
-import utils.CountWordsConstants.{AGE_TEST_TURNS, DIFFICULTY_STEP}
+import utils.CountWordsConstants.{COUNT_WORDS_TURNS, COUNT_WORDS_DIFFICULTY_STEP}
+import utils.ColoredCountConstants.{COLORED_COUNT_TURNS, COLORED_COUNT_DIFFICULTY_STEP}
 import utils.FastCalcConstants.*
 import utils.{FastCalcConstants, MiniGames}
-import utils.MiniGames.{CountWords, FastCalc, RightDirections}
+import utils.MiniGames.*
 
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.{Timer, TimerTask}
@@ -37,12 +38,20 @@ case class GameStats(results: List[QuestionResult])
  *   The methods to call when an event occurs
  */
 case class GameController(
-    remainingMiniGames: List[MiniGameLogic] = List(
-      FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP),
-      CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP),
-      RightDirectionsLogic(1, 1, 1) // TODO: create file with constants for RightDirections game
+    remainingMiniGames: List[MiniGameWrapper] = List(
+      MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc),
+      MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords),
+      MiniGameAdapter(
+        RightDirectionsLogic(10),
+        RightDirections
+      ), // TODO: create constants file for Right Directions
+      MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount),
+      MiniGameAdapter(
+        WordMemoryLogic(10),
+        WordMemory
+      ) // TODO: create constants file for Word Memory
     ),
-    currentGame: Option[MiniGameLogic] = None,
+    currentGame: Option[MiniGameWrapper] = None,
     results: List[QuestionResult] = List(),
     timer: Option[Timer] = None,
     timeLeft: Int = 60, // TODO: 120
@@ -89,19 +98,33 @@ case class GameController(
   def chooseNextGame(): Unit =
     currentGame match
       case Some(game) =>
-        val gameEnum = game match
-          case _: FastCalcLogic        => MiniGames.FastCalc
-          case _: CountWordsLogic      => MiniGames.CountWords
-          case _: RightDirectionsLogic => MiniGames.RightDirections
-        viewCallback.foreach(_.onGameChanged(gameEnum, this))
+        viewCallback.foreach(_.onGameChanged(game.gameId, this))
       case None       => ()
 
   def chooseCurrentGame(gameMode: MiniGames): GameController =
-    val game = gameMode match
-      case FastCalc   => Some(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP))
-      case CountWords => Some(CountWordsLogic(AGE_TEST_TURNS, DIFFICULTY_STEP))
-      case RightDirections => Some(RightDirectionsLogic(1, 1, 1)) // TODO: use constants from utils
-    this.copy(currentGame = game, timeLeft = 60) // TODO: 120
+    val gameWrapper = gameMode match
+      case FastCalc =>
+        Some(
+          MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc)
+        )
+
+      case CountWords =>
+        Some(MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords))
+
+      case RightDirections =>
+        Some(
+          MiniGameAdapter(RightDirectionsLogic(10), RightDirections)
+        ) // TODO: create constants file for Right Directions
+
+      case ColoredCount =>
+        Some(MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount))
+
+      case WordMemory =>
+        Some(
+          MiniGameAdapter(WordMemoryLogic(10), WordMemory)
+        ) // TODO: create constants file for Word Memory
+
+    this.copy(currentGame = gameWrapper, timeLeft = 60) // TODO: 120
 
   def getQuestion: (GameController, String) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
@@ -112,16 +135,23 @@ case class GameController(
     (updatedController, generatedQuestion)
 
   def checkAnswer(answer: String): (GameController, Boolean) =
-    val parsedAnswer    = currentGame match
-      case Some(_: FastCalcLogic)   => answer.toInt
-      case Some(_: CountWordsLogic) => answer.toInt
-      case _                        => answer
+    val parsedAnswer = currentGame match
+      case Some(wrapper) =>
+        wrapper.gameId match
+          case FastCalc | CountWords | ColoredCount => answer.toInt
+          case _                                    => answer
+      case None          => answer
 
-    val logic = currentGame.get
-    val isAnswerCorrect = logic.validateAnswer(parsedAnswer)
-    val elapsedTime     = System.currentTimeMillis() - startTime.getOrElse(System.currentTimeMillis())
-    val newResult = QuestionResult(elapsedTime, isAnswerCorrect)
-    
+    val logic           = currentGame.get
+    val result          = logic.validateAnswer(parsedAnswer)
+    val isAnswerCorrect = result match
+      case b: Boolean            => b
+      case v: Double if v >= 0.6 => true
+      case _                     => false
+
+    val elapsedTime = System.currentTimeMillis() - startTime.getOrElse(System.currentTimeMillis())
+    val newResult   = QuestionResult(elapsedTime, isAnswerCorrect)
+
     val updatedController = this.copy(
       currentGame = Some(logic),
       results = newResult :: results

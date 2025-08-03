@@ -7,11 +7,11 @@ import models.rightDirections.structure.{EvaluateOperation, SyntaxTreeBuilder}
 case class RightDirectionsLogic(
     rounds: Int,
     currentRound: Int = 0,
-    difficulty: Int,
+    difficulty: Int = 1,
     lastQuestion: Option[String] = None
-) extends MiniGameLogic:
+) extends MiniGameLogic[String, Boolean]:
   
-  override def generateQuestion: (MiniGameLogic, String) =
+  override def generateQuestion: (MiniGameLogic[String, Boolean], String) =
     (
       this.copy(), // TODO: increase difficulty here
       SyntaxTreeBuilder
@@ -19,7 +19,7 @@ case class RightDirectionsLogic(
         .toString
     )
 
-  override def validateAnswer[A](answer: A): Boolean = answer match {
+  override def validateAnswer(answer: String): Boolean = answer match {
     case s: String =>
       val normalizedAnswer = s.toLowerCase.trim
       val correctAnswer    = EvaluateOperation.evaluateOperationFromString(lastQuestion.get, List())
@@ -28,4 +28,4 @@ case class RightDirectionsLogic(
       ) || (correctAnswer.isEmpty && normalizedAnswer.equals(""))
   }
 
-  override def isMiniGameFinished: Boolean = ???
+  override def isMiniGameFinished: Boolean = currentRound >= rounds

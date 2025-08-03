@@ -8,7 +8,7 @@ case class FastCalcLogic(
     currentRound: Int = 0,
     difficulty: Int,
     lastQuestion: Option[String] = None
-) extends MiniGameLogic:
+) extends MiniGameLogic[Int, Boolean]:
 
   private def hasNextRound: Boolean =
     currentRound < rounds
@@ -60,7 +60,7 @@ case class FastCalcLogic(
           else throw new IllegalArgumentException(s"Malformed expression!")
     calculate(expression)
 
-  override def generateQuestion: (MiniGameLogic, String) =
+  override def generateQuestion: (MiniGameLogic[Int, Boolean], String) =
     val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
     val maxNumber    = MAX_NUMBER
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
@@ -77,7 +77,7 @@ case class FastCalcLogic(
       expression
     )
 
-  override def validateAnswer[Int](answer: Int): Boolean =
+  override def validateAnswer(answer: Int): Boolean =
     calculateResult(getListFromExpression(lastQuestion.get)) == answer
 
   override def isMiniGameFinished: Boolean =

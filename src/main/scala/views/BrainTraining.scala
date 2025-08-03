@@ -1,7 +1,7 @@
 package views
 
 import controllers.GameController
-import utils.MiniGames.{CountWords, FastCalc, RightDirections}
+import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, GamePanelsImpl}
 
 import javax.swing.*
@@ -86,8 +86,8 @@ case class BrainTraining(controller: GameController) extends BaseView:
           case "Fast Calc"        => initialController.chooseCurrentGame(FastCalc)
           case "Count Words"      => initialController.chooseCurrentGame(CountWords)
           case "Right Directions" => initialController.chooseCurrentGame(RightDirections)
-          case "Word Memory"      => ???
-          case "Colored Count"    => ???
+          case "Word Memory"      => initialController.chooseCurrentGame(WordMemory)
+          case "Colored Count"    => initialController.chooseCurrentGame(ColoredCount)
         loadGamePanel(updatedController, name)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
