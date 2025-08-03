@@ -3,29 +3,37 @@ package models.rightDirections
 import models.rightDirections.structure.Symbol
 import models.MiniGameLogic
 import models.rightDirections.structure.{EvaluateOperation, SyntaxTreeBuilder}
+import utils.RightDirectionsConstants.*
 
 case class RightDirectionsLogic(
     rounds: Int,
-    currentRound: Int = 0,
-    difficulty: Int = 1,
-    lastQuestion: Option[String] = None
+    difficulty: Float = 0,
+    lastQuestion: Option[String] = None,
+    currentRound: Int = 0
 ) extends MiniGameLogic[String, Boolean]:
-  
+
   override def generateQuestion: (MiniGameLogic[String, Boolean], String) =
-    (
-      this.copy(), // TODO: increase difficulty here
+    val question =
       SyntaxTreeBuilder
-        .buildOperationFromComplexity(1 /*TODO: gestire difficoltà con case class*/ )
+        .buildOperationFromComplexity(difficulty.toInt)
         .toString
+    (
+      this.copy(
+        currentRound = currentRound + 1,
+        difficulty = difficulty + DIFFICULTY_STEP,
+        lastQuestion = Some(question)
+      ),
+      question
     )
 
-  override def validateAnswer(answer: String): Boolean = answer match {
-    case s: String =>
-      val normalizedAnswer = s.toLowerCase.trim
-      val correctAnswer    = EvaluateOperation.evaluateOperationFromString(lastQuestion.get, List())
-      correctAnswer.contains(
-        Symbol.fromString(normalizedAnswer).get
-      ) || (correctAnswer.isEmpty && normalizedAnswer.equals(""))
-  }
+  override def validateAnswer(answer: String): Boolean =
+    val trimmedAnswer                  = answer.toLowerCase.trim
+    val correctAnswer                  = EvaluateOperation.evaluateOperationFromString(lastQuestion.get, List())
+    val answerAsSymbol: Option[Symbol] = Symbol.fromString(trimmedAnswer)
+    val noAnswerCase: Boolean          = correctAnswer.isEmpty && trimmedAnswer.equals("")
 
-  override def isMiniGameFinished: Boolean = currentRound >= rounds
+    answerAsSymbol.isDefined &&
+    (correctAnswer.contains(answerAsSymbol.get) || noAnswerCase)
+
+  override def isMiniGameFinished: Boolean =
+    rounds == MAX_NUMBER_OF_ROUNDS
