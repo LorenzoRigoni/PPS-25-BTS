@@ -26,7 +26,7 @@ class ColoredCountPanel(
 
     val questionText = s"How many $targetColor numbers?"
 
-    createSimpleQuestionAnswerGamePanel(
+    val (panel, _) = createSimpleQuestionAnswerGamePanel(
       questionText,
       "Your answer:",
       controller,
@@ -42,3 +42,4 @@ class ColoredCountPanel(
           container.add(label)
       })
     )
+    panel
