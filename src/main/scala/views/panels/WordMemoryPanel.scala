@@ -8,7 +8,7 @@ import javax.swing.{JLabel, JPanel}
 class WordMemoryPanel(controller: GameController, question: String, onNext: GameController => Unit)
     extends SimpleQuestionAnswerGamePanel:
   def panel(): JPanel =
-    createSimpleQuestionAnswerGamePanel(
+    val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",
       "Write all words:",
       controller,
@@ -26,3 +26,4 @@ class WordMemoryPanel(controller: GameController, question: String, onNext: Game
           container.add(lbl)
       })
     )
+    panel

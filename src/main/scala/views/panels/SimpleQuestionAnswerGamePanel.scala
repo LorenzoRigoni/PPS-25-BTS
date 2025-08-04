@@ -11,6 +11,11 @@ import javax.swing.*
  */
 trait SimpleQuestionAnswerGamePanel extends BaseView:
 
+  protected val inputField  = new JTextField(10)
+  private val feedbackLabel = new JLabel("", SwingConstants.CENTER)
+  private val questionArea  = new JTextArea()
+  private val customPanel   = new JPanel()
+
   /**
    * Create the panel with a question and an answer.
    * @param question
@@ -39,7 +44,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
       updateLogicAndQuestion: GameController => (GameController, String),
       validate: (GameController, String) => (GameController, Boolean),
       renderQuestionContent: Option[JPanel => Unit] = None
-  ): JPanel =
+  ): (JPanel, String => Unit) =
     val panel = new JPanel(new BorderLayout())
 
     val centerWrapper = new JPanel(new GridBagLayout())
@@ -48,7 +53,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
 
     // Question area
-    val questionArea = new JTextArea(question)
+    questionArea.setText(question)
     questionArea.setEditable(false)
     questionArea.setFont(pixelFont15)
     questionArea.setOpaque(false)
@@ -69,45 +74,21 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     gbc.gridy = 0
 
     // if necessary a custom panel for rich questions (ex. ColoredCount)
-    val customPanel = new JPanel()
     customPanel.setOpaque(false)
     renderQuestionContent.foreach(renderer => renderer(customPanel))
     customPanelWrapper.add(customPanel, gbc)
     panel.add(customPanelWrapper, BorderLayout.CENTER)
 
     // Input + Feedback
-    val inputField    = new JTextField(10)
-    val feedbackLabel = new JLabel("", SwingConstants.CENTER)
     feedbackLabel.setFont(pixelFont8)
     feedbackLabel.setPreferredSize(new Dimension(150, 30)) // TODO: avoid fixed size
 
-    def showNewQuestion(newQuestion: String): Unit =
-      questionArea.setText(newQuestion)
-      inputField.setText("")
-      feedbackLabel.setVisible(false)
-      customPanel.removeAll()
-      renderQuestionContent.foreach(renderer => renderer(customPanel))
-      customPanel.revalidate()
-      customPanel.repaint()
-
     var currentController = controller
 
-    def submit(): Unit =
-      val input                          = inputField.getText.trim
-      val (updatedController, isCorrect) = validate(currentController, input)
-      currentController = updatedController
-
-      feedbackLabel.setVisible(true)
-      feedbackLabel.setText(if isCorrect then "Correct!" else "Wrong!")
-      feedbackLabel.setForeground(if isCorrect then Color.GREEN else Color.RED)
-
-      if updatedController.isCurrentGameFinished then onNext(updatedController)
-      else
-        val (nextController, nextQuestion) = updateLogicAndQuestion(updatedController)
-        currentController = nextController
-        showNewQuestion(nextQuestion)
-
-    inputField.addActionListener(_ => submit())
+    inputField.addActionListener(_ =>
+      currentController =
+        submit(currentController, onNext, updateLogicAndQuestion, validate, renderQuestionContent)
+    )
 
     val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
     val inputLabel = new JLabel(textInputLabel)
@@ -117,4 +98,42 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     inputPanel.add(feedbackLabel)
     panel.add(inputPanel, BorderLayout.SOUTH)
 
-    panel
+    (panel, (input: String) => {
+      currentController =
+        submit(currentController, onNext, updateLogicAndQuestion, validate, renderQuestionContent)
+    })
+
+  protected def submit(
+      currentController: GameController,
+      onNext: GameController => Unit,
+      updateLogicAndQuestion: GameController => (GameController, String),
+      validate: (GameController, String) => (GameController, Boolean),
+      renderQuestionContent: Option[JPanel => Unit] = None
+  ): GameController =
+    val input                          = inputField.getText.trim
+    val (updatedController, isCorrect) = validate(currentController, input)
+    var newController                  = updatedController
+
+    feedbackLabel.setVisible(true)
+    feedbackLabel.setText(if isCorrect then "Correct!" else "Wrong!")
+    feedbackLabel.setForeground(if isCorrect then Color.GREEN else Color.RED)
+
+    if updatedController.isCurrentGameFinished then onNext(updatedController)
+    else
+      val (nextController, nextQuestion) = updateLogicAndQuestion(updatedController)
+      newController = nextController
+      showNewQuestion(nextQuestion, renderQuestionContent)
+
+    newController
+
+  private def showNewQuestion(
+      newQuestion: String,
+      renderQuestionContent: Option[JPanel => Unit]
+  ): Unit =
+    questionArea.setText(newQuestion)
+    inputField.setText("")
+    feedbackLabel.setVisible(false)
+    customPanel.removeAll()
+    renderQuestionContent.foreach(renderer => renderer(customPanel))
+    customPanel.revalidate()
+    customPanel.repaint()

@@ -10,7 +10,7 @@ import java.awt.*
 class FastCalcPanel(controller: GameController, question: String, onNext: GameController => Unit)
     extends SimpleQuestionAnswerGamePanel:
   def panel(): JPanel =
-    createSimpleQuestionAnswerGamePanel(
+    val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Solve the expression:",
       "Your result: ",
       controller,
@@ -24,3 +24,4 @@ class FastCalcPanel(controller: GameController, question: String, onNext: GameCo
         container.add(lbl)
       })
     )
+    panel

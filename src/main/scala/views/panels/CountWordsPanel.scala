@@ -11,7 +11,7 @@ import java.awt.*
 class CountWordsPanel(controller: GameController, question: String, onNext: GameController => Unit)
     extends SimpleQuestionAnswerGamePanel:
   def panel(): JPanel =
-    createSimpleQuestionAnswerGamePanel(
+    val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Count the words",
       "Number of words:",
       controller,
@@ -25,3 +25,4 @@ class CountWordsPanel(controller: GameController, question: String, onNext: Game
         container.add(lbl)
       })
     )
+    panel

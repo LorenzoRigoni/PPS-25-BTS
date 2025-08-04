@@ -4,6 +4,7 @@ import models.*
 import models.rightDirections.RightDirectionsLogic
 import utils.CountWordsConstants.{COUNT_WORDS_TURNS, COUNT_WORDS_DIFFICULTY_STEP}
 import utils.ColoredCountConstants.{COLORED_COUNT_TURNS, COLORED_COUNT_DIFFICULTY_STEP}
+import utils.RightDirectionsConstants.*
 import utils.FastCalcConstants.*
 import utils.{FastCalcConstants, MiniGames}
 import utils.MiniGames.*
@@ -42,7 +43,7 @@ case class GameController(
       MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc),
       MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords),
       MiniGameAdapter(
-        RightDirectionsLogic(10),
+        RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS),
         RightDirections
       ), // TODO: create constants file for Right Directions
       MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount),
@@ -113,7 +114,7 @@ case class GameController(
 
       case RightDirections =>
         Some(
-          MiniGameAdapter(RightDirectionsLogic(10), RightDirections)
+          MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections)
         ) // TODO: create constants file for Right Directions
 
       case ColoredCount =>
