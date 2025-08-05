@@ -30,9 +30,17 @@ class ColoredCountPanel(
       questionText,
       "Your answer:",
       controller,
-      onNext,
+      nextController => {
+        val nextWithResults = nextController.nextGame
+        onNext(nextWithResults)
+      },
       _.getNewQuestion,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) =>
+        println(s"Risultati prima: ${ctrl.results}")
+        val (newCtrl, isCorrect) = ctrl.checkAnswer(input)
+        println(s"Risultati dopo: ${newCtrl.results}")
+        (newCtrl, isCorrect)
+      ,
       Some(container => {
         container.setLayout(new FlowLayout())
         for (text, color) <- data do

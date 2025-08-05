@@ -14,9 +14,17 @@ class FastCalcPanel(controller: GameController, question: String, onNext: GameCo
       "Solve the expression:",
       "Your result: ",
       controller,
-      onNext,
+      nextController => {
+        val nextWithResults = nextController.nextGame
+        onNext(nextWithResults)
+      },
       _.getNewQuestion,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) =>
+        println(s"Risultati prima: ${ctrl.results}")
+        val (newCtrl, isCorrect) = ctrl.checkAnswer(input)
+        println(s"Risultati dopo: ${newCtrl.results}")
+        (newCtrl, isCorrect)
+      ,
       Some(container => {
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
         val lbl = new JLabel(question)

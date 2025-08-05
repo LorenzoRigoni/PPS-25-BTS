@@ -7,19 +7,27 @@ import java.awt.*
 import java.awt.event.ActionEvent
 
 class RightDirectionsPanel(
-                            controller: GameController,
-                            question: String,
-                            onNext: GameController => Unit
-                          ) extends SimpleQuestionAnswerGamePanel:
+    controller: GameController,
+    question: String,
+    onNext: GameController => Unit
+) extends SimpleQuestionAnswerGamePanel:
 
   def panel(): JPanel =
     val (panel, externalSubmit) = createSimpleQuestionAnswerGamePanel(
       "Follow directions",
       "Your answer:",
       controller,
-      onNext,
+      nextController => {
+        val nextWithResults = nextController.nextGame
+        onNext(nextWithResults)
+      },
       _.getNewQuestion,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) =>
+        println(s"Risultati prima: ${ctrl.results}")
+        val (newCtrl, isCorrect) = ctrl.checkAnswer(input)
+        println(s"Risultati dopo: ${newCtrl.results}")
+        (newCtrl, isCorrect)
+      ,
       Some(container => {
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
         val lbl = new JLabel(question)
@@ -33,7 +41,7 @@ class RightDirectionsPanel(
     panel.requestFocusInWindow()
 
     val actionMap = panel.getActionMap
-    val inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    val inputMap  = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 
     def bindKey(key: String, direction: String): Unit =
       inputMap.put(KeyStroke.getKeyStroke(key), key)

@@ -82,6 +82,8 @@ case class GameController(
     if numMiniGamesPlayed == 3 then
       timer.foreach(_.cancel())
       val finalController = this.copy(currentGame = None)
+      println("Lunghezza results: ")
+      println(finalController.results.size)
       viewCallback.foreach(_.onGameFinished(finalController))
       finalController
     else
@@ -91,8 +93,11 @@ case class GameController(
         this.copy(
           currentGame = Some(nextMiniGame),
           remainingMiniGames = updatedList,
-          numMiniGamesPlayed = numMiniGamesPlayed + 1
+          numMiniGamesPlayed = numMiniGamesPlayed + 1,
+          results = results
         )
+      println("Result in copie precedenti: ")
+      println(controllerCopy.results.size)
       controllerCopy.startTimer()
 
   def chooseNextGame(): Unit =
@@ -104,7 +109,9 @@ case class GameController(
   def chooseCurrentGame(gameMode: MiniGames): GameController =
     val gameWrapper = gameMode match
       case FastCalc =>
-        Some(MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc))
+        Some(
+          MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc)
+        )
 
       case CountWords =>
         Some(MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords))
