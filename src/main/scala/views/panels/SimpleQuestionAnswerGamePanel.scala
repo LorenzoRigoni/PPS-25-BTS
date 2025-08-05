@@ -11,14 +11,14 @@ import javax.swing.*
  */
 trait SimpleQuestionAnswerGamePanel extends BaseView:
 
-  protected val inputField  = new JTextField(10)
-  private val feedbackLabel = new JLabel("", SwingConstants.CENTER)
-  private val questionArea  = new JTextArea()
-  private val customPanel   = new JPanel()
+  protected val inputField    = new JTextField(10)
+  protected val feedbackLabel = new JLabel("", SwingConstants.CENTER)
+  protected val titleArea     = new JTextArea()
+  protected val questionPanel = new JPanel()
 
   /**
    * Create the panel with a question and an answer.
-   * @param question
+   * @param title
    *   the initial question of the mini-game
    * @param textInputLabel
    *   the label of the input
@@ -37,13 +37,14 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
    *   the panel created
    */
   def createSimpleQuestionAnswerGamePanel(
-      question: String,
+      title: String,
+      initialQuestion: String,
       textInputLabel: String,
       controller: GameController,
       onNext: GameController => Unit,
       updateLogicAndQuestion: GameController => (GameController, String),
       validate: (GameController, String) => (GameController, Boolean),
-      renderQuestionContent: Option[JPanel => Unit] = None
+      renderQuestionContent: Option[(JPanel, String) => Unit] = None
   ): (JPanel, String => Unit) =
     val panel = new JPanel(new BorderLayout())
 
@@ -52,20 +53,22 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     val innerPanel    = new JPanel()
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
 
-    // Question area
-    questionArea.setText(question)
-    questionArea.setEditable(false)
-    questionArea.setFont(pixelFont15)
-    questionArea.setOpaque(false)
+    // Title area
+    titleArea.setText(title)
+    titleArea.setEditable(false)
+    titleArea.setFont(pixelFont15)
+    titleArea.setOpaque(false)
 
-    val questionWrapper = new JPanel(new FlowLayout(FlowLayout.CENTER))
-    questionWrapper.setOpaque(false)
-    questionWrapper.add(questionArea)
-    panel.add(questionWrapper, BorderLayout.NORTH)
+    // container for title
+    val titleContainer = new JPanel(new FlowLayout(FlowLayout.CENTER))
+    titleContainer.setOpaque(false)
+    titleContainer.add(titleArea)
+    panel.add(titleContainer, BorderLayout.NORTH)
 
-    val customPanelWrapper = new JPanel()
-    customPanelWrapper.setLayout(new GridBagLayout())
-    customPanelWrapper.setOpaque(false)
+    // question panel container
+    val questionPanelContainer = new JPanel()
+    questionPanelContainer.setLayout(new GridBagLayout())
+    questionPanelContainer.setOpaque(false)
 
     val gbc = new GridBagConstraints()
     gbc.fill = GridBagConstraints.HORIZONTAL
@@ -73,11 +76,11 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     gbc.gridx = 0
     gbc.gridy = 0
 
-    // if necessary a custom panel for rich questions (ex. ColoredCount)
-    customPanel.setOpaque(false)
-    renderQuestionContent.foreach(renderer => renderer(customPanel))
-    customPanelWrapper.add(customPanel, gbc)
-    panel.add(customPanelWrapper, BorderLayout.CENTER)
+    // question panel
+    questionPanel.setOpaque(false)
+    renderQuestionContent.foreach(renderer => renderer(questionPanel, initialQuestion))
+    questionPanelContainer.add(questionPanel, gbc)
+    panel.add(questionPanelContainer, BorderLayout.CENTER)
 
     // Input + Feedback
     feedbackLabel.setFont(pixelFont8)
@@ -98,17 +101,20 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     inputPanel.add(feedbackLabel)
     panel.add(inputPanel, BorderLayout.SOUTH)
 
-    (panel, (input: String) => {
-      currentController =
-        submit(currentController, onNext, updateLogicAndQuestion, validate, renderQuestionContent)
-    })
+    (
+      panel,
+      (input: String) => {
+        currentController =
+          submit(currentController, onNext, updateLogicAndQuestion, validate, renderQuestionContent)
+      }
+    )
 
   protected def submit(
       currentController: GameController,
       onNext: GameController => Unit,
       updateLogicAndQuestion: GameController => (GameController, String),
       validate: (GameController, String) => (GameController, Boolean),
-      renderQuestionContent: Option[JPanel => Unit] = None
+      renderQuestionContent: Option[(JPanel, String) => Unit] = None
   ): GameController =
     val input                          = inputField.getText.trim
     val (updatedController, isCorrect) = validate(currentController, input)
@@ -126,14 +132,25 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
 
     newController
 
-  private def showNewQuestion(
+  protected def showNewQuestion(
       newQuestion: String,
-      renderQuestionContent: Option[JPanel => Unit]
+      renderQuestionContent: Option[(JPanel, String) => Unit] = None
   ): Unit =
-    questionArea.setText(newQuestion)
     inputField.setText("")
     feedbackLabel.setVisible(false)
-    customPanel.removeAll()
-    renderQuestionContent.foreach(renderer => renderer(customPanel))
-    customPanel.revalidate()
-    customPanel.repaint()
+    questionPanel.removeAll()
+    renderQuestionContent.foreach(renderer => renderer(questionPanel, newQuestion))
+    questionPanel.revalidate()
+    questionPanel.repaint()
+
+  protected def simpleLabelRenderer: (JPanel, String) => Unit =
+    (container, questionText) =>
+      container.setLayout(new BorderLayout(10, 10))
+      val question = new JTextArea(questionText)
+      question.setFont(pixelFont25)
+      question.setWrapStyleWord(true)
+      question.setLineWrap(true)
+      question.setEditable(false)
+      question.setFocusable(false)
+      container.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 10))
+      container.add(question)
