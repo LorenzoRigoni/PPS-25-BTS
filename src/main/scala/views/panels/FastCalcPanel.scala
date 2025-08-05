@@ -12,16 +12,12 @@ class FastCalcPanel(controller: GameController, question: String, onNext: GameCo
   def panel(): JPanel =
     val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Solve the expression:",
-      "Your result: ",
+      question,
+      "Your result:",
       controller,
       onNext,
       _.getQuestion,
       (ctrl, input) => ctrl.checkAnswer(input),
-      Some(container => {
-        container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
-        val lbl = new JLabel(question)
-        lbl.setFont(pixelFont25)
-        container.add(lbl)
-      })
+      Some(simpleLabelRenderer)
     )
     panel

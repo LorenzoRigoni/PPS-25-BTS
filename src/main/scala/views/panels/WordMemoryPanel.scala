@@ -10,20 +10,12 @@ class WordMemoryPanel(controller: GameController, question: String, onNext: Game
   def panel(): JPanel =
     val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",
+      question,
       "Write all words:",
       controller,
       onNext,
       _.getQuestion,
       (ctrl, input) => ctrl.checkAnswer(input),
-      Some(container => {
-        container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
-
-        // TODO: Hide words after 30 s
-        val words = question.split("\\s+")
-        for word <- words do
-          val lbl = new JLabel(word)
-          lbl.setFont(pixelFont25)
-          container.add(lbl)
-      })
+      Some(simpleLabelRenderer)
     )
     panel
