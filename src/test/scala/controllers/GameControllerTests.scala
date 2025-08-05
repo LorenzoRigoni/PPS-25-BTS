@@ -29,7 +29,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should generate question and record start time") {
     val controller            = GameController().chooseCurrentGame(CountWords)
-    val (newController, question) = controller.getQuestion
+    val (newController, question) = controller.getNewQuestion
     question should not be empty
   }
 

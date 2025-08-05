@@ -16,8 +16,12 @@ class CountWordsPanel(controller: GameController, question: String, onNext: Game
       "Number of words:",
       controller,
       onNext,
-      _.getQuestion,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      _.getNewQuestion,
+      (ctrl, input) =>
+        println(s"Risultati prima: ${ctrl.results}")
+        val (newCtrl, isCorrect) = ctrl.checkAnswer(input)
+        println(s"Risultati dopo: ${newCtrl.results}")
+        (newCtrl, isCorrect),
       Some(container => {
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
         val lbl = new JLabel(question)

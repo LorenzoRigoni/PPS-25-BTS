@@ -118,11 +118,14 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     feedbackLabel.setText(if isCorrect then "Correct!" else "Wrong!")
     feedbackLabel.setForeground(if isCorrect then Color.GREEN else Color.RED)
 
-    if updatedController.isCurrentGameFinished then onNext(updatedController)
+    if currentController.isCurrentGameFinished then
+      println(s"Results: ${currentController.results}")
+      onNext(currentController)
     else
       val (nextController, nextQuestion) = updateLogicAndQuestion(updatedController)
       newController = nextController
       showNewQuestion(nextQuestion, renderQuestionContent)
+      onNext(newController)
 
     newController
 

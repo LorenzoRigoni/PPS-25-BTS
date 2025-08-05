@@ -23,39 +23,34 @@ case class GameStats(results: List[QuestionResult])
  * communications between logics and views.
  * @param remainingMiniGames
  *   The mini-games not played yet
+ * @param numMiniGamesPlayed
+ *   The number of mini-games played
  * @param currentGame
  *   The mini-game playing
- * @param lastQuestion
- *   The last question of the mini-game
- * @param difficulty
- *   The difficulty of the level
- * @param rand
- *   The random variable for choosing the next mini-game
+ * @param results
+ *   The results of the game
  * @param timer
  *   The timer of the mini-games
  * @param timeLeft
  *   The time passed
  * @param viewCallback
  *   The methods to call when an event occurs
+ * @param startTime
+ *   The time at the start of every mini-game
  */
 case class GameController(
     remainingMiniGames: List[MiniGameWrapper] = List(
       MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc),
       MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords),
-      MiniGameAdapter(
-        RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS),
-        RightDirections
-      ), // TODO: create constants file for Right Directions
+      MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections),
       MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount),
-      MiniGameAdapter(
-        WordMemoryLogic(10),
-        WordMemory
-      ) // TODO: create constants file for Word Memory
+      MiniGameAdapter(WordMemoryLogic(10), WordMemory)
     ),
+    numMiniGamesPlayed: Int = 0,
     currentGame: Option[MiniGameWrapper] = None,
     results: List[QuestionResult] = List(),
     timer: Option[Timer] = None,
-    timeLeft: Int = 60, // TODO: 120
+    timeLeft: Int = 10, // TODO: 120
     viewCallback: Option[GameViewCallback] = None,
     startTime: Option[Long] = None
 ):
@@ -76,7 +71,7 @@ case class GameController(
           })
     }
     t.scheduleAtFixedRate(task, 1000, 1000)
-    this.copy(timer = Some(t), timeLeft = 60) // TODO: 120
+    this.copy(timer = Some(t), timeLeft = 10) // TODO: 120
 
   /**
    * Choose in a random way the next mini-game.
@@ -84,7 +79,7 @@ case class GameController(
    *   a copy of the controller with the mini-game to play
    */
   def nextGame: GameController =
-    if remainingMiniGames.isEmpty then
+    if numMiniGamesPlayed == 3 then
       timer.foreach(_.cancel())
       val finalController = this.copy(currentGame = None)
       viewCallback.foreach(_.onGameFinished(finalController))
@@ -93,7 +88,11 @@ case class GameController(
       val nextMiniGame   = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
       val updatedList    = remainingMiniGames.filterNot(_ == nextMiniGame)
       val controllerCopy =
-        this.copy(currentGame = Some(nextMiniGame), remainingMiniGames = updatedList)
+        this.copy(
+          currentGame = Some(nextMiniGame),
+          remainingMiniGames = updatedList,
+          numMiniGamesPlayed = numMiniGamesPlayed + 1
+        )
       controllerCopy.startTimer()
 
   def chooseNextGame(): Unit =
@@ -105,29 +104,23 @@ case class GameController(
   def chooseCurrentGame(gameMode: MiniGames): GameController =
     val gameWrapper = gameMode match
       case FastCalc =>
-        Some(
-          MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc)
-        )
+        Some(MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc))
 
       case CountWords =>
         Some(MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords))
 
       case RightDirections =>
-        Some(
-          MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections)
-        ) // TODO: create constants file for Right Directions
+        Some(MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections))
 
       case ColoredCount =>
         Some(MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount))
 
       case WordMemory =>
-        Some(
-          MiniGameAdapter(WordMemoryLogic(10), WordMemory)
-        ) // TODO: create constants file for Word Memory
+        Some(MiniGameAdapter(WordMemoryLogic(10), WordMemory))
 
-    this.copy(currentGame = gameWrapper, timeLeft = 60) // TODO: 120
+    this.copy(currentGame = gameWrapper, timeLeft = 10) // TODO: 120
 
-  def getQuestion: (GameController, String) =
+  def getNewQuestion: (GameController, String) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
     val updatedController                 = this.copy(
       currentGame = Some(updatedLogic),

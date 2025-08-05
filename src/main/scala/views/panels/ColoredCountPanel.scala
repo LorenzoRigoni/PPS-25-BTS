@@ -31,7 +31,7 @@ class ColoredCountPanel(
       "Your answer:",
       controller,
       onNext,
-      _.getQuestion,
+      _.getNewQuestion,
       (ctrl, input) => ctrl.checkAnswer(input),
       Some(container => {
         container.setLayout(new FlowLayout())

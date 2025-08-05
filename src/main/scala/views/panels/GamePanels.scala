@@ -37,24 +37,24 @@ sealed trait GamePanels:
 
 class GamePanelsImpl extends GamePanels:
   override def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
+    val (updatedController, question) = controller.getNewQuestion
     FastCalcPanel(updatedController, question, onNext).panel()
 
   override def countWordsPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
+    val (updatedController, question) = controller.getNewQuestion
     CountWordsPanel(updatedController, question, onNext).panel()
 
   override def rightDirectionsPanel(
       controller: GameController,
       onNext: GameController => Unit
   ): JPanel =
-    val (updatedController, question) = controller.getQuestion
+    val (updatedController, question) = controller.getNewQuestion
     RightDirectionsPanel(updatedController, question, onNext).panel()
 
   override def wordMemoryPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
+    val (updatedController, question) = controller.getNewQuestion
     WordMemoryPanel(updatedController, question, onNext).panel()
 
   override def coloredCountPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
+    val (updatedController, question) = controller.getNewQuestion
     ColoredCountPanel(updatedController, question, onNext).panel()
