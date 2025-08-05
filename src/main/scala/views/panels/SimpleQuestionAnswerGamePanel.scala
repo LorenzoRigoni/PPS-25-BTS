@@ -145,7 +145,12 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
 
   protected def simpleLabelRenderer: (JPanel, String) => Unit =
     (container, questionText) =>
-      container.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10))
-      val lbl = new JLabel(questionText)
-      lbl.setFont(pixelFont25)
-      container.add(lbl)
+      container.setLayout(new BorderLayout(10, 10))
+      val question = new JTextArea(questionText)
+      question.setFont(pixelFont25)
+      question.setWrapStyleWord(true)
+      question.setLineWrap(true)
+      question.setEditable(false)
+      question.setFocusable(false)
+      container.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 10))
+      container.add(question)
