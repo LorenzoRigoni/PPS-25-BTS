@@ -55,7 +55,7 @@ case class GameController(
     currentGame: Option[MiniGameWrapper] = None,
     results: List[QuestionResult] = List(),
     timer: Option[Timer] = None,
-    timeLeft: Int = 60, // TODO: 120
+    timeLeft: Int = 60,
     viewCallback: Option[GameViewCallback] = None,
     startTime: Option[Long] = None
 ):
@@ -63,7 +63,7 @@ case class GameController(
   private def startTimer(): GameController =
     timer.foreach(_.cancel())
     val t       = new Timer()
-    val seconds = new AtomicInteger(timeLeft) // TODO: 120
+    val seconds = new AtomicInteger(timeLeft)
     val task    = new TimerTask {
       override def run(): Unit =
         val remaining = seconds.decrementAndGet()
@@ -76,7 +76,7 @@ case class GameController(
           })
     }
     t.scheduleAtFixedRate(task, 1000, 1000)
-    this.copy(timer = Some(t), timeLeft = 60) // TODO: 120
+    this.copy(timer = Some(t), timeLeft = 60)
 
   /**
    * Choose in a random way the next mini-game.
@@ -84,16 +84,25 @@ case class GameController(
    *   a copy of the controller with the mini-game to play
    */
   def nextGame: GameController =
-    if remainingMiniGames.isEmpty then
+    if remainingMiniGames.size == 2 then
       timer.foreach(_.cancel())
-      val finalController = this.copy(currentGame = None)
+      val finalController = this.copy(currentGame = None, results = this.results)
       viewCallback.foreach(_.onGameFinished(finalController))
       finalController
     else
-      val nextMiniGame   = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
-      val updatedList    = remainingMiniGames.filterNot(_ == nextMiniGame)
+      val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
+      val updatedList  = remainingMiniGames.filterNot(_ == nextMiniGame)
+      print("Minigame rimasti nella lista aggiornata: \r\n") // ToDO: remove, only for debug
+      updatedList.foreach(el => {
+        print(el.gameId)
+        print("\r\n")
+      })
       val controllerCopy =
-        this.copy(currentGame = Some(nextMiniGame), remainingMiniGames = updatedList)
+        this.copy(
+          currentGame = Some(nextMiniGame),
+          remainingMiniGames = updatedList,
+          results = results
+        )
       controllerCopy.startTimer()
 
   def chooseNextGame(): Unit =
@@ -125,7 +134,7 @@ case class GameController(
           MiniGameAdapter(WordMemoryLogic(10), WordMemory)
         ) // TODO: create constants file for Word Memory
 
-    this.copy(currentGame = gameWrapper, timeLeft = 60) // TODO: 120
+    this.copy(currentGame = gameWrapper, timeLeft = 60)
 
   def getQuestion: (GameController, String) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
