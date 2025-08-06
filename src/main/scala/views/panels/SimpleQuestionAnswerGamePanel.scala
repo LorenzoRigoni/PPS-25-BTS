@@ -118,7 +118,6 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
   ): GameController =
     val input                          = inputField.getText.trim
     val (updatedController, isCorrect) = validate(currentController, input)
-    var newController                  = updatedController
 
     println("Risultati aggiornati: " + updatedController.results)
 
@@ -126,15 +125,15 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     feedbackLabel.setText(if isCorrect then "Correct!" else "Wrong!")
     feedbackLabel.setForeground(if isCorrect then Color.GREEN else Color.RED)
 
-    if updatedController.isCurrentGameFinished then
-      onNext(updatedController.nextGame)
+    if updatedController.isCurrentGameFinished then 
+      val newController = updatedController.nextGame
+      onNext(newController)
+      newController
     else
       val (nextController, nextQuestion) = updateLogicAndQuestion(updatedController)
-      newController = nextController
       showNewQuestion(nextQuestion, renderQuestionContent)
-      onNext(newController)
-
-    newController
+      onNext(nextController)
+      nextController
 
   protected def showNewQuestion(
       newQuestion: String,
