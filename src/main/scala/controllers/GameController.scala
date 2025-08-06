@@ -70,7 +70,7 @@ case class GameController(
             next.currentGame match
               case Some(game) =>
                 viewCallback.foreach(_.onGameChanged(game.gameId, next))
-              case None =>
+              case None       =>
                 viewCallback.foreach(_.onGameFinished(next))
           })
     }
@@ -83,6 +83,7 @@ case class GameController(
    *   a copy of the controller with the mini-game to play
    */
   def nextGame: GameController =
+    // TODO magic number
     if numMiniGamesPlayed == 3 then
       timer.foreach(_.cancel())
       val finalController = this.copy(currentGame = None, results = this.results)
@@ -109,7 +110,9 @@ case class GameController(
   def chooseCurrentGame(gameMode: MiniGames): GameController =
     val gameWrapper = gameMode match
       case FastCalc =>
-        Some(MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc))
+        Some(
+          MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc)
+        )
 
       case CountWords =>
         Some(MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords))
@@ -138,6 +141,7 @@ case class GameController(
     val parsedAnswer = currentGame match
       case Some(wrapper) =>
         wrapper.gameId match
+          // TODO R altri?
           case FastCalc | CountWords | ColoredCount => answer.toInt
           case _                                    => answer
       case None          => answer
