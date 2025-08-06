@@ -3,7 +3,7 @@ package views
 import controllers.{GameController, GameViewCallback}
 import models.{CountWordsLogic, FastCalcLogic}
 import utils.MiniGames
-import utils.MiniGames.{CountWords, FastCalc, RightDirections}
+import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels}
 
 import javax.swing.*
@@ -68,14 +68,29 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
       nextController => updatePanel(showRightDirections(nextController))
     )
 
+  private def showColoredCount(controller: GameController): JPanel =
+    gamePanels.coloredCountPanel(
+      controller,
+      nextController => updatePanel(showColoredCount(nextController))
+    )
+
+  private def showWordMemory(controller: GameController): JPanel =
+    gamePanels.wordMemoryPanel(
+      controller,
+      nextController => updatePanel(showWordMemory(nextController))
+    )
+
   override def onTimerUpdate(secondsLeft: Int): Unit =
     SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $secondsLeft seconds"))
 
   override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
+    println(s"Controller ricevuto con ${controller.results.size} risultati")
     miniGame match
       case FastCalc        => updatePanel(showFastCalc(controller))
       case CountWords      => updatePanel(showCountWords(controller))
       case RightDirections => updatePanel(showRightDirections(controller))
+      case ColoredCount    => updatePanel(showColoredCount(controller))
+      case WordMemory      => updatePanel(showWordMemory(controller))
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>

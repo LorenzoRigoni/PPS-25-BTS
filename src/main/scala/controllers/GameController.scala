@@ -42,20 +42,15 @@ case class GameController(
     remainingMiniGames: List[MiniGameWrapper] = List(
       MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc),
       MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords),
-      MiniGameAdapter(
-        RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS),
-        RightDirections
-      ), // TODO: create constants file for Right Directions
+      MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections),
       MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount),
-      MiniGameAdapter(
-        WordMemoryLogic(10),
-        WordMemory
-      ) // TODO: create constants file for Word Memory
+      MiniGameAdapter(WordMemoryLogic(10), WordMemory)
     ),
+    numMiniGamesPlayed: Int = 0,
     currentGame: Option[MiniGameWrapper] = None,
     results: List[QuestionResult] = List(),
     timer: Option[Timer] = None,
-    timeLeft: Int = 60, // TODO: 120
+    timeLeft: Int = 10, // TODO: 120
     viewCallback: Option[GameViewCallback] = None,
     startTime: Option[Long] = None
 ):
@@ -72,11 +67,15 @@ case class GameController(
           t.cancel()
           SwingUtilities.invokeLater(() => {
             val next = nextGame
-            next.chooseNextGame()
+            next.currentGame match
+              case Some(game) =>
+                viewCallback.foreach(_.onGameChanged(game.gameId, next))
+              case None =>
+                viewCallback.foreach(_.onGameFinished(next))
           })
     }
     t.scheduleAtFixedRate(task, 1000, 1000)
-    this.copy(timer = Some(t), timeLeft = 60) // TODO: 120
+    this.copy(timer = Some(t), timeLeft = 10) // TODO: 120
 
   /**
    * Choose in a random way the next mini-game.
@@ -84,16 +83,21 @@ case class GameController(
    *   a copy of the controller with the mini-game to play
    */
   def nextGame: GameController =
-    if remainingMiniGames.isEmpty then
+    if numMiniGamesPlayed == 3 then
       timer.foreach(_.cancel())
-      val finalController = this.copy(currentGame = None)
+      val finalController = this.copy(currentGame = None, results = this.results)
       viewCallback.foreach(_.onGameFinished(finalController))
       finalController
     else
       val nextMiniGame   = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
       val updatedList    = remainingMiniGames.filterNot(_ == nextMiniGame)
       val controllerCopy =
-        this.copy(currentGame = Some(nextMiniGame), remainingMiniGames = updatedList)
+        this.copy(
+          currentGame = Some(nextMiniGame),
+          remainingMiniGames = updatedList,
+          numMiniGamesPlayed = numMiniGamesPlayed + 1,
+          results = this.results
+        )
       controllerCopy.startTimer()
 
   def chooseNextGame(): Unit =
@@ -105,33 +109,28 @@ case class GameController(
   def chooseCurrentGame(gameMode: MiniGames): GameController =
     val gameWrapper = gameMode match
       case FastCalc =>
-        Some(
-          MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc)
-        )
+        Some(MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS, 0, FAST_CALC_DIFFICULTY_STEP), FastCalc))
 
       case CountWords =>
         Some(MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords))
 
       case RightDirections =>
-        Some(
-          MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections)
-        ) // TODO: create constants file for Right Directions
+        Some(MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections))
 
       case ColoredCount =>
         Some(MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount))
 
       case WordMemory =>
-        Some(
-          MiniGameAdapter(WordMemoryLogic(10), WordMemory)
-        ) // TODO: create constants file for Word Memory
+        Some(MiniGameAdapter(WordMemoryLogic(10), WordMemory))
 
-    this.copy(currentGame = gameWrapper, timeLeft = 60) // TODO: 120
+    this.copy(currentGame = gameWrapper, timeLeft = 10) // TODO: 120
 
   def getQuestion: (GameController, String) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
     val updatedController                 = this.copy(
       currentGame = Some(updatedLogic),
-      startTime = Some(System.currentTimeMillis())
+      startTime = Some(System.currentTimeMillis()),
+      results = this.results
     )
     (updatedController, generatedQuestion)
 
