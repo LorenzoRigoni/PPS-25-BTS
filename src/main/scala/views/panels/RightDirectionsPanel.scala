@@ -8,8 +8,8 @@ import java.awt.event.ActionEvent
 
 class RightDirectionsPanel(
     controller: GameController,
-    question: String,
-    onNext: GameController => Unit
+    onNext: GameController => Unit,
+    question: String
 ) extends SimpleQuestionAnswerGamePanel:
 
   def panel(): JPanel =
@@ -19,7 +19,6 @@ class RightDirectionsPanel(
       "Your answer:",
       controller,
       onNext,
-      _.getQuestion,
       (ctrl, input) => ctrl.checkAnswer(input),
       Some(simpleLabelRenderer)
     )

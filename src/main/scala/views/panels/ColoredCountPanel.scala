@@ -7,8 +7,8 @@ import javax.swing.*
 
 class ColoredCountPanel(
     controller: GameController,
-    question: String,
-    onNext: GameController => Unit
+    onNext: GameController => Unit,
+    question: String
 ) extends SimpleQuestionAnswerGamePanel:
 
   def panel(): JPanel =
@@ -20,7 +20,6 @@ class ColoredCountPanel(
       "Your answer:",
       controller,
       onNext,
-      _.getQuestion,
       (ctrl, input) => ctrl.checkAnswer(input),
       Some((container, _) => renderNumbers(container, numbersPart))
     )
@@ -33,7 +32,6 @@ class ColoredCountPanel(
     val Array(numbersPart, targetColor) = newQuestion.split("\\|").map(_.trim)
     titleArea.setText(s"How many $targetColor numbers?")
     inputField.setText("")
-    feedbackLabel.setVisible(false)
     questionPanel.removeAll()
     renderNumbers(questionPanel, numbersPart)
     questionPanel.revalidate()
