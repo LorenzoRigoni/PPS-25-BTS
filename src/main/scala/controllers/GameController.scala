@@ -67,6 +67,9 @@ case class GameController(
           t.cancel()
           SwingUtilities.invokeLater(() => {
             val next = nextGame
+            println(
+              s"[nextGame] Gontroller restituito da nextGame (thread a parte) : ${next.results}"
+            )
             next.chooseNextGame()
           })
     }
@@ -87,8 +90,8 @@ case class GameController(
       viewCallback.foreach(_.onGameFinished(finalController))
       finalController
     else
-      val nextMiniGame   = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
-      val updatedList    = remainingMiniGames.filterNot(_ == nextMiniGame)
+      val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
+      val updatedList  = remainingMiniGames.filterNot(_ == nextMiniGame)
 
       println(s"[nextGame] Nuovo gioco scelto: ${nextMiniGame.gameId}")
       println(s"[nextGame] Risultati finora: $results")
@@ -107,6 +110,7 @@ case class GameController(
       case Some(game) =>
         viewCallback.foreach(_.onGameChanged(game.gameId, this))
       case None       => ()
+    println(s"[chooseNextGame] Risultati dopo chooseNextGame: $results")
 
   def chooseCurrentGame(gameMode: MiniGames): GameController =
     val gameWrapper = gameMode match
@@ -127,7 +131,9 @@ case class GameController(
       case WordMemory =>
         Some(MiniGameAdapter(WordMemoryLogic(10), WordMemory))
 
-    this.copy(currentGame = gameWrapper, timeLeft = 10) // TODO: 120
+    val ctrl = this.copy(currentGame = gameWrapper, timeLeft = 10) // TODO: 120
+    println(s"[chooseCurrentGame] Risultati dopo chooseCurrentGame: $ctrl.results")
+    ctrl
 
   def getQuestion: (GameController, String) =
     println(s"[getQuestion] Generazione nuova domanda")
