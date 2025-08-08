@@ -11,7 +11,7 @@ import javax.swing.*
  */
 trait SimpleQuestionAnswerGamePanel extends BaseView:
 
-  protected val inputField    = new JTextField(10)
+  protected val inputField    = new JTextField(40)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
 
@@ -80,9 +80,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     questionPanelContainer.add(questionPanel, gbc)
     panel.add(questionPanelContainer, BorderLayout.CENTER)
 
-    inputField.addActionListener(_ =>
-      val newController = submit(controller, onNext, validate, renderQuestionContent)
-    )
+    inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
 
     val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
     val inputLabel = new JLabel(textInputLabel)

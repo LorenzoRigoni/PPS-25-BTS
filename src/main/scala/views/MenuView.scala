@@ -52,9 +52,9 @@ class MenuView(controller: GameController) extends BaseView:
     verticalPanel.setOpaque(false)
 
     val brainAgingButton    =
-      createStyledButton("Age Test", buttonSize, pixelFont15, customBlueColor, whiteColor)
+      createStyledButton("Age Test", buttonSize, pixelFont25, customBlueColor, whiteColor)
     val brainTrainingButton =
-      createStyledButton("Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
+      createStyledButton("Training", buttonSize, pixelFont25, customBlueColor, whiteColor)
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()

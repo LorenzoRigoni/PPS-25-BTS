@@ -2,8 +2,7 @@ package views.panels
 
 import controllers.GameController
 
-import java.awt.FlowLayout
-import javax.swing.{JLabel, JPanel}
+import javax.swing.{JPanel, Timer}
 
 class WordMemoryPanel(controller: GameController, onNext: GameController => Unit, question: String)
     extends SimpleQuestionAnswerGamePanel:
@@ -17,4 +16,16 @@ class WordMemoryPanel(controller: GameController, onNext: GameController => Unit
       (ctrl, input) => ctrl.checkAnswer(input),
       Some(simpleLabelRenderer)
     )
+    inputField.setEnabled(false)
+    val timer      = new Timer(
+      30000,
+      _ =>
+        questionPanel.removeAll()
+        questionPanel.revalidate()
+        questionPanel.repaint()
+        inputField.setEnabled(true)
+        inputField.requestFocusInWindow()
+    )
+    timer.setRepeats(false)
+    timer.start()
     panel
