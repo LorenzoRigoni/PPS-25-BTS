@@ -1,8 +1,9 @@
 package views
 
-import controllers.GameController
+import controllers.{GameController, GameViewCallback}
+import utils.MiniGames
 import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
-import views.panels.{GamePanels, GamePanelsImpl}
+import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
 
 import javax.swing.*
 import java.awt.*
@@ -11,90 +12,58 @@ import java.awt.*
  * This object represents the view of the training mode. In this mode, the user can train his mind
  * with all the mini-games.
  */
-case class BrainTraining(controller: GameController) extends BaseView:
+case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameViewCallback:
+  private val frame             = new JFrame("Brain Training")
+  private val buttonDimension   = new Dimension(300, 50)
+  private val mainPanel         = new JPanel(new BorderLayout())
+  private val buttonPanel       = new JPanel()
+  private val centerPanel       = new JPanel()
+  private val bottomPanel       = new JPanel(new FlowLayout(FlowLayout.LEFT))
+  private val initialController = GameController()
+
   /**
    * Show the brain training view with a mini-game.
    *
    * @param gamePanels
    *   the panel of the mini-game chose
    */
-  def show(initialController: GameController, gamePanels: GamePanels): Unit =
-    val frame           = new JFrame("Brain Testing")
-    val buttonDimension = new Dimension(300, 50)
-    val mainPanel       = new JPanel(new BorderLayout())
-    val buttonPanel     = new JPanel()
-    val centerPanel     = new JPanel()
-    val bottomPanel     = new JPanel(new FlowLayout(FlowLayout.LEFT))
-
+  def show(gamePanels: GamePanels): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
 
-    def loadGamePanel(controller: GameController, miniGameName: String): Unit =
+    def loadGamePanel(controller: GameController, miniGame: MiniGames): Unit =
       centerPanel.removeAll()
       val (newController, question) = controller.getQuestion
-      val panel                     = miniGameName match
-        case "Fast Calc"        =>
-          gamePanels.fastCalcPanel(
-            newController,
-            nextController => loadGamePanel(nextController, miniGameName),
-            question
-          )
-        case "Count Words"      =>
-          gamePanels.countWordsPanel(
-            newController,
-            nextController => loadGamePanel(nextController, miniGameName),
-            question
-          )
-        case "Right Directions" =>
-          gamePanels.rightDirectionsPanel(
-            newController,
-            nextController => loadGamePanel(nextController, miniGameName),
-            question
-          )
-        case "Word Memory"      =>
-          gamePanels.wordMemoryPanel(
-            newController,
-            nextController => loadGamePanel(nextController, miniGameName),
-            question
-          )
-        case "Colored Count"    =>
-          gamePanels.coloredCountPanel(
-            newController,
-            nextController => loadGamePanel(nextController, miniGameName),
-            question
-          )
-        case _                  => new JPanel()
+
+      def onNext(nextController: GameController): Unit =
+        if nextController.isCurrentGameFinished then onGameFinished(nextController)
+        else loadGamePanel(nextController, miniGame)
+
+      val panel = miniGame match
+        case FastCalc        => gamePanels.fastCalcPanel(newController, onNext, question)
+        case CountWords      => gamePanels.countWordsPanel(newController, onNext, question)
+        case RightDirections => gamePanels.rightDirectionsPanel(newController, onNext, question)
+        case ColoredCount    => gamePanels.coloredCountPanel(newController, onNext, question)
+        case WordMemory      => gamePanels.wordMemoryPanel(newController, onNext, question)
+
       centerPanel.add(panel, BorderLayout.CENTER)
       centerPanel.revalidate()
       centerPanel.repaint()
       mainPanel.remove(buttonPanel)
 
-    val buttons = Seq(
-      "Fast Calc",
-      "Count Words",
-      "Right Directions",
-      "Word Memory",
-      "Colored Count"
-    )
-
     centerPanel.setLayout(new BorderLayout())
 
-    buttons.foreach(name => {
+    MiniGames.values.foreach(miniGame => {
       val button = createStyledButton(
-        name,
+        miniGame.displayName,
         buttonDimension,
         pixelFont15,
         customBlueColor,
         whiteColor
       )
       button.addActionListener(_ => {
-        val updatedController = name match
-          case "Fast Calc"        => initialController.chooseCurrentGame(FastCalc)
-          case "Count Words"      => initialController.chooseCurrentGame(CountWords)
-          case "Right Directions" => initialController.chooseCurrentGame(RightDirections)
-          case "Word Memory"      => initialController.chooseCurrentGame(WordMemory)
-          case "Colored Count"    => initialController.chooseCurrentGame(ColoredCount)
-        loadGamePanel(updatedController, name)
+        val updatedController = initialController.chooseCurrentGame(miniGame)
+        loadGamePanel(updatedController, miniGame)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
       buttonPanel.add(Box.createVerticalStrut(40))
@@ -108,7 +77,7 @@ case class BrainTraining(controller: GameController) extends BaseView:
     backButton.addActionListener(_ => {
       frame.dispose()
       if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
-      else BrainTraining.apply(GameController()).show(GameController(), GamePanelsImpl())
+      else BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
     })
 
     bottomPanel.add(backButton)
@@ -119,3 +88,19 @@ case class BrainTraining(controller: GameController) extends BaseView:
 
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
+
+  override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit = ()
+
+  override def onGameFinished(controller: GameController): Unit =
+    SwingUtilities.invokeLater(() =>
+      centerPanel.removeAll()
+      mainPanel.remove(bottomPanel)
+      val numOfCorrectAnswers = controller.getNumberOfCorrectAnswers
+      val numOfWrongAnswers   = controller.getNumberOfWrongAnswers
+      val totalTime           = controller.getTotalTime
+      val panel               =
+        resultPanels.GameResultPanel(controller, numOfCorrectAnswers, numOfWrongAnswers, totalTime)
+      centerPanel.add(panel, BorderLayout.CENTER)
+      mainPanel.revalidate()
+      mainPanel.repaint()
+    )

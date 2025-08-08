@@ -1,6 +1,7 @@
 package models
 
 import scala.util.Random
+import utils.WordsForMiniGames.WORDS
 
 case class WordMemoryLogic(
     rounds: Int,
@@ -8,44 +9,12 @@ case class WordMemoryLogic(
     difficulty: Int = 1,
     lastQuestion: Option[String] = None
 ) extends MiniGameLogic[String, Double]:
-  private val words = Seq(
-    "apple",
-    "bridge",
-    "cloud",
-    "dream",
-    "forest",
-    "guitar",
-    "house",
-    "island",
-    "jungle",
-    "kangaroo",
-    "light",
-    "mountain",
-    "notebook",
-    "ocean",
-    "puzzle",
-    "quick",
-    "river",
-    "stone",
-    "train",
-    "umbrella",
-    "village",
-    "window",
-    "yellow",
-    "zebra",
-    "adventure",
-    "balance",
-    "circle",
-    "dance",
-    "energy",
-    "future"
-  )
 
   override def generateQuestion: (MiniGameLogic[String, Double], String) =
     if isMiniGameFinished then throw new IllegalStateException("No more rounds")
     else
       val wordsNumber = 3 + difficulty
-      val newQuestion = Random.shuffle(words).take(wordsNumber).mkString(" ")
+      val newQuestion = Random.shuffle(WORDS).take(wordsNumber).mkString(" ")
       (
         this.copy(rounds, currentRound + 1, difficulty + 1, lastQuestion = Some(newQuestion)),
         newQuestion

@@ -2,6 +2,7 @@ package models
 
 import scala.util.Random
 import utils.CountWordsConstants.{MIN_NUMBER_WORDS, COUNT_WORDS_DIFFICULTY_STEP}
+import utils.WordsForMiniGames.WORDS
 
 /**
  * This object manage the logic of the Count Words mini-game.
@@ -12,45 +13,13 @@ case class CountWordsLogic(
     difficulty: Int = 1,
     lastQuestion: Option[String] = None
 ) extends MiniGameLogic[Int, Boolean]:
-  private val words = Seq(
-    "apple",
-    "bridge",
-    "cloud",
-    "dream",
-    "forest",
-    "guitar",
-    "house",
-    "island",
-    "jungle",
-    "kangaroo",
-    "light",
-    "mountain",
-    "notebook",
-    "ocean",
-    "puzzle",
-    "quick",
-    "river",
-    "stone",
-    "train",
-    "umbrella",
-    "village",
-    "window",
-    "yellow",
-    "zebra",
-    "adventure",
-    "balance",
-    "circle",
-    "dance",
-    "energy",
-    "future"
-  )
 
   override def generateQuestion: (MiniGameLogic[Int, Boolean], String) =
     val minRand    = math.max(1, difficulty - 1)
     val numOfWords =
       if difficulty <= 2 then MIN_NUMBER_WORDS + Random.between(0, difficulty + 1)
       else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
-    val question   = Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
+    val question   = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
 
     (
       this.copy(
