@@ -48,7 +48,10 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
     title.setHorizontalAlignment(SwingConstants.CENTER)
     val homeButton  =
       createStyledButton("Home", Dimension(200, 40), pixelFont15, customBlueColor, whiteColor)
-    homeButton.addActionListener(_ => MenuView(controller).show())
+    homeButton.addActionListener(_ => {
+      MenuView(controller).show()
+      SwingUtilities.getWindowAncestor(panel).dispose()
+    })
     val bottomPanel = new JPanel()
     bottomPanel.setBackground(whiteColor)
     bottomPanel.add(homeButton)
