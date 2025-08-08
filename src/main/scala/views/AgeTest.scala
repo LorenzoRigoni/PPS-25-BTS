@@ -3,7 +3,7 @@ package views
 import controllers.{GameController, GameViewCallback}
 import models.{CountWordsLogic, FastCalcLogic}
 import utils.MiniGames
-import utils.MiniGames.{CountWords, FastCalc, RightDirections}
+import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels}
 
 import javax.swing.*
@@ -19,7 +19,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     with GameViewCallback:
   private val frame       = new JFrame("Let's play!")
   private val mainPanel   = new JPanel(new BorderLayout())
-  private val timeLabel   = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
   private val centerPanel = new JPanel(new BorderLayout())
 
   /**
@@ -30,9 +29,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
   def show(): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
-
-    timeLabel.setFont(pixelFont15)
-    mainPanel.add(timeLabel, BorderLayout.NORTH)
 
     mainPanel.add(centerPanel, BorderLayout.CENTER)
 
@@ -51,39 +47,83 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     })
 
   private def showFastCalc(controller: GameController): JPanel =
+    val (questionController, question) = controller.getQuestion
     gamePanels.fastCalcPanel(
-      controller,
-      nextController => updatePanel(showFastCalc(nextController))
+      questionController,
+      nextController =>
+        if nextController.isCurrentGameFinished then
+          val updatedController = nextController.nextGame
+          if updatedController.currentGame.isDefined then
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
+        else updatePanel(showFastCalc(nextController)),
+      question
     )
 
   private def showCountWords(controller: GameController): JPanel =
+    val (questionController, question) = controller.getQuestion
     gamePanels.countWordsPanel(
-      controller,
-      nextController => updatePanel(showCountWords(nextController))
+      questionController,
+      nextController =>
+        if nextController.isCurrentGameFinished then
+          val updatedController = nextController.nextGame
+          if updatedController.currentGame.isDefined then
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
+        else updatePanel(showCountWords(nextController)),
+      question
     )
 
   private def showRightDirections(controller: GameController): JPanel =
+    val (questionController, question) = controller.getQuestion
     gamePanels.rightDirectionsPanel(
-      controller,
-      nextController => updatePanel(showRightDirections(nextController))
+      questionController,
+      nextController =>
+        if nextController.isCurrentGameFinished then
+          val updatedController = nextController.nextGame
+          if updatedController.currentGame.isDefined then
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
+        else updatePanel(showRightDirections(nextController)),
+      question
     )
 
-  override def onTimerUpdate(secondsLeft: Int): Unit =
-    SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $secondsLeft seconds"))
+  private def showColoredCount(controller: GameController): JPanel =
+    val (questionController, question) = controller.getQuestion
+    gamePanels.coloredCountPanel(
+      questionController,
+      nextController =>
+        if nextController.isCurrentGameFinished then
+          val updatedController = nextController.nextGame
+          if updatedController.currentGame.isDefined then
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
+        else updatePanel(showColoredCount(nextController)),
+      question
+    )
+
+  private def showWordMemory(controller: GameController): JPanel =
+    val (questionController, question) = controller.getQuestion
+    gamePanels.wordMemoryPanel(
+      questionController,
+      nextController =>
+        if nextController.isCurrentGameFinished then
+          val updatedController = nextController.nextGame
+          if updatedController.currentGame.isDefined then
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
+        else updatePanel(showWordMemory(nextController)),
+      question
+    )
 
   override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
     miniGame match
       case FastCalc        => updatePanel(showFastCalc(controller))
       case CountWords      => updatePanel(showCountWords(controller))
       case RightDirections => updatePanel(showRightDirections(controller))
+      case ColoredCount    => updatePanel(showColoredCount(controller))
+      case WordMemory      => updatePanel(showWordMemory(controller))
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
-      mainPanel.remove(timeLabel)
       centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
       val panel    = resultPanels.TestResultPanel(controller, brainAge)
-      // val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
       centerPanel.add(panel, BorderLayout.CENTER)
       mainPanel.revalidate()
       mainPanel.repaint()

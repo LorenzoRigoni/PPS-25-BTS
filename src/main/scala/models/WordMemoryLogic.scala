@@ -56,4 +56,4 @@ case class WordMemoryLogic(
     val answerWordsNumber   = answer.split(" ").filter(_.nonEmpty).toSet
     answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
 
-  override def isMiniGameFinished: Boolean = currentRound >= rounds
+  override def isMiniGameFinished: Boolean = currentRound == rounds

@@ -7,7 +7,7 @@ import java.awt.*
 /**
  * This objects represents the view of the mini-game Fast Calc.
  */
-class FastCalcPanel(controller: GameController, question: String, onNext: GameController => Unit)
+class FastCalcPanel(controller: GameController, onNext: GameController => Unit, question: String)
     extends SimpleQuestionAnswerGamePanel:
   def panel(): JPanel =
     val (panel, _) = createSimpleQuestionAnswerGamePanel(
@@ -16,7 +16,6 @@ class FastCalcPanel(controller: GameController, question: String, onNext: GameCo
       "Your result:",
       controller,
       onNext,
-      _.getQuestion,
       (ctrl, input) => ctrl.checkAnswer(input),
       Some(simpleLabelRenderer)
     )

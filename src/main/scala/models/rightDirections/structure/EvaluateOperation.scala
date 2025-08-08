@@ -5,7 +5,7 @@ object EvaluateOperation:
   private def stripParentheses(s: String): String =
     s.replace("(", "").replace(")", "").trim
 
-  def evaluateOperationFromString(input: String, currentList: List[Symbol]): List[Symbol] = {
+  def evaluateOperationFromString(input: String, currentList: List[Symbol]): List[Symbol]  = {
     val trimmed: String = input.trim
 
     if (trimmed.contains("and")) {
@@ -20,8 +20,8 @@ object EvaluateOperation:
         .distinct
     } else if (!(trimmed.contains("x") || trimmed.contains("not")))
       List(Symbol.fromString(stripParentheses(trimmed)).get)
-    else 
-      handleNotCondition(trimmed,currentList)
+    else
+      handleNotCondition(trimmed, currentList)
   }
   private def handleNotCondition(trimmed: String, currentList: List[Symbol]): List[Symbol] =
     val partialExtractionOpt = trimmed.split('(').find(_.contains(')'))
@@ -29,7 +29,7 @@ object EvaluateOperation:
     partialExtractionOpt match {
       case Some(nextOperationRaw) if trimmed.contains('(') =>
         val nextOperation = nextOperationRaw.split(')')(0)
-        val replaced = trimmed.replace(s"($nextOperation)", "x").trim
+        val replaced      = trimmed.replace(s"($nextOperation)", "x").trim
 
         val newList: List[Symbol] =
           if (nextOperation.contains("x")) currentList

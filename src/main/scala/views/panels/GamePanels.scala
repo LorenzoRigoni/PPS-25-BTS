@@ -13,7 +13,11 @@ sealed trait GamePanels:
    * @return
    *   the created panel
    */
-  def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel
+  def fastCalcPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel
 
   /**
    * Create a panel for Count Words mini-game.
@@ -21,7 +25,11 @@ sealed trait GamePanels:
    * @return
    *   the created panel
    */
-  def countWordsPanel(controller: GameController, onNext: GameController => Unit): JPanel
+  def countWordsPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel
 
   /**
    * Create a panel for Right Directions mini-game.
@@ -29,32 +37,56 @@ sealed trait GamePanels:
    * @return
    *   the created panel
    */
-  def rightDirectionsPanel(controller: GameController, onNext: GameController => Unit): JPanel
+  def rightDirectionsPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel
 
-  def wordMemoryPanel(controller: GameController, onNext: GameController => Unit): JPanel
+  def wordMemoryPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel
 
-  def coloredCountPanel(controller: GameController, onNext: GameController => Unit): JPanel
+  def coloredCountPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel
 
 class GamePanelsImpl extends GamePanels:
-  override def fastCalcPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
-    FastCalcPanel(updatedController, question, onNext).panel()
+  override def fastCalcPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel =
+    FastCalcPanel(controller, onNext, question).panel()
 
-  override def countWordsPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
-    CountWordsPanel(updatedController, question, onNext).panel()
+  override def countWordsPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel =
+    CountWordsPanel(controller, onNext, question).panel()
 
   override def rightDirectionsPanel(
       controller: GameController,
-      onNext: GameController => Unit
+      onNext: GameController => Unit,
+      question: String
   ): JPanel =
-    val (updatedController, question) = controller.getQuestion
-    RightDirectionsPanel(updatedController, question, onNext).panel()
+    RightDirectionsPanel(controller, onNext, question).panel()
 
-  override def wordMemoryPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
-    WordMemoryPanel(updatedController, question, onNext).panel()
+  override def wordMemoryPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel =
+    WordMemoryPanel(controller, onNext, question).panel()
 
-  override def coloredCountPanel(controller: GameController, onNext: GameController => Unit): JPanel =
-    val (updatedController, question) = controller.getQuestion
-    ColoredCountPanel(updatedController, question, onNext).panel()
+  override def coloredCountPanel(
+      controller: GameController,
+      onNext: GameController => Unit,
+      question: String
+  ): JPanel =
+    ColoredCountPanel(controller, onNext, question).panel()

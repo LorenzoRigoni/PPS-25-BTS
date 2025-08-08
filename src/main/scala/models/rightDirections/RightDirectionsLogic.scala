@@ -34,7 +34,7 @@ case class RightDirectionsLogic(
     (correctAnswer.contains(answerAsSymbol.get) || noAnswerCase)
 
   override def isMiniGameFinished: Boolean =
-    rounds == MAX_NUMBER_OF_ROUNDS
+    currentRound == rounds
 
   @tailrec
   private def generateOperation: String =
