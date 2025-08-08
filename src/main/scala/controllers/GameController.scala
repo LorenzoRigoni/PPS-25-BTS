@@ -133,3 +133,9 @@ case class GameController(
   def isCurrentGameFinished: Boolean = currentGame.exists(_.isMiniGameFinished)
 
   def calculateBrainAge: Int = BrainAgeCalculator.calcBrainAge(GameStats(results.reverse))
+
+  def getNumberOfCorrectAnswers: Int = results.count(_.isCorrect)
+
+  def getNumberOfWrongAnswers: Int = results.count(!_.isCorrect)
+
+  def getTotalTime: Int = (results.map(_.responseTime).sum / 1000).toInt
