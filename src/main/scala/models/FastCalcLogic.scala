@@ -6,7 +6,7 @@ import scala.util.Random
 case class FastCalcLogic(
     rounds: Int,
     currentRound: Int = 0,
-    difficulty: Int,
+    difficulty: Int = 1,
     lastQuestion: Option[String] = None
 ) extends MiniGameLogic[Int, Boolean]:
 
@@ -82,3 +82,4 @@ case class FastCalcLogic(
 
   override def isMiniGameFinished: Boolean =
     !hasNextRound
+  

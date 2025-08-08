@@ -36,4 +36,4 @@ case class ColoredCountLogic(
 
     answer == coloredNumberPart.count(_.split(':')(1) == targetColor)
 
-  override def isMiniGameFinished: Boolean = currentRound >= rounds
+  override def isMiniGameFinished: Boolean = currentRound == rounds

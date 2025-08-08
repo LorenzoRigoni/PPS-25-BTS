@@ -19,7 +19,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     with GameViewCallback:
   private val frame       = new JFrame("Let's play!")
   private val mainPanel   = new JPanel(new BorderLayout())
-  private val timeLabel   = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
   private val centerPanel = new JPanel(new BorderLayout())
 
   /**
@@ -30,9 +29,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
   def show(): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
-
-    timeLabel.setFont(pixelFont15)
-    mainPanel.add(timeLabel, BorderLayout.NORTH)
 
     mainPanel.add(centerPanel, BorderLayout.CENTER)
 
@@ -59,7 +55,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
           if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.gameId, updatedController)
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
         else updatePanel(showFastCalc(nextController)),
       question
     )
@@ -73,7 +69,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
           if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.gameId, updatedController)
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
         else updatePanel(showCountWords(nextController)),
       question
     )
@@ -87,7 +83,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
           if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.gameId, updatedController)
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
         else updatePanel(showRightDirections(nextController)),
       question
     )
@@ -101,7 +97,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
           if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.gameId, updatedController)
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
         else updatePanel(showColoredCount(nextController)),
       question
     )
@@ -115,13 +111,10 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
           if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.gameId, updatedController)
+            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
         else updatePanel(showWordMemory(nextController)),
       question
     )
-
-  override def onTimerUpdate(secondsLeft: Int): Unit =
-    SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $secondsLeft seconds"))
 
   override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
     miniGame match
@@ -135,11 +128,9 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     SwingUtilities.invokeLater(() =>
       println(s"[onGameFinished] Risultati finali: ${controller.results
           .map(r => s"${r.responseTime}ms-${r.isCorrect}")}")
-      mainPanel.remove(timeLabel)
       centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
       val panel    = resultPanels.TestResultPanel(controller, brainAge)
-      // val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
       centerPanel.add(panel, BorderLayout.CENTER)
       mainPanel.revalidate()
       mainPanel.repaint()

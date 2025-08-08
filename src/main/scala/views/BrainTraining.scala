@@ -32,7 +32,7 @@ case class BrainTraining(controller: GameController) extends BaseView:
     def loadGamePanel(controller: GameController, miniGameName: String): Unit =
       centerPanel.removeAll()
       val (newController, question) = controller.getQuestion
-      val panel = miniGameName match
+      val panel                     = miniGameName match
         case "Fast Calc"        =>
           gamePanels.fastCalcPanel(
             newController,

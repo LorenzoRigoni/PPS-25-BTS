@@ -12,7 +12,7 @@ case class CountWordsLogic(
     difficulty: Int = 1,
     lastQuestion: Option[String] = None
 ) extends MiniGameLogic[Int, Boolean]:
-  private val words         = Seq(
+  private val words = Seq(
     "apple",
     "bridge",
     "cloud",
@@ -64,4 +64,4 @@ case class CountWordsLogic(
   override def validateAnswer(answer: Int): Boolean =
     answer == lastQuestion.get.split("\\s+").count(_.nonEmpty)
 
-  override def isMiniGameFinished: Boolean = currentRound >= rounds
+  override def isMiniGameFinished: Boolean = currentRound == rounds

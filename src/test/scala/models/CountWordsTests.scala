@@ -5,7 +5,7 @@ import utils.CountWordsConstants.{COUNT_WORDS_TURNS, COUNT_WORDS_DIFFICULTY_STEP
 
 class CountWordsTests extends AnyFunSuite:
   private val TEST_SENTENCE        = "This is a test sentence"
-  private val countWordsLogic = CountWordsLogic(
+  private val countWordsLogic      = CountWordsLogic(
     COUNT_WORDS_TURNS,
     lastQuestion = Some(TEST_SENTENCE)
   )

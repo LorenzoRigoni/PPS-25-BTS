@@ -83,8 +83,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     var currentController = controller
 
     inputField.addActionListener(_ =>
-      currentController =
-        submit(currentController, onNext, validate, renderQuestionContent)
+      currentController = submit(currentController, onNext, validate, renderQuestionContent)
     )
 
     val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
@@ -97,8 +96,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     (
       panel,
       (input: String) => {
-        currentController =
-          submit(currentController, onNext, validate, renderQuestionContent)
+        currentController = submit(currentController, onNext, validate, renderQuestionContent)
       }
     )
 
@@ -109,9 +107,13 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
       renderQuestionContent: Option[(JPanel, String) => Unit] = None
   ): GameController =
     val input                          = inputField.getText.trim
-    println(s"[submit] Results del controller che sto usando prima di validate: ${currentController.results}")
+    println(
+      s"[submit] Results del controller che sto usando prima di validate: ${currentController.results}"
+    )
     val (updatedController, isCorrect) = validate(currentController, input)
-    println(s"[submit] Results del controller che sto usando dopo di validate: ${updatedController.results}")
+    println(
+      s"[submit] Results del controller che sto usando dopo di validate: ${updatedController.results}"
+    )
 
     if updatedController.isCurrentGameFinished then
       onNext(updatedController)
