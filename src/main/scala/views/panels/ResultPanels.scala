@@ -2,6 +2,7 @@ package views.panels
 
 import controllers.GameController
 import views.*
+
 import java.awt.*
 import javax.swing.*
 import javax.swing.border.EmptyBorder
@@ -39,25 +40,28 @@ sealed trait ResultPanels:
 
 class ResultPanelsImpl extends ResultPanels, BaseView:
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
-    val panel       = new JPanel()
+    val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    panel.setBackground(whiteColor)
+    // panel.setBackground(whiteColor)
     panel.setBorder(new EmptyBorder(50, 50, 50, 50))
     val title       = new JLabel(titleText)
     title.setFont(pixelFont25)
     title.setHorizontalAlignment(SwingConstants.CENTER)
     val homeButton  =
-      createStyledButton("Home", Dimension(200, 40), pixelFont15, customBlueColor, whiteColor)
-    homeButton.addActionListener(_ => MenuView(controller).show())
+      createStyledButton("Home", Dimension(200, 40), pixelFont15, whiteColor, customBlueColor)
+    homeButton.addActionListener(_ => {
+      MenuView(controller).show()
+      SwingUtilities.getWindowAncestor(panel).dispose()
+    })
     val bottomPanel = new JPanel()
-    bottomPanel.setBackground(whiteColor)
+    // bottomPanel.setBackground(whiteColor)
+    bottomPanel.setOpaque(false)
     bottomPanel.add(homeButton)
     panel.add(title, BorderLayout.NORTH)
     panel.add(bottomPanel, BorderLayout.SOUTH)
     panel
 
   override def TestResultPanel(controller: GameController, age: Int): JPanel =
-
     val panel    = createBaseResultPanel(controller, "Your brain age is:")
     val ageLabel = new JLabel(age.toString)
     ageLabel.setFont(pixelFont70)
@@ -82,7 +86,8 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
 
     def resultRow(iconName: String, text: String): JPanel =
       val rowPanel  = new JPanel(new FlowLayout(FlowLayout.CENTER))
-      rowPanel.setBackground(whiteColor)
+      // rowPanel.setBackground()
+      rowPanel.setOpaque(false)
       val iconLabel = new JLabel(loadIcon(iconName, iconSize))
       val textLabel = new JLabel(text)
       textLabel.setFont(pixelFont15)
@@ -92,7 +97,8 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       rowPanel
 
     val resultsPanel = new JPanel()
-    resultsPanel.setBackground(whiteColor)
+    // resultsPanel.setBackground(whiteColor)
+    resultsPanel.setOpaque(false)
     resultsPanel.setLayout(new GridLayout(3, 1, 10, 20))
     resultsPanel.add(resultRow("greenCheck.png", s"Correct Answers: $correctAnswers"))
     resultsPanel.add(resultRow("redCross.png", s"Wrong Answers: $wrongAnswers"))
