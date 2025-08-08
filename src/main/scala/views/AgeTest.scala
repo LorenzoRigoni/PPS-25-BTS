@@ -48,7 +48,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   private def showFastCalc(controller: GameController): JPanel =
     val (questionController, question) = controller.getQuestion
-    println(s"[showPanel] Controller utilizzato per creare i panel: ${questionController.results}")
     gamePanels.fastCalcPanel(
       questionController,
       nextController =>
@@ -62,7 +61,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   private def showCountWords(controller: GameController): JPanel =
     val (questionController, question) = controller.getQuestion
-    println(s"[showPanel] Controller utilizzato per creare i panel: ${questionController.results}")
     gamePanels.countWordsPanel(
       questionController,
       nextController =>
@@ -76,7 +74,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   private def showRightDirections(controller: GameController): JPanel =
     val (questionController, question) = controller.getQuestion
-    println(s"[showPanel] Controller utilizzato per creare i panel: ${questionController.results}")
     gamePanels.rightDirectionsPanel(
       questionController,
       nextController =>
@@ -90,7 +87,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   private def showColoredCount(controller: GameController): JPanel =
     val (questionController, question) = controller.getQuestion
-    println(s"[showPanel] Controller utilizzato per creare i panel: ${questionController.results}")
     gamePanels.coloredCountPanel(
       questionController,
       nextController =>
@@ -104,7 +100,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   private def showWordMemory(controller: GameController): JPanel =
     val (questionController, question) = controller.getQuestion
-    println(s"[showPanel] Controller utilizzato per creare i panel: ${questionController.results}")
     gamePanels.wordMemoryPanel(
       questionController,
       nextController =>
@@ -126,8 +121,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
-      println(s"[onGameFinished] Risultati finali: ${controller.results
-          .map(r => s"${r.responseTime}ms-${r.isCorrect}")}")
       centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
       val panel    = resultPanels.TestResultPanel(controller, brainAge)

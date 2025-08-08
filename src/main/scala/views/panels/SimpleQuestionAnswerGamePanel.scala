@@ -107,13 +107,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
       renderQuestionContent: Option[(JPanel, String) => Unit] = None
   ): GameController =
     val input                          = inputField.getText.trim
-    println(
-      s"[submit] Results del controller che sto usando prima di validate: ${currentController.results}"
-    )
     val (updatedController, isCorrect) = validate(currentController, input)
-    println(
-      s"[submit] Results del controller che sto usando dopo di validate: ${updatedController.results}"
-    )
 
     if updatedController.isCurrentGameFinished then
       onNext(updatedController)
