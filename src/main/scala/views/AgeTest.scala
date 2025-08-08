@@ -53,12 +53,16 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     panelFactory(
       questionController,
       nextController =>
+        println(s"Controller ricevuto da submit: $nextController")
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
-          println(s"Controller in input alla creazione del pannello $updatedController")
+          println(
+            s"Gioco finito, risultati finali: ${updatedController.results}"
+          )
           if updatedController.currentGame.isDefined then
             onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
-        else updatePanel(showGame(nextController, panelFactory, miniGame)),
+        else updatePanel(showGame(nextController, panelFactory, miniGame))
+      ,
       question
     )
 

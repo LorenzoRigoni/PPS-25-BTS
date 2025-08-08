@@ -80,10 +80,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     questionPanelContainer.add(questionPanel, gbc)
     panel.add(questionPanelContainer, BorderLayout.CENTER)
 
-    var currentController = controller
-
     inputField.addActionListener(_ =>
-      currentController = submit(currentController, onNext, validate, renderQuestionContent)
+      val newController = submit(controller, onNext, validate, renderQuestionContent)
     )
 
     val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
@@ -96,7 +94,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     (
       panel,
       (input: String) => {
-        currentController = submit(currentController, onNext, validate, renderQuestionContent)
+        submit(controller, onNext, validate, renderQuestionContent)
       }
     )
 
@@ -108,14 +106,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
   ): GameController =
     val input                          = inputField.getText.trim
     val (updatedController, isCorrect) = validate(currentController, input)
-
-    if updatedController.isCurrentGameFinished then
-      onNext(updatedController)
-      updatedController
-    else
-      val (newController, newQuestion) = updatedController.getQuestion
-      showNewQuestion(newQuestion, renderQuestionContent)
-      newController
+    onNext(updatedController)
+    updatedController
 
   protected def showNewQuestion(
       newQuestion: String,
