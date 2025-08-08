@@ -4,6 +4,7 @@ import models.rightDirections.structure.Symbol
 import models.MiniGameLogic
 import models.rightDirections.structure.{EvaluateOperation, SyntaxTreeBuilder}
 import utils.RightDirectionsConstants.*
+import scala.annotation.tailrec
 
 case class RightDirectionsLogic(
     rounds: Int,
@@ -13,10 +14,7 @@ case class RightDirectionsLogic(
 ) extends MiniGameLogic[String, Boolean]:
 
   override def generateQuestion: (MiniGameLogic[String, Boolean], String) =
-    val question =
-      SyntaxTreeBuilder
-        .buildOperationFromComplexity(difficulty.toInt)
-        .toString
+    val question = trimQuestion(generateOperation)
     (
       this.copy(
         currentRound = currentRound + 1,
@@ -37,3 +35,19 @@ case class RightDirectionsLogic(
 
   override def isMiniGameFinished: Boolean =
     currentRound == rounds
+
+  @tailrec
+  private def generateOperation: String =
+    val question       = SyntaxTreeBuilder
+      .buildOperationFromComplexity(difficulty.toInt)
+      .toString
+    val containsAnswer = EvaluateOperation.evaluateOperationFromString(question, List()).nonEmpty
+
+    if (containsAnswer || CAN_GENERATE_WRONG_OPERATIONS) then question else generateOperation
+
+  private def trimQuestion(question: String): String =
+    question
+      .replaceAll("\\(", "")
+      .replaceAll("\\)", "")
+      .replace("and ", "\nand\n")
+      .replace("or ", "\nor\n")
