@@ -3,6 +3,9 @@ package models
 import scala.util.Random
 import utils.ColoredCountConstants.{COLORS, MIN_NUMBERS, COLORED_COUNT_DIFFICULTY_STEP}
 
+/**
+ * This case class manages the logic of the Colored Count mini-game.
+ */
 case class ColoredCountLogic(
     rounds: Int,
     currentRound: Int = 0,

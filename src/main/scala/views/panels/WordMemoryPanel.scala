@@ -13,7 +13,7 @@ class WordMemoryPanel(controller: GameController, onNext: GameController => Unit
       "Write all words:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) => ctrl.checkAnswer(input).get,
       Some(simpleLabelRenderer)
     )
     inputField.setEnabled(false)

@@ -16,7 +16,7 @@ class FastCalcPanel(controller: GameController, onNext: GameController => Unit, 
       "Your result:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) => ctrl.checkAnswer(input).get,
       Some(simpleLabelRenderer)
     )
     panel

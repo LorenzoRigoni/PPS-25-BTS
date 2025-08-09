@@ -1,14 +1,16 @@
 package controllers
 
-import models.rightDirections.RightDirectionsLogic
-import models.{BrainAgeCalculator, CountWordsLogic, FastCalcLogic, MiniGameAdapter, MiniGameWrapper}
+import models.{BrainAgeCalculator, CountWordsLogic, MiniGameAdapter, MiniGameWrapper}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import utils.MiniGames
+import utils.{MiniGames, QuestionResult}
 import utils.MiniGames.CountWords
 import utils.CountWordsConstants.COUNT_WORDS_TURNS
 import utils.GameControllerConstants.{MAX_NUMBER_OF_MINIGAMES_AGE_TEST, NUM_OF_MINIGAMES_AVAILABLE}
 
+/**
+ * This class tests the game controller.
+ */
 class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should initialize with all mini-games") {
@@ -41,16 +43,16 @@ class GameControllerTests extends AnyFunSuite with Matchers:
   }
 
   test("Controller should check answer correctly") {
-    val logic         = MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords)
-    val controller = GameController(
+    val logic                         = MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords)
+    val controller                    = GameController(
       currentGame = Some(logic),
       startTime = Some(System.currentTimeMillis())
     )
     val (updatedController, question) = controller.getQuestion
-    val correctAnswer = question.split("\\s+").count(_.nonEmpty).toString
+    val correctAnswer                 = question.split("\\s+").count(_.nonEmpty).toString
 
-    updatedController.checkAnswer(correctAnswer)._2 shouldBe true
-    updatedController.checkAnswer((correctAnswer.toInt + 1).toString)._2 shouldBe false
+    updatedController.checkAnswer(correctAnswer).get._2 shouldBe true
+    updatedController.checkAnswer((correctAnswer.toInt + 1).toString).get._2 shouldBe false
   }
 
   test("Controller should calculate brain age based on time and errors") {
@@ -59,9 +61,8 @@ class GameControllerTests extends AnyFunSuite with Matchers:
       QuestionResult(2000, false),
       QuestionResult(800, true)
     )
-    val gameStats       = GameStats(questionResults)
 
-    val brainAge = BrainAgeCalculator.calcBrainAge(gameStats)
+    val brainAge = BrainAgeCalculator.calcBrainAge(questionResults)
     brainAge shouldBe a[Int]
     assert(brainAge >= 20 && brainAge <= 100)
   }

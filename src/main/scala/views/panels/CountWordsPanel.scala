@@ -17,7 +17,7 @@ class CountWordsPanel(controller: GameController, onNext: GameController => Unit
       "Number of words:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) => ctrl.checkAnswer(input).get,
       Some(simpleLabelRenderer)
     )
     panel
