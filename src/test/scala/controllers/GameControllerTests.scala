@@ -49,8 +49,8 @@ class GameControllerTests extends AnyFunSuite with Matchers:
     val (updatedController, question) = controller.getQuestion
     val correctAnswer = question.split("\\s+").count(_.nonEmpty).toString
 
-    updatedController.checkAnswer(correctAnswer)._2 shouldBe true
-    updatedController.checkAnswer((correctAnswer.toInt + 1).toString)._2 shouldBe false
+    updatedController.checkAnswer(correctAnswer).get._2 shouldBe true
+    updatedController.checkAnswer((correctAnswer.toInt + 1).toString).get._2 shouldBe false
   }
 
   test("Controller should calculate brain age based on time and errors") {
@@ -59,9 +59,8 @@ class GameControllerTests extends AnyFunSuite with Matchers:
       QuestionResult(2000, false),
       QuestionResult(800, true)
     )
-    val gameStats       = GameStats(questionResults)
 
-    val brainAge = BrainAgeCalculator.calcBrainAge(gameStats)
+    val brainAge = BrainAgeCalculator.calcBrainAge(questionResults)
     brainAge shouldBe a[Int]
     assert(brainAge >= 20 && brainAge <= 100)
   }

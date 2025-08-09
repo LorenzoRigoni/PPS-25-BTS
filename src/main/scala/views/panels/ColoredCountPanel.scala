@@ -20,7 +20,7 @@ class ColoredCountPanel(
       "Your answer:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) => ctrl.checkAnswer(input).get,
       Some((container, _) => renderNumbers(container, numbersPart))
     )
     panel

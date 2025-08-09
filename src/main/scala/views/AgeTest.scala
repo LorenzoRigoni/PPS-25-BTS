@@ -34,7 +34,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     frame.setVisible(true)
 
     val initialController = GameController(viewCallback = Some(this)).nextGame
-    initialController.chooseNextGame()
+    onGameChanged(initialController.currentGame.get.getGameId, initialController)
 
   private def updatePanel(panel: JPanel): Unit =
     SwingUtilities.invokeLater(() => {

@@ -19,7 +19,7 @@ class RightDirectionsPanel(
       "Your answer:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) => ctrl.checkAnswer(input).get,
       Some(simpleLabelRenderer)
     )
 
