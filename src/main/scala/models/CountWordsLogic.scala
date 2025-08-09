@@ -5,7 +5,7 @@ import utils.CountWordsConstants.{MIN_NUMBER_WORDS, COUNT_WORDS_DIFFICULTY_STEP}
 import utils.WordsForMiniGames.WORDS
 
 /**
- * This object manage the logic of the Count Words mini-game.
+ * This case class manages the logic of the Count Words mini-game.
  */
 case class CountWordsLogic(
     rounds: Int,
