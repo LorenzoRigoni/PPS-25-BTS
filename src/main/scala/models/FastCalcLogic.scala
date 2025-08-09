@@ -14,8 +14,8 @@ case class FastCalcLogic(
     currentRound < rounds
 
   private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] = difficulty match
-    case 1          => Seq("+")
-    case d if d < 4 => Seq("+", "-")
+    case d if d < 3 => Seq("+")
+    case d if d < 6 => Seq("+", "-")
     case _          => Seq("+", "-", "*")
 
   private def getRandomNumber(maxNumber: Int): Int =
@@ -82,4 +82,3 @@ case class FastCalcLogic(
 
   override def isMiniGameFinished: Boolean =
     !hasNextRound
-  
