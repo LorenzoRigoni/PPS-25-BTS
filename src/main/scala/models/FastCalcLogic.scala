@@ -10,16 +10,13 @@ case class FastCalcLogic(
     lastQuestion: Option[String] = None
 ) extends MiniGameLogic[Int, Boolean]:
 
-  private def hasNextRound: Boolean =
-    currentRound < rounds
+  private def getRandomNumber(maxNumber: Int): Int =
+    Random.nextInt(maxNumber) + 1
 
   private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] = difficulty match
     case d if d < 3 => Seq("+")
     case d if d < 6 => Seq("+", "-")
     case _          => Seq("+", "-", "*")
-
-  private def getRandomNumber(maxNumber: Int): Int =
-    Random.nextInt(maxNumber) + 1
 
   private def getRandomOperator(operators: Seq[String]): String =
     val operatorIndex = Random.nextInt(operators.length)
@@ -34,29 +31,41 @@ case class FastCalcLogic(
       n1 :: op1 :: buildExpression(n2 :: nextNumbers, nextOperators)
     case _                                               => Nil
 
-  def getListFromExpression(expression: String): Seq[String] =
+  def getListFromExpression(expression: String): List[String] =
     expression.split(" ").toList
 
-  def calculateResult(expression: Seq[String]): Int =
-    def calculate(expression: Seq[String]): Int = expression match
+  def calculateResult(expression: List[String]): Int =
+    def calculate(expression: List[String]): Int = expression match
       case n :: Nil => n.toInt
       case _        =>
         val index = expression.lastIndexWhere(e => e == "+" || e == "-")
         if index != -1 then
-          val (left, operator :: right) = expression.splitAt(index)
-          val l                         = calculate(left)
-          val r                         = calculate(right)
-          operator match
-            case "+" => l + r
-            case "-" => l - r
+          val (left, right) = expression.splitAt(index)
+          right match
+            case operator :: rightPart =>
+              val l = calculate(left)
+              val r = calculate(rightPart)
+              operator match
+                case "+" => l + r
+                case "-" => l - r
+            case _                     =>
+              throw new IllegalArgumentException(
+                "Malformed expression"
+              )
         else
           val index = expression.lastIndexWhere(e => e == "*" || e == "/")
           if index != -1 then
-            val (left, operator :: right) = expression.splitAt(index)
-            val l                         = calculate(left)
-            val r                         = calculate(right)
-            operator match
-              case "*" => l * r
+            val (left, right) = expression.splitAt(index)
+            right match
+              case operator :: rightPart =>
+                val l = calculate(left)
+                val r = calculate(rightPart)
+                operator match
+                  case "*" => l * r
+              case _                     =>
+                throw new IllegalArgumentException(
+                  "Malformed expression"
+                )
           else throw new IllegalArgumentException(s"Malformed expression!")
     calculate(expression)
 
@@ -64,10 +73,9 @@ case class FastCalcLogic(
     val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
     val maxNumber    = MAX_NUMBER
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
-
-    val numbers    = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
-    val operators  = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
-    val expression = buildExpression(numbers, operators).mkString(" ")
+    val numbers      = (for _ <- 1 to numTerms yield getRandomNumber(maxNumber).toString).toList
+    val operators    = (for _ <- 1 until numTerms yield getRandomOperator(operatorsSeq)).toList
+    val expression   = buildExpression(numbers, operators).mkString(" ")
     (
       this.copy(
         currentRound = currentRound + 1,
@@ -81,4 +89,4 @@ case class FastCalcLogic(
     calculateResult(getListFromExpression(lastQuestion.get)) == answer
 
   override def isMiniGameFinished: Boolean =
-    !hasNextRound
+    !(currentRound < rounds)
