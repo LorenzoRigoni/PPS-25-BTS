@@ -1,6 +1,8 @@
 package views
 
 import controllers.GameController
+import utils.GUIConstants
+import utils.GUIConstants.RULES
 import views.panels.{BackgroundImagePanel, GamePanels, GamePanelsImpl, ResultPanelsImpl}
 
 import javax.swing.*
@@ -14,7 +16,22 @@ import javax.imageio.ImageIO
  * Training mode.
  */
 class MenuView(controller: GameController) extends BaseView:
-  private val frame = new JFrame("Menù")
+  private val frame                       = new JFrame("Menù")
+  private def showGameRulesDialog(): Unit =
+    val textArea   = new JTextArea(RULES)
+    textArea.setEditable(false)
+    textArea.setLineWrap(true)
+    textArea.setWrapStyleWord(true)
+    textArea.setFont(pixelFont15)
+    val scrollPane = new JScrollPane(textArea)
+    val size       = Math.min(GUIConstants.screenWidth, GUIConstants.screenHeight) / 2
+    scrollPane.setPreferredSize(new Dimension(size, size))
+    JOptionPane.showMessageDialog(
+      frame,
+      scrollPane,
+      "Game Rules",
+      JOptionPane.INFORMATION_MESSAGE
+    )
 
   /**
    * Show the Menu view.
@@ -39,6 +56,8 @@ class MenuView(controller: GameController) extends BaseView:
       createStyledButton("Age Test", buttonSize, pixelFont25, customBlueColor, whiteColor)
     val brainTrainingButton =
       createStyledButton("Training", buttonSize, pixelFont25, customBlueColor, whiteColor)
+    val gameRulesButton     =
+      createStyledButton("Game Rules", buttonSize, pixelFont25, customBlueColor, whiteColor)
 
     brainAgingButton.addActionListener(_ => {
       frame.dispose()
@@ -49,10 +68,13 @@ class MenuView(controller: GameController) extends BaseView:
       frame.dispose()
       BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
     )
+    gameRulesButton.addActionListener(_ => showGameRulesDialog())
 
     verticalPanel.add(brainAgingButton)
     verticalPanel.add(Box.createVerticalStrut(30))
     verticalPanel.add(brainTrainingButton)
+    verticalPanel.add(Box.createVerticalStrut(30))
+    verticalPanel.add(gameRulesButton)
     verticalPanel.add(Box.createVerticalStrut(120))
 
     buttonPanel.setOpaque(false)
