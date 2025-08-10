@@ -43,7 +43,6 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
     val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    // panel.setBackground(whiteColor)
     panel.setBorder(new EmptyBorder(50, 50, 50, 50))
     val title       = new JLabel(titleText)
     title.setFont(pixelFont25)
@@ -55,7 +54,6 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       SwingUtilities.getWindowAncestor(panel).dispose()
     })
     val bottomPanel = new JPanel()
-    // bottomPanel.setBackground(whiteColor)
     bottomPanel.setOpaque(false)
     bottomPanel.add(homeButton)
     panel.add(title, BorderLayout.NORTH)
@@ -87,7 +85,6 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
 
     def resultRow(iconName: String, text: String): JPanel =
       val rowPanel  = new JPanel(new FlowLayout(FlowLayout.CENTER))
-      // rowPanel.setBackground()
       rowPanel.setOpaque(false)
       val iconLabel = new JLabel(loadIcon(iconName, iconSize))
       val textLabel = new JLabel(text)
@@ -98,7 +95,6 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       rowPanel
 
     val resultsPanel = new JPanel()
-    // resultsPanel.setBackground(whiteColor)
     resultsPanel.setOpaque(false)
     resultsPanel.setLayout(new GridLayout(3, 1, 10, 20))
     resultsPanel.add(resultRow("greenCheck.png", s"Correct Answers: $correctAnswers"))

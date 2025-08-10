@@ -1,14 +1,11 @@
 package views
 
 import controllers.GameController
-import views.panels.{BackgroundImagePanel, GamePanels, GamePanelsImpl, ResultPanelsImpl}
+import views.panels.{BackgroundImagePanel, GamePanelsImpl, ResultPanelsImpl}
 import utils.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 
 /**
  * This object represents the initial menu where the player can choose between Age Test and Brain
@@ -46,37 +43,41 @@ class MenuView(controller: GameController) extends BaseView:
     val buttonPanel = new JPanel()
     buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT))
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30))
+    buttonPanel.setOpaque(false)
 
     val verticalPanel = new JPanel()
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
 
-    val brainAgingButton    =
-      createStyledButton("Age Test", buttonSize, pixelFont25, customBlueColor, whiteColor)
-    val brainTrainingButton =
-      createStyledButton("Training", buttonSize, pixelFont25, customBlueColor, whiteColor)
-    val gameRulesButton     =
-      createStyledButton("Game Rules", buttonSize, pixelFont25, customBlueColor, whiteColor)
-
-    brainAgingButton.addActionListener(_ => {
-      frame.dispose()
-      AgeTest.apply(GamePanelsImpl(), ResultPanelsImpl()).show()
-    })
-
-    brainTrainingButton.addActionListener(_ =>
-      frame.dispose()
-      BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
+    val buttonsData = Seq(
+      (
+        "Age Test",
+        () => {
+          frame.dispose()
+          AgeTest(GamePanelsImpl(), ResultPanelsImpl()).show()
+        }
+      ),
+      (
+        "Training",
+        () => {
+          frame.dispose()
+          BrainTraining(ResultPanelsImpl()).show(GamePanelsImpl())
+        }
+      ),
+      ("Game Rules", () => showGameRulesDialog())
     )
-    gameRulesButton.addActionListener(_ => showGameRulesDialog())
 
-    verticalPanel.add(brainAgingButton)
-    verticalPanel.add(Box.createVerticalStrut(30))
-    verticalPanel.add(brainTrainingButton)
-    verticalPanel.add(Box.createVerticalStrut(30))
-    verticalPanel.add(gameRulesButton)
-    verticalPanel.add(Box.createVerticalStrut(120))
+    val components = for ((btnData, idx) <- buttonsData.zipWithIndex) yield {
+      val button =
+        createStyledButton(btnData._1, buttonSize, pixelFont25, customBlueColor, whiteColor)
+      button.addActionListener(_ => btnData._2())
+      val strut  =
+        if (idx < buttonsData.size - 1) Box.createVerticalStrut(30)
+        else Box.createVerticalStrut(120)
+      Seq(button, strut)
+    }
+    components.flatten.foreach(verticalPanel.add)
 
-    buttonPanel.setOpaque(false)
     buttonPanel.add(verticalPanel)
     backgroundPanel.add(buttonPanel, BorderLayout.SOUTH)
 
