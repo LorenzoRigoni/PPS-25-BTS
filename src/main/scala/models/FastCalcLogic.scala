@@ -28,48 +28,50 @@ case class FastCalcLogic(
   private def buildExpression(
       numbers: List[String],
       operators: List[String]
-  ): List[String] = (numbers, operators) match
-    case (n1 :: Nil, Nil)                                => List(n1)
-    case (n1 :: n2 :: nextNumbers, op1 :: nextOperators) =>
-      n1 :: op1 :: buildExpression(n2 :: nextNumbers, nextOperators)
-    case _                                               => Nil
+  ): List[String] =
+    for {
+      (n, op) <- numbers.zipAll(operators, "", "")
+      token   <- List(n, op) if token.nonEmpty
+    } yield token
 
   def getListFromExpression(expression: String): List[String] =
     expression.split(" ").toList
 
   def calculateResult(expression: List[String]): Int =
-    def calculate(expression: List[String]): Int = expression match
+    def evalOperators(
+        expr: List[String],
+        ops: Set[String],
+        f: (Int, Int, String) => Int
+    ): Option[Int] = {
+      val index = expr.lastIndexWhere(ops.contains)
+      if index == -1 then None
+      else
+        val (left, right) = expr.splitAt(index)
+        right match
+          case op :: rightPart =>
+            val l = calculate(left)
+            val r = calculate(rightPart)
+            Some(f(l, r, op))
+          case _               => throw new IllegalArgumentException("Malformed expression")
+    }
+    def calculate(expr: List[String]): Int = expr match
       case n :: Nil => n.toInt
       case _        =>
-        val index = expression.lastIndexWhere(e => e == "+" || e == "-")
-        if index != -1 then
-          val (left, right) = expression.splitAt(index)
-          right match
-            case operator :: rightPart =>
-              val l = calculate(left)
-              val r = calculate(rightPart)
-              operator match
-                case "+" => l + r
-                case "-" => l - r
-            case _                     =>
-              throw new IllegalArgumentException(
-                "Malformed expression"
-              )
-        else
-          val index = expression.lastIndexWhere(e => e == "*" || e == "/")
-          if index != -1 then
-            val (left, right) = expression.splitAt(index)
-            right match
-              case operator :: rightPart =>
-                val l = calculate(left)
-                val r = calculate(rightPart)
-                operator match
+        evalOperators(expr, Set("+", "-"), (l, r, op) => if op == "+" then l + r else l - r) match
+          case Some(value) => value
+          case None        =>
+            evalOperators(
+              expr,
+              Set("*", "/"),
+              (l, r, op) =>
+                op match
                   case "*" => l * r
-              case _                     =>
-                throw new IllegalArgumentException(
-                  "Malformed expression"
-                )
-          else throw new IllegalArgumentException(s"Malformed expression!")
+                  case "/" =>
+                    if r == 0 then throw new ArithmeticException("Division by zero")
+                    else l / r
+            ) match
+              case Some(value) => value
+              case None        => throw new IllegalArgumentException("Malformed expression")
     calculate(expression)
 
   override def generateQuestion: (MiniGameLogic[Int, Boolean], String) =
