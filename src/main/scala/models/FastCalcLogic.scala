@@ -3,6 +3,9 @@ package models
 import utils.FastCalcConstants.*
 import scala.util.Random
 
+/**
+ * This case class manages the logic of the Fast Calc mini-game.
+ */
 case class FastCalcLogic(
     rounds: Int,
     currentRound: Int = 0,
