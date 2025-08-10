@@ -2,16 +2,17 @@ package models
 
 import org.scalatest.funsuite.AnyFunSuite
 import utils.FastCalcConstants.FAST_CALC_DIFFICULTY_STEP
+import utils.SimpleTextQuestion
 
 class FastCalcTests extends AnyFunSuite:
   private val TEST_DIFFICULTY_INDEX = 3
-  private val TEST_EXPRESSION       = "8 + 4 * 2"
+  private val TEST_EXPRESSION       = SimpleTextQuestion("8 + 4 * 2")
   private val logic                 = FastCalcLogic(
     rounds = 5,
     difficulty = TEST_DIFFICULTY_INDEX,
     lastQuestion = Some(TEST_EXPRESSION)
   )
-  private val CORRECT_ANSWER        = logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION))
+  private val CORRECT_ANSWER        = logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION.text))
   private val WRONG_ANSWER          = CORRECT_ANSWER + 1
 
   test("The validator of the mini-game should return true for the correct answers") {
@@ -27,7 +28,7 @@ class FastCalcTests extends AnyFunSuite:
   ) {
     val (newLogic, question) = logic.generateQuestion
     println(s"Generated question: $question")
-    assert(question.nonEmpty)
+    assert(question.text.nonEmpty)
     assert(
       newLogic
         .asInstanceOf[FastCalcLogic]
