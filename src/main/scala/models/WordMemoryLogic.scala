@@ -16,15 +16,15 @@ case class WordMemoryLogic(
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, String, Double], SimpleTextQuestion) =
-  
-      val wordsNumber    = 3 + difficulty
-      val wordsGenerated = Random.shuffle(WORDS).take(wordsNumber).mkString(" ")
-      val question       = SimpleTextQuestion(wordsGenerated)
-      (
+
+    val wordsNumber    = 3 + difficulty
+    val wordsGenerated = Random.shuffle(WORDS).take(wordsNumber).mkString(" ")
+    val question       = SimpleTextQuestion(wordsGenerated)
+    (
       this.copy(
         currentRound = currentRound + 1,
         difficulty = difficulty + 1,
-        lastQuestion = Some(newQuestion)
+        lastQuestion = Some(question)
       ),
       question
     )
@@ -33,7 +33,7 @@ case class WordMemoryLogic(
 
   override def validateAnswer(answer: String): Double =
     lastQuestion.fold(0.0)(question =>
-      val expectedWordsNumber = question.toWordSet
+      val expectedWordsNumber = question.text.toWordSet
       val answerWordsNumber   = answer.toWordSet
       answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
     )
