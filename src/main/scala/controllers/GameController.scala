@@ -11,13 +11,9 @@ import utils.{FastCalcConstants, MiniGames}
 import utils.MiniGames.*
 import utils.GameControllerConstants.*
 import utils.QuestionResult
+import utils.Question
 
 import scala.util.Random
-
-extension (results: List[QuestionResult])
-  def correctAnswers: Int     = results.count(_.isCorrect)
-  def wrongAnswers: Int       = results.count(!_.isCorrect)
-  def totalTimeInSeconds: Int = (results.map(_.responseTime).sum / 1000).toInt
 
 /**
  * This case class represents the controller of the game. It manages the game loop and the
@@ -37,23 +33,30 @@ extension (results: List[QuestionResult])
  *   The callback to the view to do when an event occurs
  */
 case class GameController(
-    currentGame: Option[MiniGameWrapper] = None,
+    currentGame: Option[MiniGameWrapper[_, _, _]] = None,
     remainingMiniGames: List[MiniGames] = MiniGames.values.toList,
-    results: List[QuestionResult] = List.empty,
+    results: List[utils.QuestionResult] = List.empty,
     numMiniGamesPlayed: Int = 0,
     startTime: Option[Long] = None,
     viewCallback: Option[GameViewCallback] = None
 ):
 
-  private val miniGamesFactory: Map[MiniGames, () => MiniGameWrapper] = Map(
-    FastCalc        -> (() => MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS), FastCalc)),
-    CountWords      -> (() => MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords)),
+  private val miniGamesFactory: Map[MiniGames, () => MiniGameWrapper[_, _, _]] = Map(
+    FastCalc        -> (() => MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS), FastCalc, _.toInt)),
+    CountWords      -> (() => MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords, _.toInt)),
     RightDirections -> (() =>
-      MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections)
+      MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections, identity)
     ),
-    ColoredCount    -> (() => MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount)),
-    WordMemory      -> (() => MiniGameAdapter(WordMemoryLogic(WORD_MEMORY_TURNS), WordMemory))
+    ColoredCount    -> (() =>
+      MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount, _.toInt)
+    ),
+    WordMemory      -> (() => MiniGameAdapter(WordMemoryLogic(WORD_MEMORY_TURNS), WordMemory, identity))
   )
+
+  extension (results: List[utils.QuestionResult])
+    def correctAnswers: Int             = results.count(_.isCorrect)
+    def wrongAnswers: Int               = results.count(!_.isCorrect)
+    private def totalTimeInSeconds: Int = (results.map(_.responseTime).sum / 1000).toInt
 
   /**
    * Choose in a random way the next mini-game.
@@ -87,7 +90,7 @@ case class GameController(
   def chooseCurrentGame(miniGame: MiniGames): GameController =
     this.copy(currentGame = miniGamesFactory.get(miniGame).map(_.apply()))
 
-  def getQuestion: (GameController, String) =
+  def getQuestion: (GameController, Question) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
     val updatedController                 = this.copy(
       currentGame = Some(updatedLogic),
@@ -108,9 +111,7 @@ case class GameController(
       game      <- currentGame
       startTime <- this.startTime
     yield
-      val parsedAnswer = game.getGameId match
-        case FastCalc | CountWords | ColoredCount => answer.toInt
-        case _                                    => answer
+      val parsedAnswer = game.parseAnswer(answer)
 
       val elapsedTime     = System.currentTimeMillis() - startTime
       val isAnswerCorrect = game.validateAnswer(parsedAnswer) match
@@ -120,7 +121,7 @@ case class GameController(
 
       val updatedController = this.copy(
         currentGame = Some(game),
-        results = QuestionResult(elapsedTime, isAnswerCorrect) :: results
+        results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results
       )
       (updatedController, isAnswerCorrect)
 

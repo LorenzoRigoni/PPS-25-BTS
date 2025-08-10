@@ -2,26 +2,24 @@ package models
 
 import org.scalatest.funsuite.AnyFunSuite
 import utils.FastCalcConstants.FAST_CALC_DIFFICULTY_STEP
+import utils.SimpleTextQuestion
 
 class FastCalcTests extends AnyFunSuite:
   private val TEST_DIFFICULTY_INDEX = 3
-
   // CASE 1: Positive Result
-  private val TEST_EXPRESSION_POSITIVE_RESULT = "8 + 4 * 2"
-  private val logic                           = FastCalcLogic(
+  private val TEST_EXPRESSION_POSITIVE_RESULT       = SimpleTextQuestion("8 + 4 * 2")
+  private val logic                 = FastCalcLogic(
     rounds = 5,
     difficulty = TEST_DIFFICULTY_INDEX,
     lastQuestion = Some(TEST_EXPRESSION_POSITIVE_RESULT)
   )
-  private val CORRECT_ANSWER1                 =
-    logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION_POSITIVE_RESULT))
+  private val CORRECT_ANSWER1                 = logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION_POSITIVE_RESULT.text))
   private val WRONG_ANSWER1                   = CORRECT_ANSWER1 + 1
 
   // CASE 2: Negative Result
-  private val TEST_EXPRESSION_NEGATIVE_RESULT = "7 - 4 * 2"
+  private val TEST_EXPRESSION_NEGATIVE_RESULT = SimpleTextQuestion("7 - 4 * 2")
   private val logic2                          = logic.copy(lastQuestion = Some(TEST_EXPRESSION_NEGATIVE_RESULT))
-  private val CORRECT_ANSWER2                 =
-    logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION_NEGATIVE_RESULT))
+  private val CORRECT_ANSWER2                 = logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION_NEGATIVE_RESULT.text))
   private val WRONG_ANSWER2                   = CORRECT_ANSWER2 + 1
 
   test(
@@ -64,7 +62,7 @@ class FastCalcTests extends AnyFunSuite:
     "The method generateQuestion should return a non-empty string and new logic with difficulty increased"
   ) {
     val (newLogic, question) = logic.generateQuestion
-    assert(question.nonEmpty)
+    assert(question.text.nonEmpty)
     assert(
       newLogic
         .asInstanceOf[FastCalcLogic]

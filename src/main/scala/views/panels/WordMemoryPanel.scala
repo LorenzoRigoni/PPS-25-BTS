@@ -1,11 +1,12 @@
 package views.panels
 
 import controllers.GameController
+import utils.SimpleTextQuestion
 
 import javax.swing.{JPanel, Timer}
 
-class WordMemoryPanel(controller: GameController, onNext: GameController => Unit, question: String)
-    extends SimpleQuestionAnswerGamePanel:
+class WordMemoryPanel(controller: GameController, onNext: GameController => Unit, question: SimpleTextQuestion)
+    extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
   def panel(): JPanel =
     val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",

@@ -2,6 +2,7 @@ package models
 
 import scala.util.Random
 import utils.WordsForMiniGames.WORDS
+import utils.SimpleTextQuestion
 
 /**
  * This case class manages the logic of the Word Memory mini-game.
@@ -10,19 +11,22 @@ case class WordMemoryLogic(
     rounds: Int,
     currentRound: Int = 0,
     difficulty: Int = 1,
-    lastQuestion: Option[String] = None
-) extends MiniGameLogic[String, Double]:
+    lastQuestion: Option[SimpleTextQuestion] = None
+) extends MiniGameLogic[SimpleTextQuestion, String, Double]:
 
-  override def generateQuestion: (MiniGameLogic[String, Double], String) =
-    val wordsNumber = 3 + difficulty
-    val newQuestion = Random.shuffle(WORDS).take(wordsNumber).mkString(" ")
-    (
+  override def generateQuestion
+      : (MiniGameLogic[SimpleTextQuestion, String, Double], SimpleTextQuestion) =
+  
+      val wordsNumber    = 3 + difficulty
+      val wordsGenerated = Random.shuffle(WORDS).take(wordsNumber).mkString(" ")
+      val question       = SimpleTextQuestion(wordsGenerated)
+      (
       this.copy(
         currentRound = currentRound + 1,
         difficulty = difficulty + 1,
         lastQuestion = Some(newQuestion)
       ),
-      newQuestion
+      question
     )
 
   extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
