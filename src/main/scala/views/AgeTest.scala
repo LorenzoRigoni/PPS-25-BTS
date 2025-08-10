@@ -28,14 +28,12 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
   def show(): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
-
     mainPanel.add(centerPanel, BorderLayout.CENTER)
-
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
 
     val initialController = GameController(viewCallback = Some(this)).nextGame
-    onGameChanged(initialController.currentGame.get.getGameId, initialController)
+    initialController.currentGame.foreach(game => onGameChanged(game.getGameId, initialController))
 
   private def updatePanel(panel: JPanel): Unit =
     SwingUtilities.invokeLater(() => {
@@ -54,16 +52,12 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     panelFactory(
       questionController,
       nextController =>
-        println(s"Controller ricevuto da submit: $nextController")
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
-          println(
-            s"Gioco finito, risultati finali: ${updatedController.results}"
+          updatedController.currentGame.foreach(game =>
+            onGameChanged(game.getGameId, updatedController)
           )
-          if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
-        else updatePanel(showGame(nextController, panelFactory, miniGame))
-      ,
+        else updatePanel(showGame(nextController, panelFactory, miniGame)),
       question
     )
 
