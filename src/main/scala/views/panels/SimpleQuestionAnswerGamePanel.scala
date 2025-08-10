@@ -3,6 +3,7 @@ package views.panels
 import controllers.GameController
 import views.*
 import utils.{Question, SimpleTextQuestion}
+import utils.GUIConstants.*
 
 import java.awt.*
 import javax.swing.*

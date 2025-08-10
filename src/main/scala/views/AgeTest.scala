@@ -5,6 +5,7 @@ import models.*
 import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
 import utils.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, ResultPanels}
+import utils.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
@@ -25,14 +26,12 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
   def show(): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
-
     mainPanel.add(centerPanel, BorderLayout.CENTER)
-
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
 
     val initialController = GameController(viewCallback = Some(this)).nextGame
-    onGameChanged(initialController.currentGame.get.getGameId, initialController)
+    initialController.currentGame.foreach(game => onGameChanged(game.getGameId, initialController))
 
   private def updatePanel(panel: JPanel): Unit =
     SwingUtilities.invokeLater(() => {
@@ -53,8 +52,9 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
       nextController => {
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
-          if updatedController.currentGame.isDefined then
-            onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
+          updatedController.currentGame.foreach(game =>
+            onGameChanged(game.getGameId, updatedController)
+          )
         else
           onGameChanged(miniGame, nextController)
       },
