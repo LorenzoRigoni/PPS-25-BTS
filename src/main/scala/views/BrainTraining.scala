@@ -1,7 +1,7 @@
 package views
 
 import controllers.{GameController, GameViewCallback}
-import utils.MiniGames
+import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
 import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
 
@@ -31,7 +31,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
 
-    def loadGamePanel(controller: GameController, miniGame: MiniGames): Unit =
+    def loadGamePanel[Q <: Question](controller: GameController, miniGame: MiniGames): Unit =
       centerPanel.removeAll()
       val (newController, question) = controller.getQuestion
 
@@ -39,12 +39,17 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
         if nextController.isCurrentGameFinished then onGameFinished(nextController)
         else loadGamePanel(nextController, miniGame)
 
-      val panel = miniGame match
-        case FastCalc        => gamePanels.fastCalcPanel(newController, onNext, question)
-        case CountWords      => gamePanels.countWordsPanel(newController, onNext, question)
-        case RightDirections => gamePanels.rightDirectionsPanel(newController, onNext, question)
-        case ColoredCount    => gamePanels.coloredCountPanel(newController, onNext, question)
-        case WordMemory      => gamePanels.wordMemoryPanel(newController, onNext, question)
+      val panel = (miniGame, question) match
+        case (FastCalc | CountWords | RightDirections | WordMemory, q: SimpleTextQuestion) =>
+          miniGame match
+            case FastCalc        => gamePanels.fastCalcPanel(newController, onNext, q)
+            case CountWords      => gamePanels.countWordsPanel(newController, onNext, q)
+            case RightDirections => gamePanels.rightDirectionsPanel(newController, onNext, q)
+            case WordMemory      => gamePanels.wordMemoryPanel(newController, onNext, q)
+            case _               => throw new IllegalArgumentException("Type of question not handled")
+        case (ColoredCount, q: ColoredCountQuestion)                                       =>
+          gamePanels.coloredCountPanel(newController, onNext, q)
+        case _ => throw new IllegalArgumentException("Type of question not handled")
 
       centerPanel.add(panel, BorderLayout.CENTER)
       centerPanel.revalidate()

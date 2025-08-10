@@ -1,6 +1,7 @@
 package views.panels
 
 import controllers.GameController
+import utils.SimpleTextQuestion
 
 import javax.swing.*
 import java.awt.*
@@ -9,8 +10,8 @@ import java.awt.event.ActionEvent
 class RightDirectionsPanel(
     controller: GameController,
     onNext: GameController => Unit,
-    question: String
-) extends SimpleQuestionAnswerGamePanel:
+    question: SimpleTextQuestion
+) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
 
   def panel(): JPanel =
     val (panel, externalSubmit) = createSimpleQuestionAnswerGamePanel(

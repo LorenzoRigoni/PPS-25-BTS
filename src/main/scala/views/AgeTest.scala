@@ -2,8 +2,8 @@ package views
 
 import controllers.{GameController, GameViewCallback}
 import models.*
-import utils.MiniGames
-import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
+import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
+import utils.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, ResultPanels}
 
 import javax.swing.*
@@ -21,8 +21,6 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
 
   /**
    * Show the age test view with a mini-game.
-   * @param gamePanels
-   *   the mini-game to play
    */
   def show(): Unit =
     frame.setBackground(whiteColor)
@@ -44,36 +42,42 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
       centerPanel.repaint()
     })
 
-  private def showGame(
+  private def showGame[Q <: Question](
       controller: GameController,
-      panelFactory: (GameController, GameController => Unit, String) => JPanel,
-      miniGame: MiniGames
+      panelFactory: (GameController, GameController => Unit, Q) => JPanel,
+      miniGame: MiniGames,
+      question: Q
   ): JPanel =
-    val (questionController, question) = controller.getQuestion
     panelFactory(
-      questionController,
-      nextController =>
-        println(s"Controller ricevuto da submit: $nextController")
+      controller,
+      nextController => {
         if nextController.isCurrentGameFinished then
           val updatedController = nextController.nextGame
-          println(
-            s"Gioco finito, risultati finali: ${updatedController.results}"
-          )
           if updatedController.currentGame.isDefined then
             onGameChanged(updatedController.currentGame.get.getGameId, updatedController)
-        else updatePanel(showGame(nextController, panelFactory, miniGame))
-      ,
+        else
+          onGameChanged(miniGame, nextController)
+      },
       question
     )
 
-  override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
-    val panelFactory = miniGame match
+  private def gamePanelsForSimpleText(
+      miniGame: MiniGames
+  ): (GameController, GameController => Unit, SimpleTextQuestion) => JPanel =
+    miniGame match
       case FastCalc        => gamePanels.fastCalcPanel
       case CountWords      => gamePanels.countWordsPanel
       case RightDirections => gamePanels.rightDirectionsPanel
-      case ColoredCount    => gamePanels.coloredCountPanel
       case WordMemory      => gamePanels.wordMemoryPanel
-    updatePanel(showGame(controller, panelFactory, miniGame))
+      case _ => throw new IllegalArgumentException("This mini-game is not a SimpleTextQuestion")
+
+  override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
+    val (questionController, question) = controller.getQuestion
+    question match
+      case q: SimpleTextQuestion   =>
+        updatePanel(showGame(questionController, gamePanelsForSimpleText(miniGame), miniGame, q))
+      case q: ColoredCountQuestion =>
+        updatePanel(showGame(questionController, gamePanels.coloredCountPanel, miniGame, q))
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
