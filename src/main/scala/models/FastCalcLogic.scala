@@ -2,13 +2,14 @@ package models
 
 import utils.FastCalcConstants.*
 import scala.util.Random
+import utils.SimpleTextQuestion
 
 case class FastCalcLogic(
     rounds: Int,
     currentRound: Int = 0,
     difficulty: Int = 1,
-    lastQuestion: Option[String] = None
-) extends MiniGameLogic[Int, Boolean]:
+    lastQuestion: Option[SimpleTextQuestion] = None
+) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]:
 
   private def hasNextRound: Boolean =
     currentRound < rounds
@@ -60,7 +61,8 @@ case class FastCalcLogic(
           else throw new IllegalArgumentException(s"Malformed expression!")
     calculate(expression)
 
-  override def generateQuestion: (MiniGameLogic[Int, Boolean], String) =
+  override def generateQuestion
+      : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
     val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
     val maxNumber    = MAX_NUMBER
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
@@ -68,18 +70,19 @@ case class FastCalcLogic(
     val numbers    = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
     val operators  = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
     val expression = buildExpression(numbers, operators).mkString(" ")
+    val question   = SimpleTextQuestion(expression)
+
     (
       this.copy(
         currentRound = currentRound + 1,
         difficulty = difficulty + FAST_CALC_DIFFICULTY_STEP,
-        lastQuestion = Some(expression)
+        lastQuestion = Some(question)
       ),
-      expression
+      question
     )
 
   override def validateAnswer(answer: Int): Boolean =
-    calculateResult(getListFromExpression(lastQuestion.get)) == answer
+    calculateResult(getListFromExpression(lastQuestion.get.text)) == answer
 
   override def isMiniGameFinished: Boolean =
     !hasNextRound
-  
