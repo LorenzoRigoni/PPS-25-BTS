@@ -1,11 +1,34 @@
 package utils
 
-import java.awt.Toolkit
+import java.awt.{Color, Font, Toolkit}
+import java.io.File
 
 object GUIConstants:
   val screenWidth: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
   val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
-  val RULES             =
+  val customBlueColor   = new Color(120, 180, 210)
+  val whiteColor: Color = Color.WHITE
+  val pixelFont70: Font =
+    Font
+      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
+      .deriveFont(70f)
+
+  val pixelFont25: Font =
+    Font
+      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
+      .deriveFont(25f)
+
+  val pixelFont15: Font =
+    Font
+      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
+      .deriveFont(15f)
+
+  val pixelFont8: Font =
+    Font
+      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
+      .deriveFont(8f)
+
+  val RULES =
     """
     | --GAME RULES--
     |
@@ -17,13 +40,13 @@ object GUIConstants:
     |
     |Mini games:
     |
-    | - FAST CALC: Enter the result of the displayed expressions, calculated mentally.
+    |FAST CALC: Enter the result of the displayed expressions, calculated mentally.
     |
-    | - WORD COUNT: Enter the number of displayed words as quickly as possible.
+    |WORD COUNT: Enter the number of displayed words as quickly as possible.
     |
-    | - RIGHT DIRECTIONS: Use the WASD keys to follow the indicated directions.
+    |RIGHT DIRECTIONS: Use the WASD keys to follow the indicated directions.
     |
-    | - COLORED COUNT: Determine how many numbers of the requested color are shown.
+    |COLORED COUNT: Determine how many numbers of the requested color are shown.
     |
-    | - WORD MEMORY: You will have 10 seconds to memorize the displayed words. After this time, the words will be hidden, and you must enter the words you remember. Be careful to spell the words correctly.
+    |WORD MEMORY: You will have 10 seconds to memorize the displayed words. After this time, the words will be hidden, and you must enter the words you remember. Be careful to spell the words correctly.
     |""".stripMargin

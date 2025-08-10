@@ -4,6 +4,7 @@ import controllers.{GameController, GameViewCallback}
 import utils.MiniGames
 import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
+import utils.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*

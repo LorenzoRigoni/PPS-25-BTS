@@ -1,7 +1,7 @@
 package views.panels
 
 import controllers.GameController
-import views.*
+import utils.GUIConstants.*
 
 import java.awt.*
 import javax.swing.*
@@ -9,7 +9,7 @@ import javax.swing.*
 /**
  * This trait represents the views of the mini-games that have a question and an answer.
  */
-trait SimpleQuestionAnswerGamePanel extends BaseView:
+trait SimpleQuestionAnswerGamePanel:
 
   protected val inputField    = new JTextField(40)
   protected val titleArea     = new JTextArea()

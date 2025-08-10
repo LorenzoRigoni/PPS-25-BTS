@@ -2,6 +2,7 @@ package views.panels
 
 import controllers.GameController
 import views.*
+import utils.GUIConstants.*
 
 import java.awt.*
 import javax.swing.*

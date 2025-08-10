@@ -1,7 +1,8 @@
 package views
 
+import utils.GUIConstants.*
+
 import java.awt.Font
-import java.io.File
 import javax.swing.*
 import java.awt.*
 
@@ -9,33 +10,6 @@ import java.awt.*
  * This trait represents the base view. It is extended by AgeTest view and BrainTrainingView
  */
 trait BaseView:
-
-  val pixelFont70: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(70f)
-
-  val pixelFont25: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(25f)
-
-  val pixelFont15: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(15f)
-
-  val pixelFont8: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(8f)
-
-  val customBlueColor   = new Color(120, 180, 210)
-  val whiteColor: Color = Color.WHITE
-
-  private val screenWidth: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
-  private val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
-
   /**
    * Set the frame in the center of the panel.
    *

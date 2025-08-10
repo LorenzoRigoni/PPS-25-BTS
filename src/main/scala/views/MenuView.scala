@@ -1,9 +1,8 @@
 package views
 
 import controllers.GameController
-import utils.GUIConstants
-import utils.GUIConstants.RULES
 import views.panels.{BackgroundImagePanel, GamePanels, GamePanelsImpl, ResultPanelsImpl}
+import utils.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
@@ -24,7 +23,7 @@ class MenuView(controller: GameController) extends BaseView:
     textArea.setWrapStyleWord(true)
     textArea.setFont(pixelFont15)
     val scrollPane = new JScrollPane(textArea)
-    val size       = Math.min(GUIConstants.screenWidth, GUIConstants.screenHeight) / 2
+    val size       = Math.min(screenWidth, screenHeight) / 2
     scrollPane.setPreferredSize(new Dimension(size, size))
     JOptionPane.showMessageDialog(
       frame,

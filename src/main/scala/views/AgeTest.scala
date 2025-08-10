@@ -5,6 +5,7 @@ import models.*
 import utils.MiniGames
 import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, ResultPanels}
+import utils.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
