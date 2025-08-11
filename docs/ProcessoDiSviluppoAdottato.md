@@ -38,7 +38,7 @@ la classica struttura di *Git flow*, il processo è stato il seguente:
 * lo sviluppatore incaricato del task apriva un nuovo branch da *develop* chiamandolo *feature/nomeFeature*
 * in quel branch, lo sviluppatore faceva i propri commit per implementare il task
 * una volta pronto, lo sviluppatore faceva una *pull request* per fare il merge con il branch *develop*
-* per ottenere il merge, la *pull request* doveva essere accettata da entrambi i membri del team
+* per ottenere il merge, la *pull request* doveva essere accettata da almeno un membro del team
 
 Questo metodo di lavoro ha permesso al team di rimanere sempre aggiornato sulle modifiche al progetto indotte da nuove
 implementazioni.
