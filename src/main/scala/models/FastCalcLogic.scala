@@ -55,6 +55,7 @@ case class FastCalcLogic(
             Some(f(l, r, op))
           case _               => throw new IllegalArgumentException("Malformed expression")
     }
+
     def calculate(expr: List[String]): Int = expr match
       case n :: Nil => n.toInt
       case _        =>
@@ -63,13 +64,8 @@ case class FastCalcLogic(
           case None        =>
             evalOperators(
               expr,
-              Set("*", "/"),
-              (l, r, op) =>
-                op match
-                  case "*" => l * r
-                  case "/" =>
-                    if r == 0 then throw new ArithmeticException("Division by zero")
-                    else l / r
+              Set("*"),
+              (l, r, op) => l * r
             ) match
               case Some(value) => value
               case None        => throw new IllegalArgumentException("Malformed expression")
@@ -80,10 +76,10 @@ case class FastCalcLogic(
     val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
     val maxNumber    = MAX_NUMBER
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
-    val numbers    = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
-    val operators  = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
-    val expression = buildExpression(numbers, operators).mkString(" ")
-    val question   = SimpleTextQuestion(expression)
+    val numbers      = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
+    val operators    = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
+    val expression   = buildExpression(numbers, operators).mkString(" ")
+    val question     = SimpleTextQuestion(expression)
     (
       this.copy(
         currentRound = currentRound + 1,

@@ -50,7 +50,6 @@ class RightDirectionsPanel(
     bindKey("DOWN", "down")
     bindKey("D", "right")
     bindKey("RIGHT", "right")
-
     bindKey("N", "")
 
     panel
