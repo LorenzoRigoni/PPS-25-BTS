@@ -25,3 +25,5 @@ Il team si è incontrato da remoto tramite chiamata Teams per definire i task de
 
 Il codice prodotto nel terzo sprint è stato incluso
 nella [release 0.3.0](https://github.com/LorenzoRigoni/PPS-25-BTS/releases/tag/v0.3.0).
+
+[Torna all'indice](../index.md)

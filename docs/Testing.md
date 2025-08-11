@@ -20,6 +20,8 @@ Le suite di test coprono tutte le principali funzionalità:
 - **FastCalc**: verifica della correttezza delle risposte generate e della validazione di risposte corrette e scorrette.
 - **RightDirections**: test sulle operazioni logiche (Not, And, Or) e sulla corretta valutazione degli alberi.
 - **CountWords**: verifica del numero di parole in frasi generate e della corretta validazione delle risposte.
+- **ColoredCount**: verifica del numero di parole in frasi generate e della corretta validazione delle risposte.
+- **Word Memory**: verifica del grado di correttezza della risposta e della generazione delle domande.
 
 ## Grado di copertura
 

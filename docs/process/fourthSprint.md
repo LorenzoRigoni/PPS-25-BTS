@@ -21,3 +21,5 @@ Il team si è incontrato da remoto tramite chiamata Teams per definire i task de
 
 Il codice prodotto nel quarto sprint è stato incluso
 nella [release 1.0.0](https://github.com/LorenzoRigoni/PPS-25-BTS/releases/tag/v0.1.0).
+
+[Torna all'indice](../index.md)

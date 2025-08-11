@@ -32,3 +32,5 @@ task del **primo sprint**.
 
 Il codice prodotto nel primo sprint è stato incluso
 nella [release 0.1.0](https://github.com/LorenzoRigoni/PPS-25-BTS/releases/tag/v0.1.0).
+
+[Torna all'indice](../index.md)
