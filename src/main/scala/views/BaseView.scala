@@ -65,3 +65,11 @@ trait BaseView:
    */
   def getResponsiveIconSize(divisor: Int): Int =
     (screenWidth / divisor.toDouble).toInt
+
+  def centerPanel(centerPanel: JPanel, panel: JPanel): Unit =
+    SwingUtilities.invokeLater { () =>
+      centerPanel.removeAll()
+      centerPanel.add(panel, BorderLayout.CENTER)
+      centerPanel.revalidate()
+      centerPanel.repaint()
+    }

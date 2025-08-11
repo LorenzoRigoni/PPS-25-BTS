@@ -6,6 +6,7 @@ import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
 import utils.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, ResultPanels}
 import utils.GUIConstants.*
+import views.panels.GamePanelMapper.*
 
 import javax.swing.*
 import java.awt.*
@@ -16,25 +17,10 @@ import java.awt.*
 case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     extends BaseView
     with GameViewCallback:
-  private val frame       = new JFrame("Let's play!")
-  private val mainPanel   = new JPanel(new BorderLayout())
-  private val centerPanel = new JPanel(new BorderLayout())
-  private val simpleTextPanelMap
-      : Map[MiniGames, (GameController, GameController => Unit, SimpleTextQuestion) => JPanel]        =
-    Map(
-      FastCalc        -> gamePanels.fastCalcPanel,
-      CountWords      -> gamePanels.countWordsPanel,
-      RightDirections -> gamePanels.rightDirectionsPanel,
-      WordMemory      -> gamePanels.wordMemoryPanel
-    )
-
-  private def addToCenterPanel(panel: JPanel): Unit =
-    SwingUtilities.invokeLater { () =>
-      centerPanel.removeAll()
-      centerPanel.add(panel, BorderLayout.CENTER)
-      centerPanel.revalidate()
-      centerPanel.repaint()
-    }
+  private val frame              = new JFrame("Let's play!")
+  private val mainPanel          = new JPanel(new BorderLayout())
+  private val centerPanel        = new JPanel(new BorderLayout())
+  private val simplePanelMap = simpleTextPanelMap(gamePanels)
 
   /**
    * Show the age test view with a mini-game.
@@ -50,7 +36,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     initialController.currentGame.foreach(game => onGameChanged(game.getGameId, initialController))
 
   private def updatePanel(panel: JPanel): Unit =
-    SwingUtilities.invokeLater(() => addToCenterPanel(panel))
+    SwingUtilities.invokeLater(() => centerPanel(centerPanel, panel))
 
   private def advanceGame(currentMiniGame: MiniGames)(nextController: GameController): Unit =
     if nextController.isCurrentGameFinished then
@@ -71,7 +57,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
   private def gamePanelsForSimpleText(
       miniGame: MiniGames
   ): (GameController, GameController => Unit, SimpleTextQuestion) => JPanel =
-    simpleTextPanelMap.getOrElse(
+    simplePanelMap.getOrElse(
       miniGame,
       throw new IllegalArgumentException(s"This mini-game is not a SimpleTextQuestion: $miniGame")
     )
@@ -88,5 +74,5 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     SwingUtilities.invokeLater(() =>
       val brainAge = controller.calculateBrainAge
       val panel    = resultPanels.TestResultPanel(controller, brainAge)
-      addToCenterPanel(panel)
+      centerPanel(centerPanel, panel)
     )

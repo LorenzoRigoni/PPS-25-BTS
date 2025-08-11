@@ -5,6 +5,7 @@ import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
 import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
 import utils.GUIConstants.*
+import views.panels.GamePanelMapper.*
 
 import javax.swing.*
 import java.awt.*
@@ -31,35 +32,27 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
   def show(gamePanels: GamePanels): Unit =
     frame.setBackground(whiteColor)
     centerFrame(frame, 1.5)
+    val simplePanelMap = simpleTextPanelMap(gamePanels)
 
-    def loadGamePanel[Q <: Question](controller: GameController, miniGame: MiniGames): Unit =
-      centerPanel.removeAll()
+    def onNext(nextController: GameController, miniGame: MiniGames): Unit =
+      if nextController.isCurrentGameFinished then onGameFinished(nextController)
+      else loadGamePanel(nextController, miniGame)
+
+    def loadGamePanel(controller: GameController, miniGame: MiniGames): Unit =
       val (newController, question) = controller.getQuestion
-
-      def onNext(nextController: GameController): Unit =
-        if nextController.isCurrentGameFinished then onGameFinished(nextController)
-        else loadGamePanel(nextController, miniGame)
-
-      val panel = (miniGame, question) match
-        case (FastCalc | CountWords | RightDirections | WordMemory, q: SimpleTextQuestion) =>
-          miniGame match
-            case FastCalc        => gamePanels.fastCalcPanel(newController, onNext, q)
-            case CountWords      => gamePanels.countWordsPanel(newController, onNext, q)
-            case RightDirections => gamePanels.rightDirectionsPanel(newController, onNext, q)
-            case WordMemory      => gamePanels.wordMemoryPanel(newController, onNext, q)
-            case _               => throw new IllegalArgumentException("Type of question not handled")
-        case (ColoredCount, q: ColoredCountQuestion)                                       =>
-          gamePanels.coloredCountPanel(newController, onNext, q)
-        case _ => throw new IllegalArgumentException("Type of question not handled")
-
-      centerPanel.add(panel, BorderLayout.CENTER)
-      centerPanel.revalidate()
-      centerPanel.repaint()
+      val panel                     = (miniGame, question) match
+        case (game, q: SimpleTextQuestion) if simplePanelMap.contains(game) =>
+          simplePanelMap(game)(newController, onNext(_, miniGame), q)
+        case (ColoredCount, q: ColoredCountQuestion)                        =>
+          gamePanels.coloredCountPanel(newController, onNext(_, miniGame), q)
+        case _                                                              =>
+          throw new IllegalArgumentException("Type of question not handled")
+      centerPanel(centerPanel, panel)
       mainPanel.remove(buttonPanel)
 
     centerPanel.setLayout(new BorderLayout())
 
-    MiniGames.values.foreach(miniGame => {
+    def createGameButton(miniGame: MiniGames): JButton =
       val button = createStyledButton(
         miniGame.displayName,
         buttonDimension,
@@ -72,9 +65,12 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
         loadGamePanel(updatedController, miniGame)
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
-      buttonPanel.add(Box.createVerticalStrut(40))
-      buttonPanel.add(button)
-    })
+      button
+
+    MiniGames.values.foreach(miniGame =>
+      buttonPanel.add(Box.createVerticalStrut(30))
+      buttonPanel.add(createGameButton(miniGame))
+    )
 
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
 
@@ -87,11 +83,9 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
     })
 
     bottomPanel.add(backButton)
-
     mainPanel.add(buttonPanel, BorderLayout.NORTH)
     mainPanel.add(centerPanel, BorderLayout.CENTER)
     mainPanel.add(bottomPanel, BorderLayout.SOUTH)
-
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
 
@@ -99,14 +93,11 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
-      centerPanel.removeAll()
-      mainPanel.remove(bottomPanel)
       val numOfCorrectAnswers = controller.getNumberOfCorrectAnswers
       val numOfWrongAnswers   = controller.getNumberOfWrongAnswers
       val totalTime           = controller.getTotalTime
       val panel               =
         resultPanels.GameResultPanel(controller, numOfCorrectAnswers, numOfWrongAnswers, totalTime)
-      centerPanel.add(panel, BorderLayout.CENTER)
-      mainPanel.revalidate()
-      mainPanel.repaint()
+      mainPanel.remove(bottomPanel)
+      centerPanel(centerPanel, panel)
     )
