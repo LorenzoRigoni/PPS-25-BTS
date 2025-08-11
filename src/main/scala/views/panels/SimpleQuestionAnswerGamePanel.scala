@@ -13,7 +13,7 @@ import javax.swing.*
  */
 trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
 
-  protected val inputField    = new JTextField(40)
+  protected val inputField    = new JTextField(TEXTFIELD_COLS)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
 
@@ -48,11 +48,17 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
   ): (JPanel, String => Unit) =
     val panel         = new JPanel(new BorderLayout())
     val centerWrapper = new JPanel(new GridBagLayout())
-    centerWrapper.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2))
+    centerWrapper.setBorder(
+      BorderFactory.createEmptyBorder(
+        SMALL_BORDER_VALUE,
+        SMALL_BORDER_VALUE,
+        SMALL_BORDER_VALUE,
+        SMALL_BORDER_VALUE
+      )
+    )
     val innerPanel    = new JPanel()
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
 
-    // Title area
     titleArea.setText(title)
     titleArea.setEditable(false)
     titleArea.setFont(pixelFont15)
@@ -80,7 +86,7 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
 
     inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
 
-    val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
+    val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_H, FLOW_V))
     val inputLabel = new JLabel(textInputLabel)
     inputLabel.setFont(pixelFont8)
     inputPanel.add(inputLabel)
@@ -117,14 +123,16 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
 
   protected def simpleLabelRenderer: (JPanel, Q) => Unit =
     (container, questionText) =>
-      container.setLayout(new BorderLayout(10, 10))
+      container.setLayout(new BorderLayout(BORDER_H, BORDER_V))
       val questionContent = questionText match
         case q: SimpleTextQuestion => q.text
-      val question = new JTextArea(questionContent)
+      val question        = new JTextArea(questionContent)
       question.setFont(pixelFont25)
       question.setWrapStyleWord(true)
       question.setLineWrap(true)
       question.setEditable(false)
       question.setFocusable(false)
-      container.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 10))
+      container.setBorder(
+        BorderFactory.createEmptyBorder(BORDER_VALUE, BORDER_VALUE, BORDER_VALUE, BORDER_VALUE)
+      )
       container.add(question)

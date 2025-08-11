@@ -4,11 +4,26 @@ import java.awt.{Color, Font, Toolkit}
 import java.io.File
 
 object GUIConstants:
-  val screenWidth: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
-  val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
-  val customBlueColor   = new Color(120, 180, 210)
-  val whiteColor: Color = Color.WHITE
-  val pixelFont70: Font =
+  val TEXTFIELD_COLS     = 40
+  // constants in simple panel
+  val FLOW_H             = 10
+  val FLOW_V             = 10
+  val BORDER_H           = 10
+  val BORDER_V           = 10
+  val BORDER_VALUE       = 10
+  val SMALL_BORDER_VALUE = 5
+
+  // menu view constants
+  val BUTTON_DISTANCE      = 30
+  val LAST_BUTTON_DISTANCE = 120
+  val RULES_PANE_SIZE_DIVISOR = 2
+  val MENU_BUTTON_W_SCALE_FACTOR = 0.4
+  val MENU_BUTTON_H_SCALE_FACTOR = 0.08
+  val screenWidth: Int     = Toolkit.getDefaultToolkit.getScreenSize.width
+  val screenHeight: Int    = Toolkit.getDefaultToolkit.getScreenSize.height
+  val customBlueColor      = new Color(120, 180, 210)
+  val whiteColor: Color    = Color.WHITE
+  val pixelFont70: Font    =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
       .deriveFont(70f)
