@@ -175,15 +175,15 @@ class MiniGameAdapter[Q <: Question, A, B](
   val parser: String => A
 ) extends MiniGameWrapper[Q, A, B]:
 
-override def generateQuestion: (MiniGameWrapper[Q, A, B], Q) =
-  val (newLogic, question) = logic.generateQuestion
-  (MiniGameAdapter(newLogic, getGameId, parser), question)
-
-override def validateAnswer(answer: A): B = logic.validateAnswer(answer)
-
-override def isMiniGameFinished: Boolean = logic.isMiniGameFinished
-
-override def parseAnswer(input: String): A = parser(input)
+    override def generateQuestion: (MiniGameWrapper[Q, A, B], Q) =
+      val (newLogic, question) = logic.generateQuestion
+      (MiniGameAdapter(newLogic, getGameId, parser), question)
+    
+    override def validateAnswer(answer: A): B = logic.validateAnswer(answer)
+    
+    override def isMiniGameFinished: Boolean = logic.isMiniGameFinished
+    
+    override def parseAnswer(input: String): A = parser(input)
 ```
 
 In questo modo, è stato possibile creare una *List* dei mini-giochi, la quale viene creata grazie ad una *factory*.
@@ -258,3 +258,5 @@ def nextGame: GameController =
       )
       (updatedController, isAnswerCorrect)
 ```
+
+[Torna indietro](../Implementazione.md)

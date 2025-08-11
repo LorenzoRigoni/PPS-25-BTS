@@ -23,3 +23,5 @@ Il team si è incontrato da remoto tramite chiamata Teams per definire i task de
 
 Il codice prodotto nel secondo sprint è stato incluso
 nella [release 0.2.0](https://github.com/LorenzoRigoni/PPS-25-BTS/releases/tag/v0.2.0).
+
+[Torna all'indice](../index.md)
