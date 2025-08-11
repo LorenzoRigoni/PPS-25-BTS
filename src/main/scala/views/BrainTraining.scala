@@ -30,7 +30,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
    *   the panel of the mini-game chose
    */
   def show(gamePanels: GamePanels): Unit =
-    frame.setBackground(whiteColor)
+    frame.setBackground(Color.WHITE)
     centerFrame(frame, CENTER_FRAME_DIVISOR)
     val simplePanelMap = simpleTextPanelMap(gamePanels)
 
@@ -56,9 +56,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
       val button = createStyledButton(
         miniGame.displayName,
         buttonDimension,
-        pixelFont15,
-        customBlueColor,
-        whiteColor
+        PIXEL_FONT15
       )
       button.addActionListener(_ => {
         val updatedController = initialController.chooseCurrentGame(miniGame)
@@ -78,9 +76,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
       createStyledButton(
         "← Home",
         new Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
-        pixelFont8,
-        customBlueColor,
-        whiteColor
+        PIXEL_FONT8
       )
     backButton.addActionListener(_ => {
       frame.dispose()

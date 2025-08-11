@@ -26,7 +26,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
    * Show the age test view with a mini-game.
    */
   def show(): Unit =
-    frame.setBackground(whiteColor)
+    frame.setBackground(Color.WHITE)
     centerFrame(frame, CENTER_FRAME_DIVISOR)
     mainPanel.add(centerPanel, BorderLayout.CENTER)
     frame.setContentPane(mainPanel)

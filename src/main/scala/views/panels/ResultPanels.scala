@@ -43,12 +43,18 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
     val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    panel.setBorder(new EmptyBorder(50, 50, 50, 50))
+    panel.setBorder(new EmptyBorder(EMPTY_BORDER, EMPTY_BORDER, EMPTY_BORDER, EMPTY_BORDER))
     val title       = new JLabel(titleText)
-    title.setFont(pixelFont25)
+    title.setFont(PIXEL_FONT25)
     title.setHorizontalAlignment(SwingConstants.CENTER)
     val homeButton  =
-      createStyledButton("Home", Dimension(200, 40), pixelFont15, whiteColor, customBlueColor)
+      createStyledButton(
+        "Home",
+        Dimension(BIG_HOME_BUTTON_W, BIG_HOME_BUTTON_H),
+        PIXEL_FONT15,
+        Color.WHITE,
+        CUSTOM_BLUE
+      )
     homeButton.addActionListener(_ => {
       MenuView(controller).show()
       SwingUtilities.getWindowAncestor(panel).dispose()
@@ -63,7 +69,7 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
   override def TestResultPanel(controller: GameController, age: Int): JPanel =
     val panel    = createBaseResultPanel(controller, "Your brain age is:")
     val ageLabel = new JLabel(age.toString)
-    ageLabel.setFont(pixelFont70)
+    ageLabel.setFont(PIXEL_FONT70)
     ageLabel.setHorizontalAlignment(SwingConstants.CENTER)
     panel.add(ageLabel, BorderLayout.CENTER)
     panel
@@ -74,7 +80,7 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       wrongAnswers: Int,
       time: Int
   ): JPanel =
-    val iconSize = getResponsiveIconSize(20)
+    val iconSize = getResponsiveIconSize(ICON_SIZE_DIVISOR)
     val panel    = createBaseResultPanel(controller, "Your results:")
 
     def loadIcon(name: String, size: Int): ImageIcon =
@@ -88,15 +94,15 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       rowPanel.setOpaque(false)
       val iconLabel = new JLabel(loadIcon(iconName, iconSize))
       val textLabel = new JLabel(text)
-      textLabel.setFont(pixelFont15)
+      textLabel.setFont(PIXEL_FONT15)
       rowPanel.add(iconLabel)
-      rowPanel.add(Box.createRigidArea(new Dimension(10, 0)))
+      rowPanel.add(Box.createRigidArea(new Dimension(ROW_SPACE, 0)))
       rowPanel.add(textLabel)
       rowPanel
 
     val resultsPanel = new JPanel()
     resultsPanel.setOpaque(false)
-    resultsPanel.setLayout(new GridLayout(3, 1, 10, 20))
+    resultsPanel.setLayout(new GridLayout(GRID_ROWS, GRID_COLS, GRID_H_GAP, GRID_V_GAP))
     resultsPanel.add(resultRow("greenCheck.png", s"Correct Answers: $correctAnswers"))
     resultsPanel.add(resultRow("redCross.png", s"Wrong Answers: $wrongAnswers"))
     resultsPanel.add(resultRow("clock.png", s"Time: $time seconds"))

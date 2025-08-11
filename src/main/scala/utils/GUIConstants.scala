@@ -29,26 +29,36 @@ object GUIConstants:
   val GAME_BUTTON_W = 300
   val GAME_BUTTON_H = 50
 
-  val screenWidth: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
-  val screenHeight: Int = Toolkit.getDefaultToolkit.getScreenSize.height
-  val customBlueColor   = new Color(120, 180, 210)
-  val whiteColor: Color = Color.WHITE
-  val pixelFont70: Font =
+  // result panels constants
+  val EMPTY_BORDER      = 50
+  val BIG_HOME_BUTTON_W = 120
+  val BIG_HOME_BUTTON_H = 30
+  val GRID_ROWS         = 3
+  val GRID_COLS         = 1
+  val GRID_H_GAP        = 10
+  val GRID_V_GAP        = 20
+  val ROW_SPACE         = 10
+  val ICON_SIZE_DIVISOR = 20
+
+  val SCREEN_WIDTH: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
+  val SCREEN_HEIGHT: Int = Toolkit.getDefaultToolkit.getScreenSize.height
+  val CUSTOM_BLUE        = new Color(120, 180, 210)
+  val PIXEL_FONT70: Font =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
       .deriveFont(70f)
 
-  val pixelFont25: Font =
+  val PIXEL_FONT25: Font =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
       .deriveFont(25f)
 
-  val pixelFont15: Font =
+  val PIXEL_FONT15: Font =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
       .deriveFont(15f)
 
-  val pixelFont8: Font =
+  val PIXEL_FONT8: Font =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
       .deriveFont(8f)

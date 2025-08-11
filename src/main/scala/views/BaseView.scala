@@ -19,9 +19,9 @@ trait BaseView:
    *   the value of divisor
    */
   def centerFrame(frame: JFrame, divisor: Float): Unit =
-    val screenSize = (Math.min(screenWidth, screenHeight) / divisor).toInt
-    val x          = (screenWidth - screenSize) / HALF_DIVISOR
-    val y          = (screenHeight - screenSize) / HALF_DIVISOR
+    val screenSize = (Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) / divisor).toInt
+    val x          = (SCREEN_WIDTH - screenSize) / HALF_DIVISOR
+    val y          = (SCREEN_HEIGHT - screenSize) / HALF_DIVISOR
     frame.setSize(screenSize, screenSize)
     frame.setLocation(x, y)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
@@ -46,7 +46,7 @@ trait BaseView:
       text: String,
       size: Dimension,
       font: Font,
-      background: Color = Color.BLUE,
+      background: Color = CUSTOM_BLUE,
       foreground: Color = Color.WHITE
   ): JButton =
     val button = new JButton(text)
@@ -64,7 +64,7 @@ trait BaseView:
    * @return
    */
   def getResponsiveIconSize(divisor: Int): Int =
-    (screenWidth / divisor.toDouble).toInt
+    (SCREEN_WIDTH / divisor.toDouble).toInt
 
   def centerPanel(centerPanel: JPanel, panel: JPanel): Unit =
     SwingUtilities.invokeLater { () =>

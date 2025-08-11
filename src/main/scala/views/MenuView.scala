@@ -18,9 +18,9 @@ class MenuView(controller: GameController) extends BaseView:
     textArea.setEditable(false)
     textArea.setLineWrap(true)
     textArea.setWrapStyleWord(true)
-    textArea.setFont(pixelFont15)
+    textArea.setFont(PIXEL_FONT15)
     val scrollPane = new JScrollPane(textArea)
-    val size       = Math.min(screenWidth, screenHeight) / HALF_DIVISOR
+    val size       = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) / HALF_DIVISOR
     scrollPane.setPreferredSize(new Dimension(size, size))
     JOptionPane.showMessageDialog(
       frame,
@@ -72,7 +72,7 @@ class MenuView(controller: GameController) extends BaseView:
 
     val components = for ((btnData, idx) <- buttonsData.zipWithIndex) yield {
       val button =
-        createStyledButton(btnData._1, buttonSize, pixelFont25, customBlueColor, whiteColor)
+        createStyledButton(btnData._1, buttonSize, PIXEL_FONT25)
       button.addActionListener(_ => btnData._2())
       val strut  =
         if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)

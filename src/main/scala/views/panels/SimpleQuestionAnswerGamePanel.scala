@@ -61,7 +61,7 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
 
     titleArea.setText(title)
     titleArea.setEditable(false)
-    titleArea.setFont(pixelFont15)
+    titleArea.setFont(PIXEL_FONT15)
     titleArea.setOpaque(false)
 
     val titleContainer = new JPanel(new FlowLayout(FlowLayout.CENTER))
@@ -88,7 +88,7 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
 
     val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_H, FLOW_V))
     val inputLabel = new JLabel(textInputLabel)
-    inputLabel.setFont(pixelFont8)
+    inputLabel.setFont(PIXEL_FONT8)
     inputPanel.add(inputLabel)
     inputPanel.add(inputField)
     panel.add(inputPanel, BorderLayout.SOUTH)
@@ -127,7 +127,7 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
       val questionContent = questionText match
         case q: SimpleTextQuestion => q.text
       val question        = new JTextArea(questionContent)
-      question.setFont(pixelFont25)
+      question.setFont(PIXEL_FONT25)
       question.setWrapStyleWord(true)
       question.setLineWrap(true)
       question.setEditable(false)
