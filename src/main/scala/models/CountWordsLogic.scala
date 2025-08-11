@@ -1,7 +1,7 @@
 package models
 
 import scala.util.Random
-import utils.CountWordsConstants.{MIN_NUMBER_WORDS, COUNT_WORDS_DIFFICULTY_STEP}
+import utils.CountWordsConstants.{COUNT_WORDS_DIFFICULTY_STEP, MIN_DIFFICULTY, MIN_NUMBER_WORDS}
 import utils.WordsForMiniGames.WORDS
 import utils.SimpleTextQuestion
 
@@ -19,7 +19,7 @@ case class CountWordsLogic(
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
     val minRand        = math.max(1, difficulty - 1)
     val numOfWords     =
-      if difficulty <= 2 then MIN_NUMBER_WORDS + Random.between(0, difficulty + 1)
+      if difficulty <= MIN_DIFFICULTY then MIN_NUMBER_WORDS + Random.between(0, difficulty + 1)
       else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
     val wordsGenerated = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
     val question       = SimpleTextQuestion(wordsGenerated)
@@ -34,6 +34,8 @@ case class CountWordsLogic(
     )
 
   override def validateAnswer(answer: Int): Boolean =
-    answer == lastQuestion.get.text.split("\\s+").count(_.nonEmpty)
+    lastQuestion match
+      case Some(q) => answer == q.text.split("\\s+").count(_.nonEmpty)
+      case _       => false
 
   override def isMiniGameFinished: Boolean = currentRound == rounds

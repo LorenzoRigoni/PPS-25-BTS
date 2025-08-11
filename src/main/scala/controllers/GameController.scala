@@ -56,7 +56,7 @@ case class GameController(
   extension (results: List[utils.QuestionResult])
     def correctAnswers: Int             = results.count(_.isCorrect)
     def wrongAnswers: Int               = results.count(!_.isCorrect)
-    private def totalTimeInSeconds: Int = (results.map(_.responseTime).sum / 1000).toInt
+    private def totalTimeInSeconds: Int = (results.map(_.responseTime).sum / SECONDS_UNITY).toInt
 
   /**
    * Choose in a random way the next mini-game.
@@ -115,9 +115,9 @@ case class GameController(
 
       val elapsedTime     = System.currentTimeMillis() - startTime
       val isAnswerCorrect = game.validateAnswer(parsedAnswer) match
-        case b: Boolean            => b
-        case d: Double if d >= 0.6 => true
-        case _                     => false
+        case b: Boolean                                  => b
+        case d: Double if d >= PERCENT_ACCETTABLE_ANSWER => true
+        case _                                           => false
 
       val updatedController = this.copy(
         currentGame = Some(game),

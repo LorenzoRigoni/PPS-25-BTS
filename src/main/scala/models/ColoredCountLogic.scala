@@ -1,7 +1,13 @@
 package models
 
 import scala.util.Random
-import utils.ColoredCountConstants.{MIN_NUMBERS, COLORED_COUNT_DIFFICULTY_STEP}
+import utils.ColoredCountConstants.{
+  COLORED_COUNT_DIFFICULTY_STEP,
+  MAX_POSSIBLE_NUMBER,
+  MIN_NUMBERS,
+  MIN_POSSIBLE_NUMBER,
+  MULT_DIFFICULTY
+}
 import utils.ColoredCountColors
 import utils.ColoredCountQuestion
 
@@ -17,9 +23,9 @@ case class ColoredCountLogic(
 
   override def generateQuestion
       : (MiniGameLogic[ColoredCountQuestion, Int, Boolean], ColoredCountQuestion) =
-    val totalNumbers  = MIN_NUMBERS + difficulty * 2
-    val numbers       = List.fill(totalNumbers)(Random.between(1, 10))
-    val colorList     = List.fill(totalNumbers)(
+    val totalNumbers  = MIN_NUMBERS + difficulty * MULT_DIFFICULTY
+    val numbers       = Seq.fill(totalNumbers)(Random.between(MIN_POSSIBLE_NUMBER, MAX_POSSIBLE_NUMBER))
+    val colorList     = Seq.fill(totalNumbers)(
       ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
     )
     val zipped        = numbers.zip(colorList)
