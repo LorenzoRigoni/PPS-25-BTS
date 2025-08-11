@@ -12,7 +12,6 @@ class RightDirectionsPanel(
     onNext: GameController => Unit,
     question: SimpleTextQuestion
 ) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
-
   def panel(): JPanel =
     val (panel, externalSubmit) = createSimpleQuestionAnswerGamePanel(
       "Follow directions",
@@ -23,13 +22,10 @@ class RightDirectionsPanel(
       (ctrl, input) => ctrl.checkAnswer(input).get,
       Some(simpleLabelRenderer)
     )
-
-    // Handle keyboard input
     panel.setFocusable(true)
     panel.requestFocusInWindow()
-
-    val actionMap = panel.getActionMap
-    val inputMap  = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+    val actionMap               = panel.getActionMap
+    val inputMap                = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 
     def bindKey(key: String, direction: String): Unit =
       inputMap.put(KeyStroke.getKeyStroke(key), key)
@@ -41,7 +37,6 @@ class RightDirectionsPanel(
             externalSubmit(direction)
         }
       )
-
     bindKey("W", "up")
     bindKey("UP", "up")
     bindKey("A", "left")
@@ -51,5 +46,4 @@ class RightDirectionsPanel(
     bindKey("D", "right")
     bindKey("RIGHT", "right")
     bindKey("N", "")
-
     panel

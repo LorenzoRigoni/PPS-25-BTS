@@ -20,8 +20,8 @@ trait BaseView:
    */
   def centerFrame(frame: JFrame, divisor: Float): Unit =
     val screenSize = (Math.min(screenWidth, screenHeight) / divisor).toInt
-    val x          = (screenWidth - screenSize) / 2
-    val y          = (screenHeight - screenSize) / 2
+    val x          = (screenWidth - screenSize) / HALF_DIVISOR
+    val y          = (screenHeight - screenSize) / HALF_DIVISOR
     frame.setSize(screenSize, screenSize)
     frame.setLocation(x, y)
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)

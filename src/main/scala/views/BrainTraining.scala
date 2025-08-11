@@ -2,7 +2,7 @@ package views
 
 import controllers.{GameController, GameViewCallback}
 import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
-import utils.MiniGames.{ColoredCount, CountWords, FastCalc, RightDirections, WordMemory}
+import utils.MiniGames.*
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
 import utils.GUIConstants.*
 import views.panels.GamePanelMapper.*
@@ -16,7 +16,7 @@ import java.awt.*
  */
 case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameViewCallback:
   private val frame             = new JFrame("Brain Training")
-  private val buttonDimension   = new Dimension(300, 50)
+  private val buttonDimension   = new Dimension(GAME_BUTTON_W, GAME_BUTTON_H)
   private val mainPanel         = new JPanel(new BorderLayout())
   private val buttonPanel       = new JPanel()
   private val centerPanel       = new JPanel()
@@ -31,7 +31,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
    */
   def show(gamePanels: GamePanels): Unit =
     frame.setBackground(whiteColor)
-    centerFrame(frame, 1.5)
+    centerFrame(frame, CENTER_FRAME_DIVISOR)
     val simplePanelMap = simpleTextPanelMap(gamePanels)
 
     def onNext(nextController: GameController, miniGame: MiniGames): Unit =
@@ -68,14 +68,20 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
       button
 
     MiniGames.values.foreach(miniGame =>
-      buttonPanel.add(Box.createVerticalStrut(30))
+      buttonPanel.add(Box.createVerticalStrut(BUTTON_DISTANCE))
       buttonPanel.add(createGameButton(miniGame))
     )
 
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
 
     val backButton =
-      createStyledButton("← Home", new Dimension(100, 30), pixelFont8, customBlueColor, whiteColor)
+      createStyledButton(
+        "← Home",
+        new Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
+        pixelFont8,
+        customBlueColor,
+        whiteColor
+      )
     backButton.addActionListener(_ => {
       frame.dispose()
       if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()

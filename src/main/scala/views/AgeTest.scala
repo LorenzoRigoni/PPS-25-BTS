@@ -17,9 +17,9 @@ import java.awt.*
 case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     extends BaseView
     with GameViewCallback:
-  private val frame              = new JFrame("Let's play!")
-  private val mainPanel          = new JPanel(new BorderLayout())
-  private val centerPanel        = new JPanel(new BorderLayout())
+  private val frame          = new JFrame("Let's play!")
+  private val mainPanel      = new JPanel(new BorderLayout())
+  private val centerPanel    = new JPanel(new BorderLayout())
   private val simplePanelMap = simpleTextPanelMap(gamePanels)
 
   /**
@@ -27,7 +27,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
    */
   def show(): Unit =
     frame.setBackground(whiteColor)
-    centerFrame(frame, 1.5)
+    centerFrame(frame, CENTER_FRAME_DIVISOR)
     mainPanel.add(centerPanel, BorderLayout.CENTER)
     frame.setContentPane(mainPanel)
     frame.setVisible(true)

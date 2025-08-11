@@ -20,7 +20,7 @@ class MenuView(controller: GameController) extends BaseView:
     textArea.setWrapStyleWord(true)
     textArea.setFont(pixelFont15)
     val scrollPane = new JScrollPane(textArea)
-    val size       = Math.min(screenWidth, screenHeight) / RULES_PANE_SIZE_DIVISOR
+    val size       = Math.min(screenWidth, screenHeight) / HALF_DIVISOR
     scrollPane.setPreferredSize(new Dimension(size, size))
     JOptionPane.showMessageDialog(
       frame,
@@ -35,7 +35,10 @@ class MenuView(controller: GameController) extends BaseView:
   def show(): Unit =
     centerFrame(frame, 1)
     val buttonSize =
-      new Dimension((frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt, (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt)
+      new Dimension(
+        (frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt,
+        (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt
+      )
 
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
