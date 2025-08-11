@@ -18,9 +18,9 @@ case class FastCalcLogic(
     Random.nextInt(maxNumber) + 1
 
   private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] = difficulty match
-    case d if d < 3 => Seq("+")
-    case d if d < 6 => Seq("+", "-")
-    case _          => Seq("+", "-", "*")
+    case d if d < NUM_SIMPLE_ROUNDS => Seq("+")
+    case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
+    case _                          => Seq("+", "-", "*")
 
   private def getRandomOperator(operators: Seq[String]): String =
     val operatorIndex = Random.nextInt(operators.length)
