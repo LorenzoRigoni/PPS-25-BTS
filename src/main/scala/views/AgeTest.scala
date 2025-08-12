@@ -14,9 +14,7 @@ import java.awt.*
 /**
  * This class represents the view of the age test. The user will play 3 random mini-games.
  */
-case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
-    extends BaseView
-    with GameViewCallback:
+case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends GameViewCallback:
   private val frame          = new JFrame("Let's play!")
   private val mainPanel      = new JPanel(new BorderLayout())
   private val centerPanel    = new JPanel(new BorderLayout())
@@ -27,7 +25,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
    */
   def show(): Unit =
     frame.setBackground(Color.WHITE)
-    centerFrame(frame, CENTER_FRAME_DIVISOR)
+    UIHelper.centerFrame(frame, CENTER_FRAME_DIVISOR)
     mainPanel.add(centerPanel, BorderLayout.CENTER)
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
@@ -36,7 +34,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     initialController.currentGame.foreach(game => onGameChanged(game.getGameId, initialController))
 
   private def updatePanel(panel: JPanel): Unit =
-    SwingUtilities.invokeLater(() => centerPanel(centerPanel, panel))
+    SwingUtilities.invokeLater(() => UIHelper.centerPanel(centerPanel, panel))
 
   private def advanceGame(currentMiniGame: MiniGames)(nextController: GameController): Unit =
     if nextController.isCurrentGameFinished then
@@ -74,5 +72,5 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
     SwingUtilities.invokeLater(() =>
       val brainAge = controller.calculateBrainAge
       val panel    = resultPanels.TestResultPanel(controller, brainAge)
-      centerPanel(centerPanel, panel)
+      UIHelper.centerPanel(centerPanel, panel)
     )

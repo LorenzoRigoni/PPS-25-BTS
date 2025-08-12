@@ -4,32 +4,13 @@ import java.awt.{Color, Font, Toolkit}
 import java.io.File
 
 object GUIConstants:
-  val TEXTFIELD_COLS              = 40
   val HALF_DIVISOR                = 2
   val CENTER_FRAME_DIVISOR: Float = 1.5
   val TIMER_WORD_MEMORY           = 10000
   val HOME_BUTTON_W               = 120
   val HOME_BUTTON_H               = 30
-
-  // constants in simple panel
-  val FLOW_H             = 10
-  val FLOW_V             = 10
-  val BORDER_H           = 10
-  val BORDER_V           = 10
-  val BORDER_VALUE       = 10
-  val SMALL_BORDER_VALUE = 5
-
-  // menu view constants
-  val BUTTON_DISTANCE            = 30
-  val LAST_BUTTON_DISTANCE       = 120
-  val MENU_BUTTON_W_SCALE_FACTOR = 0.4
-  val MENU_BUTTON_H_SCALE_FACTOR = 0.08
-
-  // brain training constants
-
-  val GAME_BUTTON_W = 300
-  val GAME_BUTTON_H = 50
-
+  val BORDER_VALUE                = 10
+  val BUTTON_DISTANCE             = 30
   val SCREEN_WIDTH: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
   val SCREEN_HEIGHT: Int = Toolkit.getDefaultToolkit.getScreenSize.height
   val CUSTOM_BLUE        = new Color(120, 180, 210)

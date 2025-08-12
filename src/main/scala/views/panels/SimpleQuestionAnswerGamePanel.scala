@@ -11,9 +11,9 @@ import javax.swing.*
 /**
  * This trait represents the views of the mini-games that have a question and an answer.
  */
-trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
-
-  protected val inputField    = new JTextField(TEXTFIELD_COLS)
+trait SimpleQuestionAnswerGamePanel[Q]:
+  private val textFieldCols   = 40
+  protected val inputField    = new JTextField(textFieldCols)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
 
@@ -46,53 +46,47 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
       validate: (GameController, String) => (GameController, Boolean),
       renderQuestionContent: Option[(JPanel, Q) => Unit] = None
   ): (JPanel, String => Unit) =
-    val panel         = new JPanel(new BorderLayout())
-    val centerWrapper = new JPanel(new GridBagLayout())
-    centerWrapper.setBorder(
-      BorderFactory.createEmptyBorder(
-        SMALL_BORDER_VALUE,
-        SMALL_BORDER_VALUE,
-        SMALL_BORDER_VALUE,
-        SMALL_BORDER_VALUE
-      )
-    )
-    val innerPanel    = new JPanel()
-    innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
-
-    titleArea.setText(title)
-    titleArea.setEditable(false)
-    titleArea.setFont(PIXEL_FONT15)
-    titleArea.setOpaque(false)
-
-    val titleContainer = new JPanel(new FlowLayout(FlowLayout.CENTER))
-    titleContainer.setOpaque(false)
-    titleContainer.add(titleArea)
-    panel.add(titleContainer, BorderLayout.NORTH)
-
-    val questionPanelContainer = new JPanel()
-    questionPanelContainer.setLayout(new GridBagLayout())
-    questionPanelContainer.setOpaque(false)
-
-    val gbc = new GridBagConstraints()
+    val gbc                    = new GridBagConstraints()
     gbc.fill = GridBagConstraints.HORIZONTAL
     gbc.weightx = 1.0
     gbc.gridx = 0
     gbc.gridy = 0
-
+    val borderValue            = 5
+    val panel                  = new JPanel(new BorderLayout())
+    val flowValue              = 10
+    val centerWrapper          = new JPanel(new GridBagLayout())
+    centerWrapper.setBorder(
+      BorderFactory.createEmptyBorder(
+        borderValue,
+        borderValue,
+        borderValue,
+        borderValue
+      )
+    )
+    val innerPanel             = new JPanel()
+    innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
+    titleArea.setText(title)
+    titleArea.setEditable(false)
+    titleArea.setFont(PIXEL_FONT15)
+    titleArea.setOpaque(false)
+    val titleContainer         = new JPanel(new FlowLayout(FlowLayout.CENTER))
+    titleContainer.setOpaque(false)
+    titleContainer.add(titleArea)
+    panel.add(titleContainer, BorderLayout.NORTH)
+    val questionPanelContainer = new JPanel()
+    questionPanelContainer.setLayout(new GridBagLayout())
+    questionPanelContainer.setOpaque(false)
     questionPanel.setOpaque(false)
     renderQuestionContent.foreach(renderer => renderer(questionPanel, initialQuestion))
     questionPanelContainer.add(questionPanel, gbc)
     panel.add(questionPanelContainer, BorderLayout.CENTER)
-
     inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
-
-    val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_H, FLOW_V))
-    val inputLabel = new JLabel(textInputLabel)
+    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, flowValue, flowValue))
+    val inputLabel             = new JLabel(textInputLabel)
     inputLabel.setFont(PIXEL_FONT8)
     inputPanel.add(inputLabel)
     inputPanel.add(inputField)
     panel.add(inputPanel, BorderLayout.SOUTH)
-
     (
       panel,
       (input: String) => {
@@ -123,7 +117,7 @@ trait SimpleQuestionAnswerGamePanel[Q] extends BaseView:
 
   protected def simpleLabelRenderer: (JPanel, Q) => Unit =
     (container, questionText) =>
-      container.setLayout(new BorderLayout(BORDER_H, BORDER_V))
+      container.setLayout(new BorderLayout(BORDER_VALUE, BORDER_VALUE))
       val questionContent = questionText match
         case q: SimpleTextQuestion => q.text
       val question        = new JTextArea(questionContent)

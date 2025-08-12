@@ -11,7 +11,7 @@ import java.awt.*
  * This object represents the initial menu where the player can choose between Age Test and Brain
  * Training mode.
  */
-class MenuView(controller: GameController) extends BaseView:
+class MenuView(controller: GameController):
   private val frame                       = new JFrame("Menù")
   private def showGameRulesDialog(): Unit =
     val textArea   = new JTextArea(RULES)
@@ -33,11 +33,14 @@ class MenuView(controller: GameController) extends BaseView:
    * Show the Menu view.
    */
   def show(): Unit =
-    centerFrame(frame, 1)
-    val buttonSize =
+    UIHelper.centerFrame(frame, 1)
+    val menuButtonWidthScaleFactor  = 0.4
+    val menuButtonHeightScaleFactor = 0.08
+    val lastButtonDistance          = 120
+    val buttonSize                  =
       new Dimension(
-        (frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt,
-        (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt
+        (frame.getSize.width * menuButtonWidthScaleFactor).toInt,
+        (frame.getSize.height * menuButtonHeightScaleFactor).toInt
       )
 
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
@@ -55,34 +58,29 @@ class MenuView(controller: GameController) extends BaseView:
     val buttonsData = Seq(
       (
         "Age Test",
-        () => {
+        () =>
           frame.dispose()
           AgeTest(GamePanelsImpl(), ResultPanelsImpl()).show()
-        }
       ),
       (
         "Training",
-        () => {
+        () =>
           frame.dispose()
           BrainTraining(ResultPanelsImpl()).show(GamePanelsImpl())
-        }
       ),
       ("Game Rules", () => showGameRulesDialog())
     )
 
-    val components = for ((btnData, idx) <- buttonsData.zipWithIndex) yield {
+    val components = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
       val button =
-        createStyledButton(btnData._1, buttonSize, PIXEL_FONT25)
+        UIHelper.createStyledButton(btnData._1, buttonSize, PIXEL_FONT25)
       button.addActionListener(_ => btnData._2())
       val strut  =
         if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
-        else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)
+        else Box.createVerticalStrut(lastButtonDistance)
       Seq(button, strut)
-    }
     components.flatten.foreach(verticalPanel.add)
-
     buttonPanel.add(verticalPanel)
     backgroundPanel.add(buttonPanel, BorderLayout.SOUTH)
-
     frame.getContentPane.add(backgroundPanel)
     frame.setVisible(true)

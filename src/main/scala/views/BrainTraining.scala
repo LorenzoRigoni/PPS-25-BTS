@@ -14,9 +14,11 @@ import java.awt.*
  * This object represents the view of the training mode. In this mode, the user can train his mind
  * with all the mini-games.
  */
-case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameViewCallback:
+case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
   private val frame             = new JFrame("Brain Training")
-  private val buttonDimension   = new Dimension(GAME_BUTTON_W, GAME_BUTTON_H)
+  private val gameButtonW       = 300
+  private val gameButtonH       = 50
+  private val buttonDimension   = new Dimension(gameButtonW, gameButtonH)
   private val mainPanel         = new JPanel(new BorderLayout())
   private val buttonPanel       = new JPanel()
   private val centerPanel       = new JPanel()
@@ -31,8 +33,9 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
    */
   def show(gamePanels: GamePanels): Unit =
     frame.setBackground(Color.WHITE)
-    centerFrame(frame, CENTER_FRAME_DIVISOR)
+    UIHelper.centerFrame(frame, CENTER_FRAME_DIVISOR)
     val simplePanelMap = simpleTextPanelMap(gamePanels)
+    centerPanel.setLayout(new BorderLayout())
 
     def onNext(nextController: GameController, miniGame: MiniGames): Unit =
       if nextController.isCurrentGameFinished then onGameFinished(nextController)
@@ -47,13 +50,11 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
           gamePanels.coloredCountPanel(newController, onNext(_, miniGame), q)
         case _                                                              =>
           throw new IllegalArgumentException("Type of question not handled")
-      centerPanel(centerPanel, panel)
+      UIHelper.centerPanel(centerPanel, panel)
       mainPanel.remove(buttonPanel)
 
-    centerPanel.setLayout(new BorderLayout())
-
     def createGameButton(miniGame: MiniGames): JButton =
-      val button = createStyledButton(
+      val button = UIHelper.createStyledButton(
         miniGame.displayName,
         buttonDimension,
         PIXEL_FONT15
@@ -73,7 +74,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
 
     val backButton =
-      createStyledButton(
+      UIHelper.createStyledButton(
         "← Home",
         new Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
         PIXEL_FONT8
@@ -101,5 +102,5 @@ case class BrainTraining(resultPanels: ResultPanels) extends BaseView with GameV
       val panel               =
         resultPanels.GameResultPanel(controller, numOfCorrectAnswers, numOfWrongAnswers, totalTime)
       mainPanel.remove(bottomPanel)
-      centerPanel(centerPanel, panel)
+      UIHelper.centerPanel(centerPanel, panel)
     )

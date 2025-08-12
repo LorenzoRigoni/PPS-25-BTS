@@ -41,7 +41,7 @@ class ColoredCountPanel(
     container.setLayout(new FlowLayout())
     numbersPart.foreach((num, color) =>
       val label = new JLabel(num.toString)
-      label.setForeground(Color.WHITE)
+      label.setForeground(color.color)
       label.setFont(PIXEL_FONT25)
       container.add(label)
     )
