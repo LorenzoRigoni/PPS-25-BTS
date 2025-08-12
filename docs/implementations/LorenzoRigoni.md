@@ -23,7 +23,7 @@ tipi di risposta, il trait è stato implementato tramite l'uso dei *generics*. I
 l'immutabilità, ogni volta che viene generata una nuova domanda deve essere restituita anche una copia dello stato
 aggiornato.
 
-```scala 3
+```
 trait MiniGameLogic[Q <: Question, A, B]:
   
   def generateQuestion: (MiniGameLogic[Q, A, B], Q)
@@ -35,7 +35,7 @@ trait MiniGameLogic[Q <: Question, A, B]:
 In questo caso, *A* e *B* sono due tipi generici che possono essere di qualsiasi tipo mentre *Q* (che rappresenta
 il tipo di domanda) deve essere un sotto tipo del trait *Question*.
 
-```scala 3
+```
 sealed trait Question
 
 case class SimpleTextQuestion(text: String) extends Question
@@ -56,16 +56,15 @@ In entrambi i casi, i mini-giochi sono implementati come *case class* che hanno 
 
 Nel caso di *Count Words*, le domande vengono generate aumentando il numero di parole da contare.
 
-```scala 3
-override def generateQuestion
-  : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
+```
+override def generateQuestion: (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
     val minRand        = math.max(1, difficulty - 1)
     val numOfWords     =
       if difficulty <= MIN_DIFFICULTY then MIN_NUMBER_WORDS + Random.between(0, difficulty + 1)
       else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
     val wordsGenerated = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
     val question       = SimpleTextQuestion(wordsGenerated)
-    
+
     (
       this.copy(
         currentRound = currentRound + 1,
@@ -75,20 +74,19 @@ override def generateQuestion
       question
     )
 
-override def validateAnswer(answer: Int): Boolean = 
-  lastQuestion match 
-    case Some(q) => answer == q.get.text.split("\\s+").count(_.nonEmpty)
-    case _       => false
+override def validateAnswer(answer: Int): Boolean =
+    lastQuestion match
+        case Some(q) => answer == q.text.split("\\s+").count(_.nonEmpty)
+        case _       => false
 ```
 
 Nel caso di *Colored Count*, invece, vengono aumentati i numeri mostrati.
 
-```scala 3
-override def generateQuestion
-      : (MiniGameLogic[ColoredCountQuestion, Int, Boolean], ColoredCountQuestion) =
-    val totalNumbers  = MIN_NUMBERS + difficulty * 2
-    val numbers       = List.fill(totalNumbers)(Random.between(1, 10))
-    val colorList     = List.fill(totalNumbers)(
+```
+override def generateQuestion: (MiniGameLogic[ColoredCountQuestion, Int, Boolean], ColoredCountQuestion) =
+    val totalNumbers  = MIN_NUMBERS + difficulty * MULT_DIFFICULTY
+    val numbers       = Seq.fill(totalNumbers)(Random.between(MIN_POSSIBLE_NUMBER, MAX_POSSIBLE_NUMBER))
+    val colorList     = Seq.fill(totalNumbers)(
       ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
     )
     val zipped        = numbers.zip(colorList)
@@ -104,10 +102,10 @@ override def generateQuestion
       question
     )
 
-  override def validateAnswer(answer: Int): Boolean =
+override def validateAnswer(answer: Int): Boolean =
     lastQuestion match
-      case Some(q) => answer == q.numbersWithColor.count((_, c) => c == q.colorRequired)
-      case _       => false
+        case Some(q) => answer == q.numbersWithColor.count((_, c) => c == q.colorRequired)
+        case _       => false
 ```
 
 ## Algoritmo Brain Age
@@ -116,11 +114,11 @@ Questo algoritmo prende in ingresso una lista (immutabile) di *QuestionResult* i
 e la correttezza delle risposte dell'utente. Il risultato viene calcolando partendo da un'età base (20 anni) a cui
 vengono sommate delle penalità per tempo ed errori.
 
-```scala 3
+```
 case class QuestionResult (responseTime: Long, isCorrect: Boolean)
 ```
 
-```scala 3
+```
 object BrainAgeCalculator:
 
   def calcBrainAge(results: List[QuestionResult]): Int =
@@ -152,7 +150,7 @@ in maniere differenti. Per ovviare a questo problema, sono stati implementate du
 
 *MiniGameWrapper* è un *trait* il quale racchiude le funzioni principali dei mini-giochi più due funzioni utili.
 
-```scala 3
+```
 trait MiniGameWrapper[Q <: Question, A, B]:
     def generateQuestion: (MiniGameWrapper[Q, A, B], Q)
     
@@ -168,7 +166,7 @@ trait MiniGameWrapper[Q <: Question, A, B]:
 *MiniGameAdapter* è una classe che implementa *MiniGameWrapper* e ha come campi la logica del mini-gioco, il suo tipo
 (rappresentato da un *enum*) e il parser per la risposta dell'utente.
 
-```scala 3
+```
 class MiniGameAdapter[Q <: Question, A, B](
   val logic: MiniGameLogic[Q, A, B],
   val gameId: MiniGames,
@@ -188,7 +186,7 @@ class MiniGameAdapter[Q <: Question, A, B](
 
 In questo modo, è stato possibile creare una *List* dei mini-giochi, la quale viene creata grazie ad una *factory*.
 
-```scala 3
+```
 private val miniGamesFactory: Map[MiniGames, () => MiniGameWrapper[_, _, _]] = Map(
   FastCalc        -> (() => MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS), FastCalc, _.toInt)),
   CountWords      -> (() => MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords, _.toInt)),
@@ -204,7 +202,7 @@ def chooseCurrentGame(miniGame: MiniGames): GameController =
 Inoltre, dato che per il training vengono chiesti dei risultati riguardo alle risposte dell'utente, è stato implementato
 una *extension* con i metodi utili.
 
-```scala 3
+```
 extension (results: List[utils.QuestionResult])
   def correctAnswers: Int             = results.count(_.isCorrect)
   def wrongAnswers: Int               = results.count(!_.isCorrect)
@@ -214,7 +212,7 @@ extension (results: List[utils.QuestionResult])
 Infine, sono stati implementati i metodi per la scelta del nuovo mini-gioco, la generazione della domanda e il controllo
 della risposta.
 
-```scala 3
+```
 def nextGame: GameController =
     Option
       .when(numMiniGamesPlayed < MAX_NUMBER_OF_MINIGAMES_AGE_TEST) {
