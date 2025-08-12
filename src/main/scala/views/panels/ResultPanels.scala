@@ -3,6 +3,7 @@ package views.panels
 import controllers.GameController
 import views.*
 import utils.GUIConstants.*
+import scala.List
 
 import java.awt.*
 import javax.swing.*
@@ -39,18 +40,20 @@ sealed trait ResultPanels:
       time: Int
   ): JPanel
 
-class ResultPanelsImpl extends ResultPanels, BaseView:
+class ResultPanelsImpl extends ResultPanels:
+
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
+    val borderInset = 50
     val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    panel.setBorder(new EmptyBorder(EMPTY_BORDER, EMPTY_BORDER, EMPTY_BORDER, EMPTY_BORDER))
+    panel.setBorder(new EmptyBorder(borderInset, borderInset, borderInset, borderInset))
     val title       = new JLabel(titleText)
     title.setFont(PIXEL_FONT25)
     title.setHorizontalAlignment(SwingConstants.CENTER)
     val homeButton  =
-      createStyledButton(
+      UIHelper.createStyledButton(
         "Home",
-        Dimension(BIG_HOME_BUTTON_W, BIG_HOME_BUTTON_H),
+        Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
         PIXEL_FONT15,
         Color.WHITE,
         CUSTOM_BLUE
@@ -80,31 +83,23 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       wrongAnswers: Int,
       time: Int
   ): JPanel =
-    val iconSize = getResponsiveIconSize(ICON_SIZE_DIVISOR)
-    val panel    = createBaseResultPanel(controller, "Your results:")
-
-    def loadIcon(name: String, size: Int): ImageIcon =
-      val url     = getClass.getResource(s"/" + name)
-      val image   = new ImageIcon(url).getImage
-      val resized = image.getScaledInstance(size, size, Image.SCALE_SMOOTH)
-      new ImageIcon(resized)
-
-    def resultRow(iconName: String, text: String): JPanel =
-      val rowPanel  = new JPanel(new FlowLayout(FlowLayout.CENTER))
-      rowPanel.setOpaque(false)
-      val iconLabel = new JLabel(loadIcon(iconName, iconSize))
-      val textLabel = new JLabel(text)
-      textLabel.setFont(PIXEL_FONT15)
-      rowPanel.add(iconLabel)
-      rowPanel.add(Box.createRigidArea(new Dimension(ROW_SPACE, 0)))
-      rowPanel.add(textLabel)
-      rowPanel
-
-    val resultsPanel = new JPanel()
+    val gridRows        = 3
+    val gridCols        = 1
+    val gridHGap        = 10
+    val gridVGap        = 20
+    val iconSizeDivisor = 20
+    val iconSize        = UIHelper.getResponsiveIconSize(iconSizeDivisor)
+    val panel           = createBaseResultPanel(controller, "Your results:")
+    val resultsPanel    = new JPanel()
+    val rows            = List(
+      ("greenCheck.png", s"Correct Answers: $correctAnswers"),
+      ("redCross.png", s"Wrong Answers: $wrongAnswers"),
+      ("clock.png", s"Time: $time seconds")
+    )
     resultsPanel.setOpaque(false)
-    resultsPanel.setLayout(new GridLayout(GRID_ROWS, GRID_COLS, GRID_H_GAP, GRID_V_GAP))
-    resultsPanel.add(resultRow("greenCheck.png", s"Correct Answers: $correctAnswers"))
-    resultsPanel.add(resultRow("redCross.png", s"Wrong Answers: $wrongAnswers"))
-    resultsPanel.add(resultRow("clock.png", s"Time: $time seconds"))
+    resultsPanel.setLayout(new GridLayout(gridRows, gridCols, gridHGap, gridVGap))
+    rows
+      .map((icon, text) => UIHelper.createResultRow(icon, text, iconSize))
+      .foreach(resultsPanel.add)
     panel.add(resultsPanel, BorderLayout.CENTER)
     panel

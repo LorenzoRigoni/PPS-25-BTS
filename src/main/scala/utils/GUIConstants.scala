@@ -8,6 +8,8 @@ object GUIConstants:
   val HALF_DIVISOR                = 2
   val CENTER_FRAME_DIVISOR: Float = 1.5
   val TIMER_WORD_MEMORY           = 10000
+  val HOME_BUTTON_W               = 120
+  val HOME_BUTTON_H               = 30
 
   // constants in simple panel
   val FLOW_H             = 10
@@ -24,21 +26,9 @@ object GUIConstants:
   val MENU_BUTTON_H_SCALE_FACTOR = 0.08
 
   // brain training constants
-  val HOME_BUTTON_W = 120
-  val HOME_BUTTON_H = 30
+
   val GAME_BUTTON_W = 300
   val GAME_BUTTON_H = 50
-
-  // result panels constants
-  val EMPTY_BORDER      = 50
-  val BIG_HOME_BUTTON_W = 120
-  val BIG_HOME_BUTTON_H = 30
-  val GRID_ROWS         = 3
-  val GRID_COLS         = 1
-  val GRID_H_GAP        = 10
-  val GRID_V_GAP        = 20
-  val ROW_SPACE         = 10
-  val ICON_SIZE_DIVISOR = 20
 
   val SCREEN_WIDTH: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
   val SCREEN_HEIGHT: Int = Toolkit.getDefaultToolkit.getScreenSize.height

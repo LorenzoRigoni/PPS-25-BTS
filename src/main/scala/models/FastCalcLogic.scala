@@ -17,10 +17,13 @@ case class FastCalcLogic(
   private def getRandomNumber(maxNumber: Int): Int =
     Random.nextInt(maxNumber) + 1
 
-  private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] = difficulty match
-    case d if d < NUM_SIMPLE_ROUNDS => Seq("+")
-    case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
-    case _                          => Seq("+", "-", "*")
+  private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] =
+    val numSimpleRounds = 3
+    val numMediumRounds = 6
+    difficulty match
+      case d if d < numSimpleRounds => Seq("+")
+      case d if d < numMediumRounds => Seq("+", "-")
+      case _                        => Seq("+", "-", "*")
 
   private def getRandomOperator(operators: Seq[String]): String =
     val operatorIndex = Random.nextInt(operators.length)
@@ -30,10 +33,10 @@ case class FastCalcLogic(
       numbers: List[String],
       operators: List[String]
   ): List[String] =
-    for {
+    for
       (n, op) <- numbers.zipAll(operators, "", "")
       token   <- List(n, op) if token.nonEmpty
-    } yield token
+    yield token
 
   def getListFromExpression(expression: String): List[String] =
     expression.split(" ").toList
@@ -43,7 +46,7 @@ case class FastCalcLogic(
         expr: List[String],
         ops: Set[String],
         f: (Int, Int, String) => Int
-    ): Option[Int] = {
+    ): Option[Int] =
       val index = expr.lastIndexWhere(ops.contains)
       if index == -1 then None
       else
@@ -54,7 +57,6 @@ case class FastCalcLogic(
             val r = calculate(rightPart)
             Some(f(l, r, op))
           case _               => throw new IllegalArgumentException("Malformed expression")
-    }
 
     def calculate(expr: List[String]): Int = expr match
       case n :: Nil => n.toInt
@@ -73,8 +75,9 @@ case class FastCalcLogic(
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
-    val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
-    val maxNumber    = MAX_NUMBER
+    val maxNumTerms  = 4
+    val maxNumber    = 10
+    val numTerms     = Math.min(difficulty + 1, maxNumTerms)
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
     val numbers      = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
     val operators    = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
@@ -83,7 +86,7 @@ case class FastCalcLogic(
     (
       this.copy(
         currentRound = currentRound + 1,
-        difficulty = difficulty + FAST_CALC_DIFFICULTY_STEP,
+        difficulty = difficulty + 1 * FAST_CALC_DIFFICULTY_STEP,
         lastQuestion = Some(question)
       ),
       question
