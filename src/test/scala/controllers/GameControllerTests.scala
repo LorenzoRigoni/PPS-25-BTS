@@ -6,7 +6,7 @@ import org.scalatest.matchers.should.Matchers
 import utils.{MiniGames, QuestionResult, SimpleTextQuestion}
 import utils.MiniGames.CountWords
 import utils.CountWordsConstants.COUNT_WORDS_TURNS
-import utils.GameControllerConstants.{MAX_NUMBER_OF_MINIGAMES_AGE_TEST, NUM_OF_MINIGAMES_AVAILABLE}
+import utils.GameControllerConstants.MAX_NUMBER_OF_MINIGAMES_AGE_TEST
 
 /**
  * This class tests the game controller.
@@ -15,7 +15,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should initialize with all mini-games") {
     val controller = GameController()
-    controller.remainingMiniGames.length shouldBe NUM_OF_MINIGAMES_AVAILABLE
+    controller.remainingMiniGames shouldBe MiniGames.values.toList
     controller.currentGame shouldBe None
   }
 

@@ -2,8 +2,23 @@ package models
 
 import utils.{MiniGames, Question}
 
+/**
+ * This class is an adapter of the mini-game logics. It is used from the controller.
+ * @param logic
+ *   The mini-game logic
+ * @param getGameId
+ *   The mini-game id
+ * @param parser
+ *   The parser for the user input
+ * @tparam Q
+ *   The type of question
+ * @tparam A
+ *   The type of answer
+ * @tparam B
+ *   The type of validation
+ */
 class MiniGameAdapter[Q <: Question, A, B](
-    logic: MiniGameLogic[Q, A, B],
+    val logic: MiniGameLogic[Q, A, B],
     val getGameId: MiniGames,
     val parser: String => A
 ) extends MiniGameWrapper[Q, A, B]:

@@ -40,6 +40,8 @@ case class GameController(
     startTime: Option[Long] = None,
     viewCallback: Option[GameViewCallback] = None
 ):
+  private val PERCENT_ACCETTABLE_ANSWER = 0.6
+  private val SECONDS_UNITY             = 1000
 
   private val miniGamesFactory: Map[MiniGames, () => MiniGameWrapper[_, _, _]] = Map(
     FastCalc        -> (() => MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS), FastCalc, _.toInt)),
@@ -54,8 +56,8 @@ case class GameController(
   )
 
   extension (results: List[utils.QuestionResult])
-    def correctAnswers: Int             = results.count(_.isCorrect)
-    def wrongAnswers: Int               = results.count(!_.isCorrect)
+    private def correctAnswers: Int     = results.count(_.isCorrect)
+    private def wrongAnswers: Int       = results.count(!_.isCorrect)
     private def totalTimeInSeconds: Int = (results.map(_.responseTime).sum / SECONDS_UNITY).toInt
 
   /**
@@ -64,20 +66,17 @@ case class GameController(
    *   a copy of the controller with the mini-game to play
    */
   def nextGame: GameController =
-    Option
-      .when(numMiniGamesPlayed < MAX_NUMBER_OF_MINIGAMES_AGE_TEST) {
-        val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
-        this.copy(
-          currentGame = miniGamesFactory.get(nextMiniGame).map(_.apply()),
-          remainingMiniGames = remainingMiniGames.filterNot(_ == nextMiniGame),
-          numMiniGamesPlayed = numMiniGamesPlayed + 1
-        )
-      }
-      .getOrElse {
-        val finalController = this.copy(currentGame = None)
-        viewCallback.foreach(_.onGameFinished(finalController))
-        finalController
-      }
+    if numMiniGamesPlayed == MAX_NUMBER_OF_MINIGAMES_AGE_TEST then
+      val finalController = this.copy(currentGame = None)
+      viewCallback.foreach(_.onGameFinished(finalController))
+      finalController
+    else
+      val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
+      this.copy(
+        currentGame = miniGamesFactory.get(nextMiniGame).map(_.apply()),
+        remainingMiniGames = remainingMiniGames.filterNot(_ == nextMiniGame),
+        numMiniGamesPlayed = numMiniGamesPlayed + 1
+      )
 
   /**
    * Choose the mini-game to play.
@@ -90,6 +89,12 @@ case class GameController(
   def chooseCurrentGame(miniGame: MiniGames): GameController =
     this.copy(currentGame = miniGamesFactory.get(miniGame).map(_.apply()))
 
+  /**
+   * Generate a new question of the mini-game.
+   *
+   * @return
+   *   a copy of the controller and a new question
+   */
   def getQuestion: (GameController, Question) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
     val updatedController                 = this.copy(
@@ -109,16 +114,14 @@ case class GameController(
   def checkAnswer(answer: String): Option[(GameController, Boolean)] =
     for
       game      <- currentGame
-      startTime <- this.startTime
+      startTime <- startTime
     yield
-      val parsedAnswer = game.parseAnswer(answer)
-
-      val elapsedTime     = System.currentTimeMillis() - startTime
-      val isAnswerCorrect = game.validateAnswer(parsedAnswer) match
+      val parsedAnswer      = game.parseAnswer(answer)
+      val elapsedTime       = System.currentTimeMillis() - startTime
+      val isAnswerCorrect   = game.validateAnswer(parsedAnswer) match
         case b: Boolean                                  => b
         case d: Double if d >= PERCENT_ACCETTABLE_ANSWER => true
         case _                                           => false
-
       val updatedController = this.copy(
         currentGame = Some(game),
         results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results

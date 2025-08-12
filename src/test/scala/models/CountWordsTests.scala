@@ -1,7 +1,7 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
-import utils.CountWordsConstants.{COUNT_WORDS_DIFFICULTY_STEP, COUNT_WORDS_TURNS}
+import utils.CountWordsConstants.COUNT_WORDS_TURNS
 import utils.SimpleTextQuestion
 
 /**
@@ -31,4 +31,11 @@ class CountWordsTests extends AnyFunSuite:
   test("The generator of the mini-game should generate questions based on difficulty") {
     val (_, question) = countWordsLogic.generateQuestion
     assert(getNumOfWords(countWordsLogic.lastQuestion.get.text) <= getNumOfWords(question.text))
+  }
+
+  test("The mini-game should end when it reaches the maximum number of turns") {
+    val lastMiniGameLogic = countWordsLogic.copy(
+      currentRound = COUNT_WORDS_TURNS
+    )
+    assert(lastMiniGameLogic.isMiniGameFinished)
   }

@@ -1,12 +1,15 @@
 package models
 
 import scala.util.Random
-import utils.CountWordsConstants.{COUNT_WORDS_DIFFICULTY_STEP, MIN_DIFFICULTY, MIN_NUMBER_WORDS}
 import utils.WordsForMiniGames.WORDS
 import utils.SimpleTextQuestion
 
 /**
- * This case class manages the logic of the Count Words mini-game.
+ * This case class manage the logic of the mini-game "Count Words"
+ * @param rounds The total number of rounds
+ * @param currentRound The current round
+ * @param difficulty The current difficulty
+ * @param lastQuestion The last question generated
  */
 case class CountWordsLogic(
     rounds: Int,
@@ -14,6 +17,9 @@ case class CountWordsLogic(
     difficulty: Int = 1,
     lastQuestion: Option[SimpleTextQuestion] = None
 ) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]:
+  private val COUNT_WORDS_DIFFICULTY_STEP = 1
+  private val MIN_NUMBER_WORDS            = 3
+  private val MIN_DIFFICULTY              = 2
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
