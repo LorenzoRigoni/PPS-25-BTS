@@ -15,6 +15,7 @@ collaborazione con Alessandra Versari.
 Ogni mini-gioco implementato nel progetto deve aderire al contratto *MiniGameLogic* il quale prevede tre funzioni
 principali da implementare:
 - generare nuove domande
+- fare il *parsing* delle risposte dell'utente
 - validare le risposte dell'utente
 - controllare se il mini-gioco è finito
 
@@ -27,11 +28,14 @@ aggiornato.
 trait MiniGameLogic[Q <: Question, A, B]:
   
   def generateQuestion: (MiniGameLogic[Q, A, B], Q)
+  
+  def parseAnswer(answer: String): A
 
   def validateAnswer(answer: A): B
 
   def isMiniGameFinished: Boolean
 ```
+
 In questo caso, *A* e *B* sono due tipi generici che possono essere di qualsiasi tipo mentre *Q* (che rappresenta
 il tipo di domanda) deve essere un sotto tipo del trait *Question*.
 
@@ -120,6 +124,10 @@ case class QuestionResult (responseTime: Long, isCorrect: Boolean)
 
 ```
 object BrainAgeCalculator:
+  private val BASE_AGE = 20
+  private val MAXIMUM_AGE = 100
+  private val SECONDS_UNITY = 1000
+  private val ERROR_PERCENT = 50
 
   def calcBrainAge(results: List[QuestionResult]): Int =
     if results.isEmpty then return BASE_AGE
@@ -145,58 +153,31 @@ ha i seguenti campi:
 
 Una prima difficoltà incontrata è stata riguardo alla collezione delle logiche dei mini-giochi. Infatti, in
 Scala, non è possibile riempire una collezione con trait che usano i *generics* i quali vengono implementati
-in maniere differenti. Per ovviare a questo problema, sono stati implementate due entità: *MiniGameWrapper* e
-*MiniGameAdapter*.
-
-*MiniGameWrapper* è un *trait* il quale racchiude le funzioni principali dei mini-giochi più due funzioni utili.
+in maniere differenti. Per ovviare a questo problema, non è stata creata una collezione di *MiniGameLogic* bensì
+è stata creata una collezione di *MiniGames*, ovvero del *enum* che rappresenta i mini-giochi.
 
 ```
-trait MiniGameWrapper[Q <: Question, A, B]:
-    def generateQuestion: (MiniGameWrapper[Q, A, B], Q)
-    
-    def validateAnswer(answer: A): B
-    
-    def isMiniGameFinished: Boolean
-    
-    def getGameId: MiniGames
-    
-    def parseAnswer(input: String): A
+enum MiniGames(val displayName: String):
+  case FastCalc        extends MiniGames("Fast Calc")
+  case CountWords      extends MiniGames("Count Words")
+  case RightDirections extends MiniGames("Right Directions")
+  case ColoredCount    extends MiniGames("Colored Count")
+  case WordMemory      extends MiniGames("Word Memory")
 ```
 
-*MiniGameAdapter* è una classe che implementa *MiniGameWrapper* e ha come campi la logica del mini-gioco, il suo tipo
-(rappresentato da un *enum*) e il parser per la risposta dell'utente.
+In questo modo, i mini-giochi vengono poi creati tramite una *factory*.
 
 ```
-class MiniGameAdapter[Q <: Question, A, B](
-  val logic: MiniGameLogic[Q, A, B],
-  val gameId: MiniGames,
-  val parser: String => A
-) extends MiniGameWrapper[Q, A, B]:
-
-    override def generateQuestion: (MiniGameWrapper[Q, A, B], Q) =
-      val (newLogic, question) = logic.generateQuestion
-      (MiniGameAdapter(newLogic, getGameId, parser), question)
-    
-    override def validateAnswer(answer: A): B = logic.validateAnswer(answer)
-    
-    override def isMiniGameFinished: Boolean = logic.isMiniGameFinished
-    
-    override def parseAnswer(input: String): A = parser(input)
-```
-
-In questo modo, è stato possibile creare una *List* dei mini-giochi, la quale viene creata grazie ad una *factory*.
-
-```
-private val miniGamesFactory: Map[MiniGames, () => MiniGameWrapper[_, _, _]] = Map(
-  FastCalc        -> (() => MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS), FastCalc, _.toInt)),
-  CountWords      -> (() => MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords, _.toInt)),
-  RightDirections -> (() => MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections, identity)),
-  ColoredCount    -> (() => MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount, _.toInt)),
-  WordMemory      -> (() => MiniGameAdapter(WordMemoryLogic(WORD_MEMORY_TURNS), WordMemory, identity))
-)
-
+private val miniGamesFactory: Map[MiniGames, () => MiniGameLogic[_, _, _]] = Map(
+    FastCalc        -> (() => FastCalcLogic(FAST_CALC_TURNS)),
+    CountWords      -> (() => CountWordsLogic(COUNT_WORDS_TURNS)),
+    RightDirections -> (() => RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS)),
+    ColoredCount    -> (() => ColoredCountLogic(COLORED_COUNT_TURNS)),
+    WordMemory      -> (() => WordMemoryLogic(WORD_MEMORY_TURNS))
+  )
+  
 def chooseCurrentGame(miniGame: MiniGames): GameController =
-  this.copy(currentGame = miniGamesFactory.get(miniGame).map(_.apply()))
+    this.copy(currentGame = miniGamesFactory.get(miniGame).map(m => (m.apply(), miniGame)))
 ```
 
 Inoltre, dato che per il training vengono chiesti dei risultati riguardo alle risposte dell'utente, è stato implementato
