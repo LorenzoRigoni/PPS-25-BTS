@@ -26,6 +26,9 @@ case class RightDirectionsLogic(
       question
     )
 
+  override def parseAnswer(answer: String): String =
+    identity(answer)
+
   override def validateAnswer(answer: String): Boolean =
     val trimmedAnswer                  = answer.toLowerCase.trim
     val correctAnswer                  = EvaluateOperation.evaluateOperationFromString(lastQuestion.get.text, List())

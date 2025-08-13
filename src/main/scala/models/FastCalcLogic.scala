@@ -92,6 +92,11 @@ case class FastCalcLogic(
       question
     )
 
+  override def parseAnswer(answer: String): Int =
+    answer.trim.toIntOption.getOrElse(
+      throw IllegalArgumentException(s"$answer is not an Int")
+    )
+
   override def validateAnswer(answer: Int): Boolean =
     calculateResult(getListFromExpression(lastQuestion.get.text)) == answer
 

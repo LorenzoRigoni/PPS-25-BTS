@@ -33,8 +33,8 @@ import scala.util.Random
  *   The callback to the view to do when an event occurs
  */
 case class GameController(
-    currentGame: Option[MiniGameWrapper[_, _, _]] = None,
-    remainingMiniGames: List[MiniGames] = MiniGames.values.toList,
+    currentGame: Option[(MiniGameLogic[_, _, _], MiniGames)] = None,
+    remainingMiniGames: Seq[MiniGames] = MiniGames.values.toList,
     results: List[utils.QuestionResult] = List.empty,
     numMiniGamesPlayed: Int = 0,
     startTime: Option[Long] = None,
@@ -43,16 +43,12 @@ case class GameController(
   private val PERCENT_ACCETTABLE_ANSWER = 0.6
   private val SECONDS_UNITY             = 1000
 
-  private val miniGamesFactory: Map[MiniGames, () => MiniGameWrapper[_, _, _]] = Map(
-    FastCalc        -> (() => MiniGameAdapter(FastCalcLogic(FAST_CALC_TURNS), FastCalc, _.toInt)),
-    CountWords      -> (() => MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords, _.toInt)),
-    RightDirections -> (() =>
-      MiniGameAdapter(RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS), RightDirections, identity)
-    ),
-    ColoredCount    -> (() =>
-      MiniGameAdapter(ColoredCountLogic(COLORED_COUNT_TURNS), ColoredCount, _.toInt)
-    ),
-    WordMemory      -> (() => MiniGameAdapter(WordMemoryLogic(WORD_MEMORY_TURNS), WordMemory, identity))
+  private val miniGamesFactory: Map[MiniGames, () => MiniGameLogic[_, _, _]] = Map(
+    FastCalc        -> (() => FastCalcLogic(FAST_CALC_TURNS)),
+    CountWords      -> (() => CountWordsLogic(COUNT_WORDS_TURNS)),
+    RightDirections -> (() => RightDirectionsLogic(MAX_NUMBER_OF_ROUNDS)),
+    ColoredCount    -> (() => ColoredCountLogic(COLORED_COUNT_TURNS)),
+    WordMemory      -> (() => WordMemoryLogic(WORD_MEMORY_TURNS))
   )
 
   extension (results: List[utils.QuestionResult])
@@ -73,7 +69,7 @@ case class GameController(
     else
       val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
       this.copy(
-        currentGame = miniGamesFactory.get(nextMiniGame).map(_.apply()),
+        currentGame = miniGamesFactory.get(nextMiniGame).map(m => (m.apply(), nextMiniGame)),
         remainingMiniGames = remainingMiniGames.filterNot(_ == nextMiniGame),
         numMiniGamesPlayed = numMiniGamesPlayed + 1
       )
@@ -87,7 +83,7 @@ case class GameController(
    *   a copy of the controller with the mini-game to play
    */
   def chooseCurrentGame(miniGame: MiniGames): GameController =
-    this.copy(currentGame = miniGamesFactory.get(miniGame).map(_.apply()))
+    this.copy(currentGame = miniGamesFactory.get(miniGame).map(m => (m.apply(), miniGame)))
 
   /**
    * Generate a new question of the mini-game.
@@ -96,9 +92,9 @@ case class GameController(
    *   a copy of the controller and a new question
    */
   def getQuestion: (GameController, Question) =
-    val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
+    val (updatedLogic, generatedQuestion) = currentGame.get._1.generateQuestion
     val updatedController                 = this.copy(
-      currentGame = Some(updatedLogic),
+      currentGame = Some((updatedLogic, currentGame.get._2)),
       startTime = Some(System.currentTimeMillis())
     )
     (updatedController, generatedQuestion)
@@ -116,12 +112,12 @@ case class GameController(
       game      <- currentGame
       startTime <- startTime
     yield
-      val parsedAnswer      = game.parseAnswer(answer)
+      val parsedAnswer      = game._1.parseAnswer(answer)
       val elapsedTime       = System.currentTimeMillis() - startTime
-      val isAnswerCorrect   = game.validateAnswer(parsedAnswer) match
-        case b: Boolean                                  => b
-        case d: Double if d >= PERCENT_ACCETTABLE_ANSWER => true
-        case _                                           => false
+      val isAnswerCorrect   = game._1.validateAnswer(parsedAnswer) match
+        case b: Boolean => b
+        case d: Double  => d >= PERCENT_ACCETTABLE_ANSWER
+        case _          => false
       val updatedController = this.copy(
         currentGame = Some(game),
         results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results
@@ -134,7 +130,7 @@ case class GameController(
    * @return
    *   true if it is finished, false otherwise
    */
-  def isCurrentGameFinished: Boolean = currentGame.exists(_.isMiniGameFinished)
+  def isCurrentGameFinished: Boolean = currentGame.exists(_._1.isMiniGameFinished)
 
   /**
    * Calculate the brain age of the user.

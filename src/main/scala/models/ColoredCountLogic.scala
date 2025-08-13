@@ -42,6 +42,11 @@ case class ColoredCountLogic(
       question
     )
 
+  override def parseAnswer(answer: String): Int =
+    answer.trim.toIntOption.getOrElse(
+      throw IllegalArgumentException(s"$answer is not an Int")
+    )
+
   override def validateAnswer(answer: Int): Boolean =
     lastQuestion match
       case Some(q) => answer == q.numbersWithColor.count((_, c) => c == q.colorRequired)

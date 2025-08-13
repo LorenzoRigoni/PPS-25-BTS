@@ -31,7 +31,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends G
     frame.setVisible(true)
 
     val initialController = GameController(viewCallback = Some(this)).nextGame
-    initialController.currentGame.foreach(game => onGameChanged(game.getGameId, initialController))
+    initialController.currentGame.foreach(game => onGameChanged(game._2, initialController))
 
   private def updatePanel(panel: JPanel): Unit =
     SwingUtilities.invokeLater(() => UIHelper.centerPanel(centerPanel, panel))
@@ -40,7 +40,7 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends G
     if nextController.isCurrentGameFinished then
       val updatedController = nextController.nextGame
       updatedController.currentGame.foreach(game =>
-        onGameChanged(game.getGameId, updatedController)
+        onGameChanged(game._2, updatedController)
       )
     else onGameChanged(currentMiniGame, nextController)
 

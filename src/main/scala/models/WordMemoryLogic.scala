@@ -31,6 +31,9 @@ case class WordMemoryLogic(
 
   extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
 
+  override def parseAnswer(answer: String): String =
+    identity(answer)
+
   override def validateAnswer(answer: String): Double =
     lastQuestion.fold(0.0)(question =>
       val expectedWordsNumber = question.text.toWordSet

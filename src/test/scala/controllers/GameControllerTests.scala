@@ -1,6 +1,7 @@
 package controllers
 
-import models.{BrainAgeCalculator, CountWordsLogic, MiniGameAdapter, MiniGameWrapper}
+import models.rightDirections.RightDirectionsLogic
+import models.{BrainAgeCalculator, ColoredCountLogic, CountWordsLogic, FastCalcLogic, WordMemoryLogic}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import utils.{MiniGames, QuestionResult, SimpleTextQuestion}
@@ -21,19 +22,19 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should choose correct mini-game") {
     val controllerForFastCalc = GameController().chooseCurrentGame(MiniGames.FastCalc)
-    controllerForFastCalc.currentGame.get shouldBe a[MiniGameWrapper[_, _, _]]
+    controllerForFastCalc.currentGame.get._1 shouldBe a[FastCalcLogic]
 
     val controllerForCountWords = GameController().chooseCurrentGame(MiniGames.CountWords)
-    controllerForCountWords.currentGame.get shouldBe a[MiniGameWrapper[_, _, _]]
+    controllerForCountWords.currentGame.get._1 shouldBe a[CountWordsLogic]
 
     val controllerForRightDirections = GameController().chooseCurrentGame(MiniGames.RightDirections)
-    controllerForRightDirections.currentGame.get shouldBe a[MiniGameWrapper[_, _, _]]
+    controllerForRightDirections.currentGame.get._1 shouldBe a[RightDirectionsLogic]
 
     val controllerForColoredCount = GameController().chooseCurrentGame(MiniGames.ColoredCount)
-    controllerForColoredCount.currentGame.get shouldBe a[MiniGameWrapper[_, _, _]]
+    controllerForColoredCount.currentGame.get._1 shouldBe a[ColoredCountLogic]
 
     val controllerForWordMemory = GameController().chooseCurrentGame(MiniGames.WordMemory)
-    controllerForWordMemory.currentGame.get shouldBe a[MiniGameWrapper[_, _, _]]
+    controllerForWordMemory.currentGame.get._1 shouldBe a[WordMemoryLogic]
   }
 
   test("Controller should generate question and record start time") {
@@ -43,9 +44,9 @@ class GameControllerTests extends AnyFunSuite with Matchers:
   }
 
   test("Controller should check answer correctly") {
-    val logic                         = MiniGameAdapter(CountWordsLogic(COUNT_WORDS_TURNS), CountWords, _.toInt)
+    val logic                         = CountWordsLogic(COUNT_WORDS_TURNS)
     val controller                    = GameController(
-      currentGame = Some(logic),
+      currentGame = Some((logic, CountWords)),
       startTime = Some(System.currentTimeMillis())
     )
     val (updatedController, question) = controller.getQuestion
