@@ -214,47 +214,41 @@ della risposta.
 
 ```
 def nextGame: GameController =
-    Option
-      .when(numMiniGamesPlayed < MAX_NUMBER_OF_MINIGAMES_AGE_TEST) {
-        val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
-        this.copy(
-          currentGame = miniGamesFactory.get(nextMiniGame).map(_.apply()),
-          remainingMiniGames = remainingMiniGames.filterNot(_ == nextMiniGame),
-          numMiniGamesPlayed = numMiniGamesPlayed + 1
-        )
-      }
-      .getOrElse {
-        val finalController = this.copy(currentGame = None)
-        viewCallback.foreach(_.onGameFinished(finalController))
-        finalController
-      }
-
-  def getQuestion: (GameController, Question) =
+    if numMiniGamesPlayed == MAX_NUMBER_OF_MINIGAMES_AGE_TEST then
+      val finalController = this.copy(currentGame = None)
+      viewCallback.foreach(_.onGameFinished(finalController))
+      finalController
+    else
+      val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
+      this.copy(
+        currentGame = miniGamesFactory.get(nextMiniGame).map(_.apply()),
+        remainingMiniGames = remainingMiniGames.filterNot(_ == nextMiniGame),
+        numMiniGamesPlayed = numMiniGamesPlayed + 1
+      )
+      
+def getQuestion: (GameController, Question) =
     val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
     val updatedController                 = this.copy(
-      currentGame = Some(updatedLogic),
-      startTime = Some(System.currentTimeMillis())
+        currentGame = Some(updatedLogic),
+        startTime = Some(System.currentTimeMillis())
     )
     (updatedController, generatedQuestion)
 
-  def checkAnswer(answer: String): Option[(GameController, Boolean)] =
+def checkAnswer(answer: String): Option[(GameController, Boolean)] =
     for
-      game      <- currentGame
-      startTime <- this.startTime
+        game      <- currentGame
+        startTime <- this.startTime
     yield
-      val parsedAnswer = game.parseAnswer(answer)
-
-      val elapsedTime     = System.currentTimeMillis() - startTime
-      val isAnswerCorrect = game.validateAnswer(parsedAnswer) match
-        case b: Boolean                                   => b
-        case d: Double if d >= PERCENT_ACCETTABLE_ANSWER  => true
-        case _                                            => false
-
-      val updatedController = this.copy(
+        val parsedAnswer = game.parseAnswer(answer)
+        val elapsedTime     = System.currentTimeMillis() - startTime
+        val isAnswerCorrect = game.validateAnswer(parsedAnswer) match
+            case b: Boolean                                   => b
+            case d: Double if d >= PERCENT_ACCETTABLE_ANSWER  => true
+            case _                                            => false
+        val updatedController = this.copy(
         currentGame = Some(game),
-        results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results
-      )
-      (updatedController, isAnswerCorrect)
+        results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results)
+        (updatedController, isAnswerCorrect)
 ```
 
 [Torna indietro](../Implementazione.md)
