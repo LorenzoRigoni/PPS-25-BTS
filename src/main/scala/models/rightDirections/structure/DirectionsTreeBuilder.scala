@@ -1,8 +1,11 @@
 package models.rightDirections.structure
 
 import models.rightDirections.structure.Token.X
-import models.rightDirections.structure.treeLogic.{BinaryTree, Leaf}
+import models.rightDirections.structure.treeLogic.*
+
 import scala.util.Random
+import utils.RightDirectionsConstants.*
+
 import scala.annotation.tailrec
 
 object DirectionsTreeBuilder extends OperationBuilder[Token]:
@@ -18,18 +21,18 @@ object DirectionsTreeBuilder extends OperationBuilder[Token]:
       if (treeComplexity > complexity) root
       else
         val TokensNextComplexity = (treeComplexity, complexity) match
-          case (0, c) if c >= 2     => 2
-          case (c1, c2) if c1 != c2 => 1
-          case _                    => 0
+          case (0, c) if c >= BINARY_OPERATOR_COMPLEXITY => BINARY_OPERATOR_COMPLEXITY
+          case (c1, c2) if c1 != c2                      => UNARY_OPERATOR_COMPLEXITY
+          case _                                         => SUBSTITUTE_OPERATOR_COMPLEXITY
 
-        val tokenToAdd = Token.randomOperatorUpTo(TokensNextComplexity)
         given Random   = new Random()
+        val tokenToAdd = Token.randomOperatorUpTo(TokensNextComplexity)
         expandTree(
           tokenToAdd.complexity match
-            case 2 => root.expand(X, tokenToAdd, Some(X), Some(X))
-            case 1 => root.expand(X, tokenToAdd, Some(X), None)
-            case 0 => root.expand(X, tokenToAdd, None, None)
-            case _ => root
+            case BINARY_OPERATOR_COMPLEXITY     => root.expand(X, tokenToAdd, Some(X), Some(X))
+            case UNARY_OPERATOR_COMPLEXITY      => root.expand(X, tokenToAdd, Some(X), None)
+            case SUBSTITUTE_OPERATOR_COMPLEXITY => root.expand(X, tokenToAdd, None, None)
+            case _                              => root
           ,
           complexity
         )
