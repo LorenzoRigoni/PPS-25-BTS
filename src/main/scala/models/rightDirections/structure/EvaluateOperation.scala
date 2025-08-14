@@ -1,44 +1,42 @@
 package models.rightDirections.structure
-import scala.List
 
 object EvaluateOperation:
   private def stripParentheses(s: String): String =
     s.replace("(", "").replace(")", "").trim
 
-  def evaluateOperationFromString(input: String, currentList: List[Symbol]): List[Symbol]  = {
-    val trimmed: String = input.trim
+  def evaluateOperationFromString(input: String, currentList: Seq[Token]): Seq[Token] =
+    val trimmedInput = stripParentheses(input)
 
-    if (trimmed.contains("and")) {
-      val Array(left, right) = trimmed.split("and", 2)
-      evaluateOperationFromString(left, Nil)
-        .intersect(evaluateOperationFromString(right, Nil))
-        .distinct
-    } else if (trimmed.contains("or")) {
-      val Array(left, right) = trimmed.split("or", 2)
-      evaluateOperationFromString(left, Nil)
-        .concat(evaluateOperationFromString(right, Nil))
-        .distinct
-    } else if (!(trimmed.contains("x") || trimmed.contains("not")))
-      List(Symbol.fromString(stripParentheses(trimmed)).get)
-    else
-      handleNotCondition(trimmed, currentList)
-  }
-  private def handleNotCondition(trimmed: String, currentList: List[Symbol]): List[Symbol] =
-    val partialExtractionOpt = trimmed.split('(').find(_.contains(')'))
+    trimmedInput match
+      case operation if operation.contains("and") =>
+        val Array(left, right) = operation.split("and")
+        combineAnd(left, right)
 
-    partialExtractionOpt match {
-      case Some(nextOperationRaw) if trimmed.contains('(') =>
-        val nextOperation = nextOperationRaw.split(')')(0)
-        val replaced      = trimmed.replace(s"($nextOperation)", "x").trim
+      case operation if operation.contains("or") =>
+        val Array(left, right) = operation.split("or")
+        combineOr(left, right)
 
-        val newList: List[Symbol] =
-          if (nextOperation.contains("x")) currentList
-          else List(Symbol.fromString(nextOperation.split(" ")(1)).get)
+      case operation if !(operation.contains("x") || operation.contains("not")) =>
+        Seq(Token.fromString(stripParentheses(operation)))
 
-        val filtered = Symbol.allDirections.filterNot(newList.contains)
-        evaluateOperationFromString(replaced, filtered)
+      case operation =>
+        handleNotCondition(operation)
 
-      case _ =>
-        if currentList.nonEmpty then currentList
-        else List(Symbol.fromString("").get)
-    }
+  private def combineAnd(left: String, right: String): Seq[Token] =
+    (evaluateOperationFromString(left, Nil) intersect
+      evaluateOperationFromString(right, Nil)).distinct
+
+  private def combineOr(left: String, right: String): Seq[Token] =
+    (evaluateOperationFromString(left, Nil) concat
+      evaluateOperationFromString(right, Nil)).distinct
+
+  private def handleNotCondition(trimmed: String): Seq[Token] =
+    val operator          = Token fromString
+      trimmed
+        .split(" ")
+        .lastOption
+        .getOrElse("")
+    val numberOfNegations = trimmed.split(" ").count(_ == "not")
+
+    if numberOfNegations % 2 == 0 then Seq(operator)
+    else Token.directions.filterNot(_ == operator)
