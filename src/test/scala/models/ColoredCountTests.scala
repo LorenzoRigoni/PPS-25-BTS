@@ -1,8 +1,9 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
-import utils.ColoredCountConstants.COLORED_COUNT_TURNS
-import utils.{ColoredCountColors, ColoredCountQuestion}
+import utils.constants.ColoredCountConstants.COLORED_COUNT_TURNS
+import utils.ColoredCountQuestion
+import utils.enums.ColoredCountColors
 
 /**
  * This class tests the logic of the mini-game Colored Count.

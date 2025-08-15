@@ -1,7 +1,7 @@
 package views.panels
 
 import controllers.GameController
-import utils.GUIConstants.TIMER_WORD_MEMORY
+import utils.constants.GUIConstants.TIMER_WORD_MEMORY
 import utils.SimpleTextQuestion
 
 import javax.swing.{JPanel, Timer}

@@ -1,4 +1,4 @@
-package utils
+package utils.constants
 
 /**
  * This object contains the constants for the mini-game CountWords

@@ -1,4 +1,4 @@
-package utils
+package utils.constants
 
 object RightDirectionsConstants:
   val DIFFICULTY_STEP: Float        = 0.25

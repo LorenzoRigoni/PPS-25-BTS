@@ -1,7 +1,7 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
-import utils.CountWordsConstants.COUNT_WORDS_TURNS
+import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
 import utils.SimpleTextQuestion
 
 /**

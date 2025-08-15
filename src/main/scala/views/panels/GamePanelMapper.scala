@@ -1,8 +1,9 @@
 package views.panels
 
 import controllers.GameController
-import utils.{MiniGames, SimpleTextQuestion}
-import utils.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
+import utils.SimpleTextQuestion
+import utils.enums.MiniGames
+import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels
 
 import javax.swing.JPanel

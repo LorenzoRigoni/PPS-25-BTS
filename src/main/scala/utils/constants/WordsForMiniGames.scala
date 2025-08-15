@@ -1,4 +1,4 @@
-package utils
+package utils.constants
 
 object WordsForMiniGames:
   val WORDS: Seq[String] = Seq(

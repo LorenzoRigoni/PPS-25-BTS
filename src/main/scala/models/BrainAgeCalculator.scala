@@ -20,7 +20,7 @@ object BrainAgeCalculator:
    *   An integer that represents the brain age of the player
    */
   def calcBrainAge(results: List[QuestionResult]): Int =
-    if results.isEmpty then return BASE_AGE
+    if results.isEmpty then return MAXIMUM_AGE
     val avgTime      = results.map(_.responseTime).sum.toDouble / results.length
     val errorRate    = results.count(!_.isCorrect).toDouble / results.length
     val timePenalty  = (avgTime / SECONDS_UNITY).toInt

@@ -1,12 +1,11 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
-import utils.FastCalcConstants.{FAST_CALC_DIFFICULTY_STEP, FAST_CALC_TURNS}
+import utils.constants.FastCalcConstants.{FAST_CALC_DIFFICULTY_STEP, FAST_CALC_TURNS}
 import utils.SimpleTextQuestion
 
 class FastCalcTests extends AnyFunSuite:
   private val TEST_DIFFICULTY_INDEX           = 3
-  // CASE 1: Positive Result
   private val TEST_EXPRESSION_POSITIVE_RESULT = SimpleTextQuestion("8 + 4 * 2")
   private val logic                           = FastCalcLogic(
     rounds = FAST_CALC_TURNS,
@@ -16,8 +15,6 @@ class FastCalcTests extends AnyFunSuite:
   private val CORRECT_ANSWER1                 =
     logic.calculateResult(logic.getListFromExpression(TEST_EXPRESSION_POSITIVE_RESULT.text))
   private val WRONG_ANSWER1                   = CORRECT_ANSWER1 + 1
-
-  // CASE 2: Negative Result
   private val TEST_EXPRESSION_NEGATIVE_RESULT = SimpleTextQuestion("7 - 4 * 2")
   private val logic2                          = logic.copy(lastQuestion = Some(TEST_EXPRESSION_NEGATIVE_RESULT))
   private val CORRECT_ANSWER2                 =

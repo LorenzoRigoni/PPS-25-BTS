@@ -1,13 +1,20 @@
 package controllers
 
 import models.rightDirections.RightDirectionsLogic
-import models.{BrainAgeCalculator, ColoredCountLogic, CountWordsLogic, FastCalcLogic, WordMemoryLogic}
+import models.{
+  BrainAgeCalculator,
+  ColoredCountLogic,
+  CountWordsLogic,
+  FastCalcLogic,
+  WordMemoryLogic
+}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import utils.{MiniGames, QuestionResult, SimpleTextQuestion}
-import utils.MiniGames.CountWords
-import utils.CountWordsConstants.COUNT_WORDS_TURNS
-import utils.GameControllerConstants.MAX_NUMBER_OF_MINIGAMES_AGE_TEST
+import utils.{QuestionResult, SimpleTextQuestion}
+import utils.enums.MiniGames.CountWords
+import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
+import utils.constants.GameControllerConstants.MAX_NUMBER_OF_MINIGAMES_AGE_TEST
+import utils.enums.MiniGames
 
 /**
  * This class tests the game controller.
@@ -21,19 +28,15 @@ class GameControllerTests extends AnyFunSuite with Matchers:
   }
 
   test("Controller should choose correct mini-game") {
-    val controllerForFastCalc = GameController().chooseCurrentGame(MiniGames.FastCalc)
+    val controllerForFastCalc        = GameController().chooseCurrentGame(MiniGames.FastCalc)
     controllerForFastCalc.currentGame.get._1 shouldBe a[FastCalcLogic]
-
-    val controllerForCountWords = GameController().chooseCurrentGame(MiniGames.CountWords)
+    val controllerForCountWords      = GameController().chooseCurrentGame(MiniGames.CountWords)
     controllerForCountWords.currentGame.get._1 shouldBe a[CountWordsLogic]
-
     val controllerForRightDirections = GameController().chooseCurrentGame(MiniGames.RightDirections)
     controllerForRightDirections.currentGame.get._1 shouldBe a[RightDirectionsLogic]
-
-    val controllerForColoredCount = GameController().chooseCurrentGame(MiniGames.ColoredCount)
+    val controllerForColoredCount    = GameController().chooseCurrentGame(MiniGames.ColoredCount)
     controllerForColoredCount.currentGame.get._1 shouldBe a[ColoredCountLogic]
-
-    val controllerForWordMemory = GameController().chooseCurrentGame(MiniGames.WordMemory)
+    val controllerForWordMemory      = GameController().chooseCurrentGame(MiniGames.WordMemory)
     controllerForWordMemory.currentGame.get._1 shouldBe a[WordMemoryLogic]
   }
 
@@ -52,7 +55,6 @@ class GameControllerTests extends AnyFunSuite with Matchers:
     val (updatedController, question) = controller.getQuestion
     val correctAnswer                 =
       question.asInstanceOf[SimpleTextQuestion].text.split("\\s+").count(_.nonEmpty).toString
-
     updatedController.checkAnswer(correctAnswer).get._2 shouldBe true
     updatedController.checkAnswer((correctAnswer.toInt + 1).toString).get._2 shouldBe false
   }
@@ -63,8 +65,7 @@ class GameControllerTests extends AnyFunSuite with Matchers:
       QuestionResult(2000, false),
       QuestionResult(800, true)
     )
-
-    val brainAge = BrainAgeCalculator.calcBrainAge(questionResults)
+    val brainAge        = BrainAgeCalculator.calcBrainAge(questionResults)
     brainAge shouldBe a[Int]
     assert(brainAge >= 20 && brainAge <= 100)
   }
@@ -73,15 +74,12 @@ class GameControllerTests extends AnyFunSuite with Matchers:
     var isFinished = false
     val callback   = new GameViewCallback:
       override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit = {}
-
-      override def onGameFinished(controller: GameController): Unit = isFinished = true
-
+      override def onGameFinished(controller: GameController): Unit                     = isFinished = true
     val controller = GameController(
       numMiniGamesPlayed = MAX_NUMBER_OF_MINIGAMES_AGE_TEST,
       viewCallback = Some(callback)
     )
-
-    val next = controller.nextGame
+    val next       = controller.nextGame
     next.currentGame shouldBe Option.empty
     isFinished shouldBe true
   }

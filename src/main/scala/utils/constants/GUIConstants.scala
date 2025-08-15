@@ -1,4 +1,4 @@
-package utils
+package utils.constants
 
 import java.awt.{Color, Font, Toolkit}
 import java.io.File

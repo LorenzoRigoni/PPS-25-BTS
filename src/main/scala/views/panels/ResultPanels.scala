@@ -2,7 +2,7 @@ package views.panels
 
 import controllers.GameController
 import views.*
-import utils.GUIConstants.*
+import utils.constants.GUIConstants.*
 import scala.List
 
 import java.awt.*

@@ -1,10 +1,11 @@
 package views
 
 import controllers.{GameController, GameViewCallback}
-import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
-import utils.MiniGames.*
+import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
+import utils.enums.MiniGames.*
 import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
-import utils.GUIConstants.*
+import utils.constants.GUIConstants.*
+import utils.enums.MiniGames
 import views.panels.GamePanelMapper.*
 
 import javax.swing.*
@@ -65,15 +66,12 @@ case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
       })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
       button
-
     MiniGames.values.foreach(miniGame =>
       buttonPanel.add(Box.createVerticalStrut(BUTTON_DISTANCE))
       buttonPanel.add(createGameButton(miniGame))
     )
-
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
-
-    val backButton =
+    val backButton                                     =
       UIHelper.createStyledButton(
         "← Home",
         new Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
@@ -84,7 +82,6 @@ case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
       if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
       else BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
     })
-
     bottomPanel.add(backButton)
     mainPanel.add(buttonPanel, BorderLayout.NORTH)
     mainPanel.add(centerPanel, BorderLayout.CENTER)

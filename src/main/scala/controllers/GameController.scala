@@ -2,16 +2,17 @@ package controllers
 
 import models.*
 import models.rightDirections.RightDirectionsLogic
-import utils.CountWordsConstants.COUNT_WORDS_TURNS
-import utils.ColoredCountConstants.COLORED_COUNT_TURNS
-import utils.WordMemoryConstants.WORD_MEMORY_TURNS
-import utils.RightDirectionsConstants.*
-import utils.FastCalcConstants.*
-import utils.{FastCalcConstants, MiniGames}
-import utils.MiniGames.*
-import utils.GameControllerConstants.*
+import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
+import utils.constants.ColoredCountConstants.COLORED_COUNT_TURNS
+import utils.constants.WordMemoryConstants.WORD_MEMORY_TURNS
+import utils.constants.RightDirectionsConstants.*
+import utils.constants.FastCalcConstants.*
+import utils.enums.MiniGames.*
+import utils.constants.GameControllerConstants.*
 import utils.QuestionResult
 import utils.Question
+import utils.constants.FastCalcConstants
+import utils.enums.MiniGames
 
 import scala.util.Random
 

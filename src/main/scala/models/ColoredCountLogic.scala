@@ -1,11 +1,12 @@
 package models
 
 import scala.util.Random
-import utils.ColoredCountColors
 import utils.ColoredCountQuestion
+import utils.enums.ColoredCountColors
 
 /**
  * This case class manage the logic of the mini-game "Colored Count"
+ *
  * @param rounds The total number of rounds
  * @param currentRound The current round
  * @param difficulty The current difficulty

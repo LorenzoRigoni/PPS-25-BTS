@@ -1,6 +1,6 @@
 package models
 
-import utils.FastCalcConstants.*
+import utils.constants.FastCalcConstants.*
 import scala.util.Random
 import utils.SimpleTextQuestion
 
@@ -13,17 +13,19 @@ case class FastCalcLogic(
     difficulty: Int = 1,
     lastQuestion: Option[SimpleTextQuestion] = None
 ) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]:
+  private val NUM_SIMPLE_ROUNDS = 3
+  private val NUM_MEDIUM_ROUNDS = 6
+  private val MAX_NUM_TERMS     = 4
+  private val MAX_NUM           = 10
 
   private def getRandomNumber(maxNumber: Int): Int =
     Random.nextInt(maxNumber) + 1
 
   private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] =
-    val numSimpleRounds = 3
-    val numMediumRounds = 6
     difficulty match
-      case d if d < numSimpleRounds => Seq("+")
-      case d if d < numMediumRounds => Seq("+", "-")
-      case _                        => Seq("+", "-", "*")
+      case d if d < NUM_SIMPLE_ROUNDS => Seq("+")
+      case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
+      case _                          => Seq("+", "-", "*")
 
   private def getRandomOperator(operators: Seq[String]): String =
     val operatorIndex = Random.nextInt(operators.length)
@@ -75,11 +77,9 @@ case class FastCalcLogic(
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
-    val maxNumTerms  = 4
-    val maxNumber    = 10
-    val numTerms     = Math.min(difficulty + 1, maxNumTerms)
+    val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
-    val numbers      = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
+    val numbers      = (1 to numTerms).map(_ => getRandomNumber(MAX_NUM).toString).toList
     val operators    = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
     val expression   = buildExpression(numbers, operators).mkString(" ")
     val question     = SimpleTextQuestion(expression)
@@ -101,4 +101,4 @@ case class FastCalcLogic(
     calculateResult(getListFromExpression(lastQuestion.get.text)) == answer
 
   override def isMiniGameFinished: Boolean =
-    !(currentRound < rounds)
+    currentRound == rounds

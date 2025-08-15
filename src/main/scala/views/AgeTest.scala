@@ -2,10 +2,11 @@ package views
 
 import controllers.{GameController, GameViewCallback}
 import models.*
-import utils.{ColoredCountQuestion, MiniGames, Question, SimpleTextQuestion}
-import utils.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
+import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
+import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanels, ResultPanels}
-import utils.GUIConstants.*
+import utils.constants.GUIConstants.*
+import utils.enums.MiniGames
 import views.panels.GamePanelMapper.*
 
 import javax.swing.*
@@ -20,28 +21,13 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends G
   private val centerPanel    = new JPanel(new BorderLayout())
   private val simplePanelMap = simpleTextPanelMap(gamePanels)
 
-  /**
-   * Show the age test view with a mini-game.
-   */
-  def show(): Unit =
-    frame.setBackground(Color.WHITE)
-    UIHelper.centerFrame(frame, CENTER_FRAME_DIVISOR)
-    mainPanel.add(centerPanel, BorderLayout.CENTER)
-    frame.setContentPane(mainPanel)
-    frame.setVisible(true)
-
-    val initialController = GameController(viewCallback = Some(this)).nextGame
-    initialController.currentGame.foreach(game => onGameChanged(game._2, initialController))
-
   private def updatePanel(panel: JPanel): Unit =
     SwingUtilities.invokeLater(() => UIHelper.centerPanel(centerPanel, panel))
 
   private def advanceGame(currentMiniGame: MiniGames)(nextController: GameController): Unit =
     if nextController.isCurrentGameFinished then
       val updatedController = nextController.nextGame
-      updatedController.currentGame.foreach(game =>
-        onGameChanged(game._2, updatedController)
-      )
+      updatedController.currentGame.foreach(game => onGameChanged(game._2, updatedController))
     else onGameChanged(currentMiniGame, nextController)
 
   private def showGame[Q <: Question](
@@ -59,6 +45,18 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends G
       miniGame,
       throw new IllegalArgumentException(s"This mini-game is not a SimpleTextQuestion: $miniGame")
     )
+
+  /**
+   * Show the age test view with a mini-game.
+   */
+  def show(): Unit =
+    frame.setBackground(Color.WHITE)
+    UIHelper.centerFrame(frame, CENTER_FRAME_DIVISOR)
+    mainPanel.add(centerPanel, BorderLayout.CENTER)
+    frame.setContentPane(mainPanel)
+    frame.setVisible(true)
+    val initialController = GameController(viewCallback = Some(this)).nextGame
+    initialController.currentGame.foreach(game => onGameChanged(game._2, initialController))
 
   override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
     val (questionController, question) = controller.getQuestion

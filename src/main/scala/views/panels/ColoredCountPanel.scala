@@ -1,8 +1,9 @@
 package views.panels
 
 import controllers.GameController
-import utils.{ColoredCountColors, ColoredCountQuestion}
-import utils.GUIConstants.*
+import utils.ColoredCountQuestion
+import utils.constants.GUIConstants.*
+import utils.enums.ColoredCountColors
 
 import java.awt.*
 import javax.swing.*

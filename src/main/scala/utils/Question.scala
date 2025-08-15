@@ -1,5 +1,7 @@
 package utils
 
+import utils.enums.ColoredCountColors
+
 sealed trait Question
 
 case class SimpleTextQuestion(text: String) extends Question

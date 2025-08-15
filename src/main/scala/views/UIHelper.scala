@@ -1,6 +1,6 @@
 package views
 
-import utils.GUIConstants.*
+import utils.constants.GUIConstants.*
 
 import java.awt.Font
 import javax.swing.*

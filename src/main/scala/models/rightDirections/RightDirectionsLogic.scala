@@ -3,7 +3,7 @@ package models.rightDirections
 import models.rightDirections.structure.Token
 import models.MiniGameLogic
 import models.rightDirections.structure.*
-import utils.RightDirectionsConstants.*
+import utils.constants.RightDirectionsConstants.*
 import utils.SimpleTextQuestion
 
 import scala.annotation.tailrec
@@ -15,7 +15,8 @@ case class RightDirectionsLogic(
     currentRound: Int = 0
 ) extends MiniGameLogic[SimpleTextQuestion, String, Boolean]:
 
-  override def generateQuestion: (MiniGameLogic[SimpleTextQuestion, String, Boolean], SimpleTextQuestion) =
+  override def generateQuestion
+      : (MiniGameLogic[SimpleTextQuestion, String, Boolean], SimpleTextQuestion) =
     val question = SimpleTextQuestion(trimQuestion(generateOperation))
     (
       this.copy(
@@ -34,7 +35,6 @@ case class RightDirectionsLogic(
     val correctAnswer         = EvaluateOperation.evaluateOperationFromString(lastQuestion.get.text, Seq())
     val answerAsToken: Token  = Token.fromString(trimmedAnswer)
     val noAnswerCase: Boolean = correctAnswer.isEmpty && answerAsToken.equals(Token.Empty)
-
     correctAnswer.contains(answerAsToken) || noAnswerCase
 
   override def isMiniGameFinished: Boolean =
@@ -46,7 +46,6 @@ case class RightDirectionsLogic(
       .buildOperationFromComplexity(difficulty.toInt)
       .toString
     val containsAnswer = EvaluateOperation.evaluateOperationFromString(question, Seq()).nonEmpty
-
     if containsAnswer || CAN_GENERATE_WRONG_OPERATIONS then question else generateOperation
 
   private def trimQuestion(question: String): String =

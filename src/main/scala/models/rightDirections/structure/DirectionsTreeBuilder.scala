@@ -4,7 +4,7 @@ import models.rightDirections.structure.Token.X
 import models.rightDirections.structure.treeLogic.*
 
 import scala.util.Random
-import utils.RightDirectionsConstants.*
+import utils.constants.RightDirectionsConstants.*
 
 import scala.annotation.tailrec
 
@@ -24,7 +24,6 @@ object DirectionsTreeBuilder extends OperationBuilder[Token]:
           case (0, c) if c >= BINARY_OPERATOR_COMPLEXITY => BINARY_OPERATOR_COMPLEXITY
           case (c1, c2) if c1 != c2                      => UNARY_OPERATOR_COMPLEXITY
           case _                                         => SUBSTITUTE_OPERATOR_COMPLEXITY
-
         given Random   = new Random()
         val tokenToAdd = Token.randomOperatorUpTo(TokensNextComplexity)
         expandTree(
