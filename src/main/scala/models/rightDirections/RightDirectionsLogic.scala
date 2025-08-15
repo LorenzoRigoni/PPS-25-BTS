@@ -1,8 +1,8 @@
 package models.rightDirections
 
-import models.rightDirections.structure.Symbol
+import models.rightDirections.structure.Token
 import models.MiniGameLogic
-import models.rightDirections.structure.{EvaluateOperation, SyntaxTreeBuilder}
+import models.rightDirections.structure.*
 import utils.RightDirectionsConstants.*
 import utils.SimpleTextQuestion
 
@@ -30,29 +30,26 @@ case class RightDirectionsLogic(
     identity(answer)
 
   override def validateAnswer(answer: String): Boolean =
-    val trimmedAnswer                  = answer.toLowerCase.trim
-    val correctAnswer                  = EvaluateOperation.evaluateOperationFromString(lastQuestion.get.text, List())
-    val answerAsSymbol: Option[Symbol] = Symbol.fromString(trimmedAnswer)
-    val noAnswerCase: Boolean          = correctAnswer.isEmpty && trimmedAnswer.equals("")
+    val trimmedAnswer         = answer.toLowerCase.trim
+    val correctAnswer         = EvaluateOperation.evaluateOperationFromString(lastQuestion.get.text, Seq())
+    val answerAsToken: Token  = Token.fromString(trimmedAnswer)
+    val noAnswerCase: Boolean = correctAnswer.isEmpty && answerAsToken.equals(Token.Empty)
 
-    answerAsSymbol.isDefined &&
-    (correctAnswer.contains(answerAsSymbol.get) || noAnswerCase)
+    correctAnswer.contains(answerAsToken) || noAnswerCase
 
   override def isMiniGameFinished: Boolean =
     currentRound == rounds
 
   @tailrec
   private def generateOperation: String =
-    val question       = SyntaxTreeBuilder
+    val question       = DirectionsTreeBuilder
       .buildOperationFromComplexity(difficulty.toInt)
       .toString
-    val containsAnswer = EvaluateOperation.evaluateOperationFromString(question, List()).nonEmpty
+    val containsAnswer = EvaluateOperation.evaluateOperationFromString(question, Seq()).nonEmpty
 
-    if (containsAnswer || CAN_GENERATE_WRONG_OPERATIONS) then question else generateOperation
+    if containsAnswer || CAN_GENERATE_WRONG_OPERATIONS then question else generateOperation
 
   private def trimQuestion(question: String): String =
     question
       .replaceAll("\\(", "")
       .replaceAll("\\)", "")
-      .replace("and ", "\nand\n")
-      .replace("or ", "\nor\n")
