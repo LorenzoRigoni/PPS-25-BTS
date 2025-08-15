@@ -1,6 +1,7 @@
 package views.panels
 
 import controllers.GameController
+import utils.{ColoredCountQuestion, SimpleTextQuestion}
 
 import javax.swing.*
 
@@ -16,7 +17,7 @@ sealed trait GamePanels:
   def fastCalcPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel
 
   /**
@@ -28,7 +29,7 @@ sealed trait GamePanels:
   def countWordsPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel
 
   /**
@@ -40,53 +41,53 @@ sealed trait GamePanels:
   def rightDirectionsPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel
 
   def wordMemoryPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel
 
   def coloredCountPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: ColoredCountQuestion
   ): JPanel
 
 class GamePanelsImpl extends GamePanels:
   override def fastCalcPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel =
     FastCalcPanel(controller, onNext, question).panel()
 
   override def countWordsPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel =
     CountWordsPanel(controller, onNext, question).panel()
 
   override def rightDirectionsPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel =
     RightDirectionsPanel(controller, onNext, question).panel()
 
   override def wordMemoryPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: SimpleTextQuestion
   ): JPanel =
     WordMemoryPanel(controller, onNext, question).panel()
 
   override def coloredCountPanel(
       controller: GameController,
       onNext: GameController => Unit,
-      question: String
+      question: ColoredCountQuestion
   ): JPanel =
     ColoredCountPanel(controller, onNext, question).panel()

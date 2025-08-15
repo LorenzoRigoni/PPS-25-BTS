@@ -5,5 +5,3 @@ package utils
  */
 object CountWordsConstants:
   val COUNT_WORDS_TURNS           = 10
-  val COUNT_WORDS_DIFFICULTY_STEP = 1
-  val MIN_NUMBER_WORDS            = 3

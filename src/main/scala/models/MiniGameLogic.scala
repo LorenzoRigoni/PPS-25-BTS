@@ -1,22 +1,39 @@
 package models
 
+import utils.Question
+
 /**
  * This is the basic logic of all the mini-games. Every mini-game must be able to generate the
  * question and validate the answer.
+ *
+ * @tparam Q
+ *   The type of question
+ * @tparam A
+ *   The type of answer
+ * @tparam B
+ *   The type of validation
  */
-trait MiniGameLogic[A, B]:
+trait MiniGameLogic[Q <: Question, A, B]:
   /**
    * Generate the question for the mini-game.
    *
    * @return
    *   a copy of the game logic and the question generated
    */
-  def generateQuestion: (MiniGameLogic[A, B], String)
+  def generateQuestion: (MiniGameLogic[Q, A, B], Q)
+
+  /**
+   * Parse the answer of the user in the type required from the mini-game.
+   *
+   * @param answer
+   *   The user answer
+   * @return
+   *   the parsed answer
+   */
+  def parseAnswer(answer: String): A
 
   /**
    * Check the answer of the user.
-   * @param question
-   *   the question to answer
    * @param answer
    *   the user answer
    * @return

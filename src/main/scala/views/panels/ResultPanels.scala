@@ -2,6 +2,8 @@ package views.panels
 
 import controllers.GameController
 import views.*
+import utils.GUIConstants.*
+import scala.List
 
 import java.awt.*
 import javax.swing.*
@@ -38,23 +40,29 @@ sealed trait ResultPanels:
       time: Int
   ): JPanel
 
-class ResultPanelsImpl extends ResultPanels, BaseView:
+class ResultPanelsImpl extends ResultPanels:
+
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
+    val borderInset = 50
     val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    // panel.setBackground(whiteColor)
-    panel.setBorder(new EmptyBorder(50, 50, 50, 50))
+    panel.setBorder(new EmptyBorder(borderInset, borderInset, borderInset, borderInset))
     val title       = new JLabel(titleText)
-    title.setFont(pixelFont25)
+    title.setFont(PIXEL_FONT25)
     title.setHorizontalAlignment(SwingConstants.CENTER)
     val homeButton  =
-      createStyledButton("Home", Dimension(200, 40), pixelFont15, whiteColor, customBlueColor)
+      UIHelper.createStyledButton(
+        "Home",
+        Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
+        PIXEL_FONT15,
+        Color.WHITE,
+        CUSTOM_BLUE
+      )
     homeButton.addActionListener(_ => {
       MenuView(controller).show()
       SwingUtilities.getWindowAncestor(panel).dispose()
     })
     val bottomPanel = new JPanel()
-    // bottomPanel.setBackground(whiteColor)
     bottomPanel.setOpaque(false)
     bottomPanel.add(homeButton)
     panel.add(title, BorderLayout.NORTH)
@@ -64,7 +72,7 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
   override def TestResultPanel(controller: GameController, age: Int): JPanel =
     val panel    = createBaseResultPanel(controller, "Your brain age is:")
     val ageLabel = new JLabel(age.toString)
-    ageLabel.setFont(pixelFont70)
+    ageLabel.setFont(PIXEL_FONT70)
     ageLabel.setHorizontalAlignment(SwingConstants.CENTER)
     panel.add(ageLabel, BorderLayout.CENTER)
     panel
@@ -75,33 +83,23 @@ class ResultPanelsImpl extends ResultPanels, BaseView:
       wrongAnswers: Int,
       time: Int
   ): JPanel =
-    val iconSize = getResponsiveIconSize(20)
-    val panel    = createBaseResultPanel(controller, "Your results:")
-
-    def loadIcon(name: String, size: Int): ImageIcon =
-      val url     = getClass.getResource(s"/" + name)
-      val image   = new ImageIcon(url).getImage
-      val resized = image.getScaledInstance(size, size, Image.SCALE_SMOOTH)
-      new ImageIcon(resized)
-
-    def resultRow(iconName: String, text: String): JPanel =
-      val rowPanel  = new JPanel(new FlowLayout(FlowLayout.CENTER))
-      // rowPanel.setBackground()
-      rowPanel.setOpaque(false)
-      val iconLabel = new JLabel(loadIcon(iconName, iconSize))
-      val textLabel = new JLabel(text)
-      textLabel.setFont(pixelFont15)
-      rowPanel.add(iconLabel)
-      rowPanel.add(Box.createRigidArea(new Dimension(10, 0)))
-      rowPanel.add(textLabel)
-      rowPanel
-
-    val resultsPanel = new JPanel()
-    // resultsPanel.setBackground(whiteColor)
+    val gridRows        = 3
+    val gridCols        = 1
+    val gridHGap        = 10
+    val gridVGap        = 20
+    val iconSizeDivisor = 20
+    val iconSize        = UIHelper.getResponsiveIconSize(iconSizeDivisor)
+    val panel           = createBaseResultPanel(controller, "Your results:")
+    val resultsPanel    = new JPanel()
+    val rows            = List(
+      ("greenCheck.png", s"Correct Answers: $correctAnswers"),
+      ("redCross.png", s"Wrong Answers: $wrongAnswers"),
+      ("clock.png", s"Time: $time seconds")
+    )
     resultsPanel.setOpaque(false)
-    resultsPanel.setLayout(new GridLayout(3, 1, 10, 20))
-    resultsPanel.add(resultRow("greenCheck.png", s"Correct Answers: $correctAnswers"))
-    resultsPanel.add(resultRow("redCross.png", s"Wrong Answers: $wrongAnswers"))
-    resultsPanel.add(resultRow("clock.png", s"Time: $time seconds"))
+    resultsPanel.setLayout(new GridLayout(gridRows, gridCols, gridHGap, gridVGap))
+    rows
+      .map((icon, text) => UIHelper.createResultRow(icon, text, iconSize))
+      .foreach(resultsPanel.add)
     panel.add(resultsPanel, BorderLayout.CENTER)
     panel

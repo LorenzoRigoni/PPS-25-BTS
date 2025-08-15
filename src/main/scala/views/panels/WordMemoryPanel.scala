@@ -1,11 +1,16 @@
 package views.panels
 
 import controllers.GameController
+import utils.GUIConstants.TIMER_WORD_MEMORY
+import utils.SimpleTextQuestion
 
 import javax.swing.{JPanel, Timer}
 
-class WordMemoryPanel(controller: GameController, onNext: GameController => Unit, question: String)
-    extends SimpleQuestionAnswerGamePanel:
+class WordMemoryPanel(
+    controller: GameController,
+    onNext: GameController => Unit,
+    question: SimpleTextQuestion
+) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
   def panel(): JPanel =
     val (panel, _) = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",
@@ -18,7 +23,7 @@ class WordMemoryPanel(controller: GameController, onNext: GameController => Unit
     )
     inputField.setEnabled(false)
     val timer      = new Timer(
-      30000,
+      TIMER_WORD_MEMORY,
       _ =>
         questionPanel.removeAll()
         questionPanel.revalidate()

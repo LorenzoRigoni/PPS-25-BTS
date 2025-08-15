@@ -1,63 +1,86 @@
 package views
 
 import controllers.GameController
-import views.panels.{BackgroundImagePanel, GamePanels, GamePanelsImpl, ResultPanelsImpl}
+import views.panels.{BackgroundImagePanel, GamePanelsImpl, ResultPanelsImpl}
+import utils.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 
 /**
  * This object represents the initial menu where the player can choose between Age Test and Brain
  * Training mode.
  */
-class MenuView(controller: GameController) extends BaseView:
-  private val frame = new JFrame("Menù")
+class MenuView(controller: GameController):
+  private val frame                       = new JFrame("Menù")
+  private def showGameRulesDialog(): Unit =
+    val textArea   = new JTextArea(RULES)
+    textArea.setEditable(false)
+    textArea.setLineWrap(true)
+    textArea.setWrapStyleWord(true)
+    textArea.setFont(PIXEL_FONT15)
+    val scrollPane = new JScrollPane(textArea)
+    val size       = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) / HALF_DIVISOR
+    scrollPane.setPreferredSize(new Dimension(size, size))
+    JOptionPane.showMessageDialog(
+      frame,
+      scrollPane,
+      "Game Rules",
+      JOptionPane.INFORMATION_MESSAGE
+    )
 
   /**
    * Show the Menu view.
    */
   def show(): Unit =
-    centerFrame(frame, 1)
-    val buttonSize =
-      new Dimension((frame.getSize.width * 0.4).toInt, (frame.getSize.height * 0.08).toInt)
+    UIHelper.centerFrame(frame, 1)
+    val menuButtonWidthScaleFactor  = 0.4
+    val menuButtonHeightScaleFactor = 0.08
+    val lastButtonDistance          = 120
+    val buttonSize                  =
+      new Dimension(
+        (frame.getSize.width * menuButtonWidthScaleFactor).toInt,
+        (frame.getSize.height * menuButtonHeightScaleFactor).toInt
+      )
 
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
 
     val buttonPanel = new JPanel()
     buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT))
-    buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30))
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, BUTTON_DISTANCE))
+    buttonPanel.setOpaque(false)
 
     val verticalPanel = new JPanel()
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
 
-    val brainAgingButton    =
-      createStyledButton("Age Test", buttonSize, pixelFont25, customBlueColor, whiteColor)
-    val brainTrainingButton =
-      createStyledButton("Training", buttonSize, pixelFont25, customBlueColor, whiteColor)
-
-    brainAgingButton.addActionListener(_ => {
-      frame.dispose()
-      AgeTest.apply(GamePanelsImpl(), ResultPanelsImpl()).show()
-    })
-
-    brainTrainingButton.addActionListener(_ =>
-      frame.dispose()
-      BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
+    val buttonsData = Seq(
+      (
+        "Age Test",
+        () =>
+          frame.dispose()
+          AgeTest(GamePanelsImpl(), ResultPanelsImpl()).show()
+      ),
+      (
+        "Training",
+        () =>
+          frame.dispose()
+          BrainTraining(ResultPanelsImpl()).show(GamePanelsImpl())
+      ),
+      ("Game Rules", () => showGameRulesDialog())
     )
 
-    verticalPanel.add(brainAgingButton)
-    verticalPanel.add(Box.createVerticalStrut(30))
-    verticalPanel.add(brainTrainingButton)
-    verticalPanel.add(Box.createVerticalStrut(120))
-
-    buttonPanel.setOpaque(false)
+    val components = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
+      val button =
+        UIHelper.createStyledButton(btnData._1, buttonSize, PIXEL_FONT25)
+      button.addActionListener(_ => btnData._2())
+      val strut  =
+        if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
+        else Box.createVerticalStrut(lastButtonDistance)
+      Seq(button, strut)
+    components.flatten.foreach(verticalPanel.add)
     buttonPanel.add(verticalPanel)
     backgroundPanel.add(buttonPanel, BorderLayout.SOUTH)
-
     frame.getContentPane.add(backgroundPanel)
     frame.setVisible(true)

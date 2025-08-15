@@ -6,6 +6,10 @@ import utils.QuestionResult
  * This object is a helper for calculate the brain age of the player.
  */
 object BrainAgeCalculator:
+  private val BASE_AGE = 20
+  private val MAXIMUM_AGE = 100
+  private val SECONDS_UNITY = 1000
+  private val ERROR_PERCENT = 50
 
   /**
    * Calculate the brain age of the player. The result is an integer based on the time used to
@@ -16,12 +20,10 @@ object BrainAgeCalculator:
    *   An integer that represents the brain age of the player
    */
   def calcBrainAge(results: List[QuestionResult]): Int =
-    val baseAge      = 20
-    val maximumAge   = 100
-    if results.isEmpty then return baseAge
+    if results.isEmpty then return BASE_AGE
     val avgTime      = results.map(_.responseTime).sum.toDouble / results.length
     val errorRate    = results.count(!_.isCorrect).toDouble / results.length
-    val timePenalty  = (avgTime / 1000).toInt
-    val errorPenalty = (errorRate * 50).toInt
-    val result       = baseAge + timePenalty + errorPenalty
-    if result <= maximumAge then result else maximumAge
+    val timePenalty  = (avgTime / SECONDS_UNITY).toInt
+    val errorPenalty = (errorRate * ERROR_PERCENT).toInt
+    val result       = BASE_AGE + timePenalty + errorPenalty
+    if result <= MAXIMUM_AGE then result else MAXIMUM_AGE

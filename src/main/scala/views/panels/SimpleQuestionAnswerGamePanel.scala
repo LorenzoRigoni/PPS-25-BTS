@@ -2,6 +2,8 @@ package views.panels
 
 import controllers.GameController
 import views.*
+import utils.{Question, SimpleTextQuestion}
+import utils.GUIConstants.*
 
 import java.awt.*
 import javax.swing.*
@@ -9,9 +11,9 @@ import javax.swing.*
 /**
  * This trait represents the views of the mini-games that have a question and an answer.
  */
-trait SimpleQuestionAnswerGamePanel extends BaseView:
-
-  protected val inputField    = new JTextField(40)
+trait SimpleQuestionAnswerGamePanel[Q]:
+  private val textFieldCols   = 40
+  protected val inputField    = new JTextField(textFieldCols)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
 
@@ -37,58 +39,54 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
    */
   def createSimpleQuestionAnswerGamePanel(
       title: String,
-      initialQuestion: String,
+      initialQuestion: Q,
       textInputLabel: String,
       controller: GameController,
       onNext: GameController => Unit,
       validate: (GameController, String) => (GameController, Boolean),
-      renderQuestionContent: Option[(JPanel, String) => Unit] = None
+      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
   ): (JPanel, String => Unit) =
-    val panel = new JPanel(new BorderLayout())
-
-    val centerWrapper = new JPanel(new GridBagLayout())
-    centerWrapper.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2))
-    val innerPanel    = new JPanel()
-    innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
-
-    // Title area
-    titleArea.setText(title)
-    titleArea.setEditable(false)
-    titleArea.setFont(pixelFont15)
-    titleArea.setOpaque(false)
-
-    // container for title
-    val titleContainer = new JPanel(new FlowLayout(FlowLayout.CENTER))
-    titleContainer.setOpaque(false)
-    titleContainer.add(titleArea)
-    panel.add(titleContainer, BorderLayout.NORTH)
-
-    // question panel container
-    val questionPanelContainer = new JPanel()
-    questionPanelContainer.setLayout(new GridBagLayout())
-    questionPanelContainer.setOpaque(false)
-
-    val gbc = new GridBagConstraints()
+    val gbc                    = new GridBagConstraints()
     gbc.fill = GridBagConstraints.HORIZONTAL
     gbc.weightx = 1.0
     gbc.gridx = 0
     gbc.gridy = 0
-
-    // question panel
+    val borderValue            = 5
+    val panel                  = new JPanel(new BorderLayout())
+    val flowValue              = 10
+    val centerWrapper          = new JPanel(new GridBagLayout())
+    centerWrapper.setBorder(
+      BorderFactory.createEmptyBorder(
+        borderValue,
+        borderValue,
+        borderValue,
+        borderValue
+      )
+    )
+    val innerPanel             = new JPanel()
+    innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
+    titleArea.setText(title)
+    titleArea.setEditable(false)
+    titleArea.setFont(PIXEL_FONT15)
+    titleArea.setOpaque(false)
+    val titleContainer         = new JPanel(new FlowLayout(FlowLayout.CENTER))
+    titleContainer.setOpaque(false)
+    titleContainer.add(titleArea)
+    panel.add(titleContainer, BorderLayout.NORTH)
+    val questionPanelContainer = new JPanel()
+    questionPanelContainer.setLayout(new GridBagLayout())
+    questionPanelContainer.setOpaque(false)
     questionPanel.setOpaque(false)
     renderQuestionContent.foreach(renderer => renderer(questionPanel, initialQuestion))
     questionPanelContainer.add(questionPanel, gbc)
     panel.add(questionPanelContainer, BorderLayout.CENTER)
-
     inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
-
-    val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
-    val inputLabel = new JLabel(textInputLabel)
-    inputLabel.setFont(pixelFont8)
+    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, flowValue, flowValue))
+    val inputLabel             = new JLabel(textInputLabel)
+    inputLabel.setFont(PIXEL_FONT8)
     inputPanel.add(inputLabel)
     inputPanel.add(inputField)
     panel.add(inputPanel, BorderLayout.SOUTH)
-
     (
       panel,
       (input: String) => {
@@ -100,7 +98,7 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
       currentController: GameController,
       onNext: GameController => Unit,
       validate: (GameController, String) => (GameController, Boolean),
-      renderQuestionContent: Option[(JPanel, String) => Unit] = None
+      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
   ): GameController =
     val input                          = inputField.getText.trim
     val (updatedController, isCorrect) = validate(currentController, input)
@@ -108,8 +106,8 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     updatedController
 
   protected def showNewQuestion(
-      newQuestion: String,
-      renderQuestionContent: Option[(JPanel, String) => Unit] = None
+      newQuestion: Q,
+      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
   ): Unit =
     inputField.setText("")
     questionPanel.removeAll()
@@ -117,14 +115,18 @@ trait SimpleQuestionAnswerGamePanel extends BaseView:
     questionPanel.revalidate()
     questionPanel.repaint()
 
-  protected def simpleLabelRenderer: (JPanel, String) => Unit =
+  protected def simpleLabelRenderer: (JPanel, Q) => Unit =
     (container, questionText) =>
-      container.setLayout(new BorderLayout(10, 10))
-      val question = new JTextArea(questionText)
-      question.setFont(pixelFont25)
+      container.setLayout(new BorderLayout(BORDER_VALUE, BORDER_VALUE))
+      val questionContent = questionText match
+        case q: SimpleTextQuestion => q.text
+      val question        = new JTextArea(questionContent)
+      question.setFont(PIXEL_FONT25)
       question.setWrapStyleWord(true)
       question.setLineWrap(true)
       question.setEditable(false)
       question.setFocusable(false)
-      container.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 10))
+      container.setBorder(
+        BorderFactory.createEmptyBorder(BORDER_VALUE, BORDER_VALUE, BORDER_VALUE, BORDER_VALUE)
+      )
       container.add(question)

@@ -4,17 +4,19 @@ import models.rightDirections.structure.Token
 import models.MiniGameLogic
 import models.rightDirections.structure.*
 import utils.RightDirectionsConstants.*
+import utils.SimpleTextQuestion
+
 import scala.annotation.tailrec
 
 case class RightDirectionsLogic(
     rounds: Int,
     difficulty: Float = 0,
-    lastQuestion: Option[String] = None,
+    lastQuestion: Option[SimpleTextQuestion] = None,
     currentRound: Int = 0
-) extends MiniGameLogic[String, Boolean]:
+) extends MiniGameLogic[SimpleTextQuestion, String, Boolean]:
 
-  override def generateQuestion: (MiniGameLogic[String, Boolean], String) =
-    val question = (generateOperation)
+  override def generateQuestion: (MiniGameLogic[SimpleTextQuestion, String, Boolean], SimpleTextQuestion) =
+    val question = SimpleTextQuestion(trimQuestion(generateOperation))
     (
       this.copy(
         currentRound = currentRound + 1,
@@ -24,9 +26,12 @@ case class RightDirectionsLogic(
       question
     )
 
+  override def parseAnswer(answer: String): String =
+    identity(answer)
+
   override def validateAnswer(answer: String): Boolean =
     val trimmedAnswer         = answer.toLowerCase.trim
-    val correctAnswer         = EvaluateOperation.evaluateOperationFromString(lastQuestion.get, Seq())
+    val correctAnswer         = EvaluateOperation.evaluateOperationFromString(lastQuestion.get.text, Seq())
     val answerAsToken: Token  = Token.fromString(trimmedAnswer)
     val noAnswerCase: Boolean = correctAnswer.isEmpty && answerAsToken.equals(Token.Empty)
 
