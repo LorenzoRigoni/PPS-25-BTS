@@ -4,18 +4,6 @@ import models.rightDirections.structure.treeLogic.BinaryTree
 
 trait OperationBuilder[A]:
   /**
-   * Build an operation from an input. Operation can fail if the input string doesn't respect
-   * syntactical rules
-   * @param input
-   *   the input that will be checked for syntactical errors
-   * @param formatter
-   *   a function that formats correctly the input
-   * @return
-   *   the inputted string or a failure
-   */
-  def buildOperationFromString(input: String, formatter: (String) => String): Option[BinaryTree[A]]
-
-  /**
    * Build an operation from a given complexity.
    * @param complexity
    *   each operation has a given complexity: the result should try to expand the base
@@ -25,10 +13,23 @@ trait OperationBuilder[A]:
   def buildOperationFromComplexity(complexity: Int): BinaryTree[A]
 
   /**
-   * checks if a string is well-formed
-   * @param input
-   *   the string which may or may not be well-formed
+   * Build an operation from a given complexity.
+   *
+   * @param root
+   *   the root of the tree on which to calculate the total complexity recursively
    * @return
-   *   a well-formed version of input
+   *   The complexity of the complete tree
    */
-  protected def formatString(input: String): String
+  def calculateTreeComplexity(root: BinaryTree[A]): Int
+
+  /**
+   * Build an operation from a given complexity.
+   *
+   * @param root
+   *   the root of the tree to be expanded
+   * @param complexity
+   *   the desired complexity of the final tree
+   * @return
+   *   a BinaryTree of the correct complexity
+   */
+  def expandTree(root: BinaryTree[A], complexity: Int): BinaryTree[A]
