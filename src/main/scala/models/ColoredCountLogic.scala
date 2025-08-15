@@ -7,10 +7,14 @@ import utils.enums.ColoredCountColors
 /**
  * This case class manage the logic of the mini-game "Colored Count"
  *
- * @param rounds The total number of rounds
- * @param currentRound The current round
- * @param difficulty The current difficulty
- * @param lastQuestion The last question generated
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
  */
 case class ColoredCountLogic(
     rounds: Int,

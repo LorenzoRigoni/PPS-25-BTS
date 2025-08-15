@@ -1,5 +1,8 @@
 package utils.constants
 
+/**
+ * This object contains the words for the mini-games "Count Words" and "Word Memory"
+ */
 object WordsForMiniGames:
   val WORDS: Seq[String] = Seq(
     "apple",

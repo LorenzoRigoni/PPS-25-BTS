@@ -14,12 +14,18 @@ import utils.{QuestionResult, SimpleTextQuestion}
 import utils.enums.MiniGames.CountWords
 import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
 import utils.constants.GameControllerConstants.MAX_NUMBER_OF_MINIGAMES_AGE_TEST
+import utils.constants.BrainAgeCalculatorConstants.{BASE_AGE, MAXIMUM_AGE}
 import utils.enums.MiniGames
 
 /**
  * This class tests the game controller.
  */
 class GameControllerTests extends AnyFunSuite with Matchers:
+  private val QUESTION_RESULTS = List(
+    QuestionResult(1000, true),
+    QuestionResult(2000, false),
+    QuestionResult(800, true)
+  )
 
   test("Controller should initialize with all mini-games") {
     val controller = GameController()
@@ -29,14 +35,14 @@ class GameControllerTests extends AnyFunSuite with Matchers:
 
   test("Controller should choose correct mini-game") {
     val controllerForFastCalc        = GameController().chooseCurrentGame(MiniGames.FastCalc)
-    controllerForFastCalc.currentGame.get._1 shouldBe a[FastCalcLogic]
     val controllerForCountWords      = GameController().chooseCurrentGame(MiniGames.CountWords)
-    controllerForCountWords.currentGame.get._1 shouldBe a[CountWordsLogic]
     val controllerForRightDirections = GameController().chooseCurrentGame(MiniGames.RightDirections)
-    controllerForRightDirections.currentGame.get._1 shouldBe a[RightDirectionsLogic]
     val controllerForColoredCount    = GameController().chooseCurrentGame(MiniGames.ColoredCount)
-    controllerForColoredCount.currentGame.get._1 shouldBe a[ColoredCountLogic]
     val controllerForWordMemory      = GameController().chooseCurrentGame(MiniGames.WordMemory)
+    controllerForFastCalc.currentGame.get._1 shouldBe a[FastCalcLogic]
+    controllerForCountWords.currentGame.get._1 shouldBe a[CountWordsLogic]
+    controllerForRightDirections.currentGame.get._1 shouldBe a[RightDirectionsLogic]
+    controllerForColoredCount.currentGame.get._1 shouldBe a[ColoredCountLogic]
     controllerForWordMemory.currentGame.get._1 shouldBe a[WordMemoryLogic]
   }
 
@@ -60,14 +66,9 @@ class GameControllerTests extends AnyFunSuite with Matchers:
   }
 
   test("Controller should calculate brain age based on time and errors") {
-    val questionResults = List(
-      QuestionResult(1000, true),
-      QuestionResult(2000, false),
-      QuestionResult(800, true)
-    )
-    val brainAge        = BrainAgeCalculator.calcBrainAge(questionResults)
+    val brainAge = BrainAgeCalculator.calcBrainAge(QUESTION_RESULTS)
     brainAge shouldBe a[Int]
-    assert(brainAge >= 20 && brainAge <= 100)
+    assert(brainAge >= BASE_AGE && brainAge <= MAXIMUM_AGE)
   }
 
   test("Controller should manage the end of the game") {

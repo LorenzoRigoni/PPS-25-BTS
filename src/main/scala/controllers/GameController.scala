@@ -35,7 +35,7 @@ import scala.util.Random
  */
 case class GameController(
     currentGame: Option[(MiniGameLogic[_, _, _], MiniGames)] = None,
-    remainingMiniGames: Seq[MiniGames] = MiniGames.values.toList,
+    remainingMiniGames: Seq[MiniGames] = MiniGames.values.toSeq,
     results: List[utils.QuestionResult] = List.empty,
     numMiniGamesPlayed: Int = 0,
     startTime: Option[Long] = None,

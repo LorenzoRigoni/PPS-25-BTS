@@ -1,13 +1,12 @@
 package models
 
 import utils.QuestionResult
+import utils.constants.BrainAgeCalculatorConstants.{BASE_AGE, MAXIMUM_AGE}
 
 /**
  * This object is a helper for calculate the brain age of the player.
  */
 object BrainAgeCalculator:
-  private val BASE_AGE = 20
-  private val MAXIMUM_AGE = 100
   private val SECONDS_UNITY = 1000
   private val ERROR_PERCENT = 50
 
