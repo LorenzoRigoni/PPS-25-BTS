@@ -12,44 +12,6 @@ collaborazione con Alessandra Versari.
 
 ## Logica Count Words e Colored Count
 
-Ogni mini-gioco implementato nel progetto deve aderire al contratto *MiniGameLogic* il quale prevede tre funzioni
-principali da implementare:
-- generare nuove domande
-- fare il *parsing* delle risposte dell'utente
-- validare le risposte dell'utente
-- controllare se il mini-gioco è finito
-
-Dato che i mini-giochi possono generare diversi tipi di domande, accettare diversi tipi di input e produrre diversi
-tipi di risposta, il trait è stato implementato tramite l'uso dei *generics*. Inoltre, per garantire 
-l'immutabilità, ogni volta che viene generata una nuova domanda deve essere restituita anche una copia dello stato
-aggiornato.
-
-```
-trait MiniGameLogic[Q <: Question, A, B]:
-  
-  def generateQuestion: (MiniGameLogic[Q, A, B], Q)
-  
-  def parseAnswer(answer: String): A
-
-  def validateAnswer(answer: A): B
-
-  def isMiniGameFinished: Boolean
-```
-
-In questo caso, *A* e *B* sono due tipi generici che possono essere di qualsiasi tipo mentre *Q* (che rappresenta
-il tipo di domanda) deve essere un sotto tipo del trait *Question*.
-
-```
-sealed trait Question
-
-case class SimpleTextQuestion(text: String) extends Question
-
-case class ColoredCountQuestion(
-  numbersWithColor: Seq[(Int, ColoredCountColors)],
-  colorRequired: ColoredCountColors
-) extends Question
-```
-
 I due mini-giochi che ho sviluppato usano due tipi diversi di domanda generata. Infatti, *Count Words* genera domande
 del tipo *SimpleTextQuestion* mentre *Colored Count* genera domande del tipo *ColoredCountQuestion*.
 In entrambi i casi, i mini-giochi sono implementati come *case class* che hanno i seguenti campi:
@@ -93,7 +55,7 @@ override def generateQuestion: (MiniGameLogic[ColoredCountQuestion, Int, Boolean
     val colorList     = Seq.fill(totalNumbers)(
       ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
     )
-    val zipped        = numbers.zip(colorList)
+    val zipped        = numbers zip colorList
     val questionColor = ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
     val question      = ColoredCountQuestion(zipped, questionColor)
 
@@ -130,7 +92,7 @@ object BrainAgeCalculator:
   private val ERROR_PERCENT = 50
 
   def calcBrainAge(results: List[QuestionResult]): Int =
-    if results.isEmpty then return BASE_AGE
+    if results.isEmpty then return MAXIMUM_AGE
     val avgTime      = results.map(_.responseTime).sum.toDouble / results.length
     val errorRate    = results.count(!_.isCorrect).toDouble / results.length
     val timePenalty  = (avgTime / SECONDS_UNITY).toInt
@@ -202,34 +164,40 @@ def nextGame: GameController =
     else
       val nextMiniGame = remainingMiniGames(Random.nextInt(remainingMiniGames.size))
       this.copy(
-        currentGame = miniGamesFactory.get(nextMiniGame).map(_.apply()),
+        currentGame = miniGamesFactory.get(nextMiniGame).map(m => (m.apply(), nextMiniGame)),
         remainingMiniGames = remainingMiniGames.filterNot(_ == nextMiniGame),
         numMiniGamesPlayed = numMiniGamesPlayed + 1
       )
       
 def getQuestion: (GameController, Question) =
-    val (updatedLogic, generatedQuestion) = currentGame.get.generateQuestion
+    val (updatedLogic, generatedQuestion) = currentGame.get._1.generateQuestion
     val updatedController                 = this.copy(
-        currentGame = Some(updatedLogic),
-        startTime = Some(System.currentTimeMillis())
+      currentGame = Some((updatedLogic, currentGame.get._2)),
+      startTime = Some(System.currentTimeMillis())
     )
     (updatedController, generatedQuestion)
 
 def checkAnswer(answer: String): Option[(GameController, Boolean)] =
     for
-        game      <- currentGame
-        startTime <- this.startTime
+      game  <- currentGame
+      start <- startTime
     yield
-        val parsedAnswer = game.parseAnswer(answer)
-        val elapsedTime     = System.currentTimeMillis() - startTime
-        val isAnswerCorrect = game.validateAnswer(parsedAnswer) match
-            case b: Boolean                                   => b
-            case d: Double if d >= PERCENT_ACCETTABLE_ANSWER  => true
-            case _                                            => false
-        val updatedController = this.copy(
+      val elapsedTime       = System.currentTimeMillis() - start
+      val isAnswerCorrect   = game._1.parseAnswer(answer) match
+        case Some(parsedAnswer) =>
+          game._1.validateAnswer(parsedAnswer) match
+            case b: Boolean => b
+            case d: Double  => d >= PERCENT_ACCETTABLE_ANSWER
+            case _          => false
+        case _                  => false
+      val updatedController = this.copy(
         currentGame = Some(game),
-        results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results)
-        (updatedController, isAnswerCorrect)
+        results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results
+      )
+      (updatedController, isAnswerCorrect)
 ```
+
+In questo ultimo metodo, *checkAnswer*, le risposte non previste (stringhe vuote, input non numerici...) vengono
+trattate direttamente come risposte errate, andando così a gestire eventuali eccezioni.
 
 [Torna indietro](../Implementazione.md)
