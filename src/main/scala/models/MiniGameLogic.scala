@@ -28,9 +28,9 @@ trait MiniGameLogic[Q <: Question, A, B]:
    * @param answer
    *   The user answer
    * @return
-   *   the parsed answer
+   *   an Option with the parsed answer if is it possible
    */
-  def parseAnswer(answer: String): A
+  def parseAnswer(answer: String): Option[A]
 
   /**
    * Check the answer of the user.

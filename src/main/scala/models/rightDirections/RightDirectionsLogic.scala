@@ -27,8 +27,7 @@ case class RightDirectionsLogic(
       question
     )
 
-  override def parseAnswer(answer: String): String =
-    identity(answer)
+  override def parseAnswer(answer: String): Option[String] = Some(identity(answer))
 
   override def validateAnswer(answer: String): Boolean =
     val trimmedAnswer         = answer.toLowerCase.trim
