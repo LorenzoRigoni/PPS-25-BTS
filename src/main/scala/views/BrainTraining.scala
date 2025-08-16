@@ -51,7 +51,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
           gamePanels.coloredCountPanel(newController, onNext(_, miniGame), q)
         case _                                                              =>
           throw new IllegalArgumentException("Type of question not handled")
-      UIHelper.centerPanel(centerPanel, panel)
+      UIHelper.centerPanel(centerPanel, panel, Some(miniGame))
       mainPanel.remove(buttonPanel)
 
     def createGameButton(miniGame: MiniGames): JButton =
@@ -99,5 +99,5 @@ case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
       val panel               =
         resultPanels.GameResultPanel(controller, numOfCorrectAnswers, numOfWrongAnswers, totalTime)
       mainPanel.remove(bottomPanel)
-      UIHelper.centerPanel(centerPanel, panel)
+      UIHelper.centerPanel(centerPanel, panel, Option.empty)
     )

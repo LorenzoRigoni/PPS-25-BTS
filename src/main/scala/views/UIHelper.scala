@@ -1,6 +1,7 @@
 package views
 
 import utils.constants.GUIConstants.*
+import utils.enums.MiniGames
 
 import java.awt.Font
 import javax.swing.*
@@ -63,12 +64,22 @@ object UIHelper:
   def getResponsiveIconSize(divisor: Int): Int =
     (SCREEN_WIDTH / divisor.toDouble).toInt
 
-  def centerPanel(centerPanel: JPanel, panel: JPanel): Unit =
+  private def findTextField(c: Component): Option[JTextField] = c match
+    case tf: JTextField => Some(tf)
+    case p: JPanel      =>
+      p.getComponents.iterator.map(findTextField).collectFirst { case Some(tf) => tf }
+    case _              => None
+
+  def centerPanel(centerPanel: JPanel, panel: JPanel, miniGame: Option[MiniGames]): Unit =
     SwingUtilities.invokeLater { () =>
       centerPanel.removeAll()
       centerPanel.add(panel, BorderLayout.CENTER)
       centerPanel.revalidate()
       centerPanel.repaint()
+      if miniGame.isDefined && miniGame.get != MiniGames.RightDirections then
+        findTextField(panel).foreach(tf =>
+          SwingUtilities.invokeLater(() => tf.requestFocusInWindow())
+        )
     }
 
   def createLabel(text: String, font: Font, center: Boolean = true): JLabel =
@@ -77,7 +88,7 @@ object UIHelper:
     if center then label.setHorizontalAlignment(SwingConstants.CENTER)
     label
 
-  def loadIcon(name: String, size: Int): ImageIcon =
+  private def loadIcon(name: String, size: Int): ImageIcon =
     val url     = getClass.getResource(s"/" + name)
     val image   = new ImageIcon(url).getImage
     val resized = image.getScaledInstance(size, size, Image.SCALE_SMOOTH)
@@ -85,7 +96,7 @@ object UIHelper:
 
   def createResultRow(iconName: String, text: String, iconSize: Int): JPanel =
     val rowPanel  = new JPanel(new FlowLayout(FlowLayout.CENTER))
-    val rowSpace = 10
+    val rowSpace  = 10
     val iconLabel = new JLabel(loadIcon(iconName, iconSize))
     val textLabel = new JLabel(text)
     rowPanel.setOpaque(false)

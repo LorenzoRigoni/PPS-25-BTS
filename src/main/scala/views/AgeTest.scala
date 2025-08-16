@@ -21,8 +21,8 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends G
   private val centerPanel    = new JPanel(new BorderLayout())
   private val simplePanelMap = simpleTextPanelMap(gamePanels)
 
-  private def updatePanel(panel: JPanel): Unit =
-    SwingUtilities.invokeLater(() => UIHelper.centerPanel(centerPanel, panel))
+  private def updatePanel(panel: JPanel, miniGame: MiniGames): Unit =
+    SwingUtilities.invokeLater(() => UIHelper.centerPanel(centerPanel, panel, Some(miniGame)))
 
   private def advanceGame(currentMiniGame: MiniGames)(nextController: GameController): Unit =
     if nextController.isCurrentGameFinished then
@@ -62,13 +62,13 @@ case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends G
     val (questionController, question) = controller.getQuestion
     question match
       case q: SimpleTextQuestion   =>
-        updatePanel(showGame(questionController, gamePanelsForSimpleText(miniGame), miniGame, q))
+        updatePanel(showGame(questionController, gamePanelsForSimpleText(miniGame), miniGame, q), miniGame)
       case q: ColoredCountQuestion =>
-        updatePanel(showGame(questionController, gamePanels.coloredCountPanel, miniGame, q))
+        updatePanel(showGame(questionController, gamePanels.coloredCountPanel, miniGame, q), miniGame)
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
       val brainAge = controller.calculateBrainAge
       val panel    = resultPanels.TestResultPanel(controller, brainAge)
-      UIHelper.centerPanel(centerPanel, panel)
+      UIHelper.centerPanel(centerPanel, panel, Option.empty)
     )

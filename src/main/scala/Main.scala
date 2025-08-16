@@ -16,6 +16,4 @@ import javax.swing.SwingUtilities
  *   Versari Alessandra
  */
 object Main extends App:
-  val controller = GameController()
-  val view       = new MenuView(controller)
-  SwingUtilities.invokeLater(() => MenuView.apply(controller).show())
+  SwingUtilities.invokeLater(() => MenuView.apply(GameController()).show())
