@@ -81,6 +81,6 @@ case class AgeTest(gamePanels: GamePanelsFactory, resultPanels: ResultPanelsFact
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
       val brainAge = controller.calculateBrainAge
-      val panel    = resultPanels.TestResultPanel(controller, brainAge)
+      val panel    = resultPanels.testResultPanel(controller, brainAge)
       UIHelper.centerPanel(centerPanel, panel, Option.empty)
     )

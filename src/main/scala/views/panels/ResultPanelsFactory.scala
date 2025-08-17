@@ -21,7 +21,7 @@ sealed trait ResultPanelsFactory:
    *   calculated
    * @return
    */
-  def TestResultPanel(controller: GameController, age: Int): JPanel
+  def testResultPanel(controller: GameController, age: Int): JPanel
 
   /**
    * Creates the panel that shows the results of the minigame just completed.
@@ -35,7 +35,7 @@ sealed trait ResultPanelsFactory:
    *   needed to complete the minigame
    * @return
    */
-  def GameResultPanel(
+  def gameResultPanel(
       controller: GameController,
       correctAnswers: Int,
       wrongAnswers: Int,
@@ -75,7 +75,7 @@ class ResultPanelsFactoryImpl extends ResultPanelsFactory:
     panel.add(bottomPanel, BorderLayout.SOUTH)
     panel
 
-  override def TestResultPanel(controller: GameController, age: Int): JPanel =
+  override def testResultPanel(controller: GameController, age: Int): JPanel =
     val panel    = createBaseResultPanel(controller, "Your brain age is:")
     val ageLabel = new JLabel(age.toString)
     ageLabel.setFont(PIXEL_FONT70)
@@ -83,7 +83,7 @@ class ResultPanelsFactoryImpl extends ResultPanelsFactory:
     panel.add(ageLabel, BorderLayout.CENTER)
     panel
 
-  override def GameResultPanel(
+  override def gameResultPanel(
       controller: GameController,
       correctAnswers: Int,
       wrongAnswers: Int,

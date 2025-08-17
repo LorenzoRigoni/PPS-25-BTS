@@ -124,7 +124,7 @@ case class BrainTraining(resultPanels: ResultPanelsFactory) extends GameViewCall
       val numOfWrongAnswers   = controller.getNumberOfWrongAnswers
       val totalTime           = controller.getTotalTime
       val panel               =
-        resultPanels.GameResultPanel(controller, numOfCorrectAnswers, numOfWrongAnswers, totalTime)
+        resultPanels.gameResultPanel(controller, numOfCorrectAnswers, numOfWrongAnswers, totalTime)
       mainPanel.remove(bottomPanel)
       UIHelper.centerPanel(centerPanel, panel, Option.empty)
     )
