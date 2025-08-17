@@ -3,7 +3,7 @@ package views
 import controllers.{GameController, GameViewCallback}
 import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
 import utils.enums.MiniGames.*
-import views.panels.{GamePanels, GamePanelsImpl, ResultPanels, ResultPanelsImpl}
+import views.panels.{GamePanelsFactory, GamePanelsFactoryImpl, ResultPanels, ResultPanelsImpl}
 import utils.constants.GUIConstants.*
 import utils.enums.MiniGames
 import views.panels.GamePanelMapper.*
@@ -32,7 +32,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
    * @param gamePanels
    *   the panel of the mini-game chose
    */
-  def show(gamePanels: GamePanels): Unit =
+  def show(gamePanels: GamePanelsFactory): Unit =
     frame.setBackground(Color.WHITE)
     UIHelper.centerFrame(frame, CENTER_FRAME_DIVISOR)
     val simplePanelMap = simpleTextPanelMap(gamePanels)
@@ -80,7 +80,7 @@ case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
     backButton.addActionListener(_ => {
       frame.dispose()
       if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
-      else BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
+      else BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsFactoryImpl())
     })
     bottomPanel.add(backButton)
     mainPanel.add(buttonPanel, BorderLayout.NORTH)

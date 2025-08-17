@@ -5,12 +5,21 @@ import utils.SimpleTextQuestion
 
 import javax.swing.{JPanel, Timer}
 
+/**
+ * Class used to create the panel for the game "Word Memory"
+ * @param controller
+ *   the controller that manages the game logic and state
+ * @param onNext
+ *   callback invoked when the player completes the current question
+ * @param question
+ *   the question to display
+ */
 class WordMemoryPanel(
     controller: GameController,
     onNext: GameController => Unit,
     question: SimpleTextQuestion
 ) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
-  def panel(): JPanel =
+  override def panel(): JPanel =
     val TIMER_WORD_MEMORY = 10000
     val (panel, _)        = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",

@@ -8,12 +8,21 @@ import utils.enums.ColoredCountColors
 import java.awt.*
 import javax.swing.*
 
+/**
+ * Class used to create the panel for the game "Colored Count"
+ * @param controller
+ *   the controller that manages the game logic and state
+ * @param onNext
+ *   callback invoked when the player completes the current question
+ * @param question
+ *   the question to display
+ */
 class ColoredCountPanel(
     controller: GameController,
     onNext: GameController => Unit,
     question: ColoredCountQuestion
 ) extends SimpleQuestionAnswerGamePanel[ColoredCountQuestion]:
-  def panel(): JPanel =
+  override def panel(): JPanel =
     val questionText = s"How many ${question.colorRequired.toString.toLowerCase} numbers?"
     val (panel, _)   = createSimpleQuestionAnswerGamePanel(
       questionText,
@@ -25,17 +34,6 @@ class ColoredCountPanel(
       Some((container, q) => renderNumbers(container, q.numbersWithColor))
     )
     panel
-
-  override protected def showNewQuestion(
-      newQuestion: ColoredCountQuestion,
-      renderQuestionContent: Option[(JPanel, ColoredCountQuestion) => Unit]
-  ): Unit =
-    titleArea.setText(s"How many ${question.colorRequired.toString.toLowerCase} numbers?")
-    inputField.setText("")
-    questionPanel.removeAll()
-    renderNumbers(questionPanel, newQuestion.numbersWithColor)
-    questionPanel.revalidate()
-    questionPanel.repaint()
 
   private def renderNumbers(container: JPanel, numbersPart: Seq[(Int, ColoredCountColors)]): Unit =
     container.setLayout(new FlowLayout())

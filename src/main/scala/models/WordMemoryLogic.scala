@@ -6,7 +6,15 @@ import utils.SimpleTextQuestion
 import utils.constants.WordMemoryConstants.MIN_WORD_NUM
 
 /**
- * This case class manages the logic of the Word Memory mini-game.
+ * This case class manage the logic of the mini-game "Word Memory"
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
  */
 case class WordMemoryLogic(
     rounds: Int,

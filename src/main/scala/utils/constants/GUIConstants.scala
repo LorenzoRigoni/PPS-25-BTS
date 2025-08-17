@@ -4,7 +4,7 @@ import java.awt.{Color, Font, Toolkit}
 import java.io.File
 
 /**
- * This object contains the constants of the GUI
+ * This object contains the constants for the GUI
  */
 object GUIConstants:
   val HALF_DIVISOR                = 2

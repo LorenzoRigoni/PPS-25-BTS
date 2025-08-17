@@ -9,7 +9,8 @@ import java.awt.*
 import javax.swing.*
 
 /**
- * This trait represents the views of the mini-games that have a question and an answer.
+ * This trait represents the views of the mini-games that need simple panel that only contains a
+ * title, a question and a textfield for the answer.
  */
 trait SimpleQuestionAnswerGamePanel[Q]:
   private val TEXTFIELD_COLS  = 40
@@ -18,6 +19,13 @@ trait SimpleQuestionAnswerGamePanel[Q]:
   protected val inputField    = new JTextField(TEXTFIELD_COLS)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
+
+  /**
+   * Creates the Swing panel associated with this mini-game.
+   * @return
+   *   the constructed JPanel
+   */
+  def panel(): JPanel
 
   /**
    * Create the panel with a question and an answer.
@@ -103,16 +111,6 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     val (updatedController, isCorrect) = validate(currentController, input)
     onNext(updatedController)
     updatedController
-
-  protected def showNewQuestion(
-      newQuestion: Q,
-      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
-  ): Unit =
-    inputField.setText("")
-    questionPanel.removeAll()
-    renderQuestionContent.foreach(renderer => renderer(questionPanel, newQuestion))
-    questionPanel.revalidate()
-    questionPanel.repaint()
 
   protected def simpleLabelRenderer: (JPanel, Q) => Unit =
     (container, questionText) =>

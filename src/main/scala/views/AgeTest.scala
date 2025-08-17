@@ -4,7 +4,7 @@ import controllers.{GameController, GameViewCallback}
 import models.*
 import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
 import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
-import views.panels.{GamePanels, ResultPanels}
+import views.panels.{GamePanelsFactory, ResultPanels}
 import utils.constants.GUIConstants.*
 import utils.enums.MiniGames
 import views.panels.GamePanelMapper.*
@@ -15,7 +15,7 @@ import java.awt.*
 /**
  * This class represents the view of the age test. The user will play 3 random mini-games.
  */
-case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels) extends GameViewCallback:
+case class AgeTest(gamePanels: GamePanelsFactory, resultPanels: ResultPanels) extends GameViewCallback:
   private val frame          = new JFrame("Let's play!")
   private val mainPanel      = new JPanel(new BorderLayout())
   private val centerPanel    = new JPanel(new BorderLayout())

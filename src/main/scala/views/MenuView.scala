@@ -1,7 +1,7 @@
 package views
 
 import controllers.GameController
-import views.panels.{BackgroundImagePanel, GamePanelsImpl, ResultPanelsImpl}
+import views.panels.{BackgroundImagePanel, GamePanelsFactoryImpl, ResultPanelsImpl}
 import utils.constants.GUIConstants.*
 
 import javax.swing.*
@@ -56,13 +56,13 @@ class MenuView(controller: GameController):
         "Age Test",
         () =>
           frame.dispose()
-          AgeTest(GamePanelsImpl(), ResultPanelsImpl()).show()
+          AgeTest(GamePanelsFactoryImpl(), ResultPanelsImpl()).show()
       ),
       (
         "Training",
         () =>
           frame.dispose()
-          BrainTraining(ResultPanelsImpl()).show(GamePanelsImpl())
+          BrainTraining(ResultPanelsImpl()).show(GamePanelsFactoryImpl())
       ),
       ("Game Rules", () => showGameRulesDialog())
     )
