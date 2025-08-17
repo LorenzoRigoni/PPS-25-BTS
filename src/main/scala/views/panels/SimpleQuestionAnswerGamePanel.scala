@@ -28,24 +28,24 @@ trait SimpleQuestionAnswerGamePanel[Q]:
   def panel(): JPanel
 
   /**
-   * Create the panel with a question and an answer.
    * @param title
-   *   the initial question of the mini-game
+   *   the title displayed at the top of the panel
+   * @param initialQuestion
+   *   the initial question to render
    * @param textInputLabel
-   *   the label of the input
+   *   the label describing the input field
    * @param controller
-   *   the game controller
+   *   the current GameController managing game state
    * @param onNext
-   *   callback to notify when the mini-game ends
-   * @param updateLogicAndQuestion
-   *   callback that takes the controller and returns (updatedController, newQuestion) (i.e.,
-   *   similar to `getQuestion`)
+   *   callback invoked when the user submits an answer
    * @param validate
-   *   the function that returns (updatedController, isCorrect)
+   *   a function to check the submitted answer
    * @param renderQuestionContent
+   *   optional custom renderer for displaying the question content
    * @return
-   *   the panel created
+   *   a tuple containing the constructed JPanel and a function
    */
+  // TODO to complete function description in return
   def createSimpleQuestionAnswerGamePanel(
       title: String,
       initialQuestion: Q,
@@ -112,6 +112,10 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     onNext(updatedController)
     updatedController
 
+  /**
+   * Default renderer for simple text questions. Adds the question text into the provided container
+   * JPanel.
+   */
   protected def simpleLabelRenderer: (JPanel, Q) => Unit =
     (container, questionText) =>
       container.setLayout(new BorderLayout(BORDER_VALUE, BORDER_VALUE))

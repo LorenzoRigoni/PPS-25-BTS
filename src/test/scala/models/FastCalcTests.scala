@@ -4,6 +4,9 @@ import org.scalatest.funsuite.AnyFunSuite
 import utils.constants.FastCalcConstants.{FAST_CALC_DIFFICULTY_STEP, FAST_CALC_TURNS}
 import utils.SimpleTextQuestion
 
+/**
+ * This class tests the logic of the mini-game Fast Calc.
+ */
 class FastCalcTests extends AnyFunSuite:
   private val TEST_DIFFICULTY_INDEX           = 3
   private val TEST_EXPRESSION_POSITIVE_RESULT = SimpleTextQuestion("8 + 4 * 2")

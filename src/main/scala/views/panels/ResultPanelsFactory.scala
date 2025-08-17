@@ -10,12 +10,13 @@ import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 /**
- * This trait represents the possible result panels.
+ * This is a factory trait to create panels to show results.
  */
-sealed trait ResultPanels:
+sealed trait ResultPanelsFactory:
   /**
    * Creates the panel that shows the age calculated during the Age Test.
    * @param controller
+   *   the controller that manages the game logic and state
    * @param age
    *   calculated
    * @return
@@ -25,6 +26,7 @@ sealed trait ResultPanels:
   /**
    * Creates the panel that shows the results of the minigame just completed.
    * @param controller
+   *   the controller that manages the game logic and state
    * @param correctAnswers
    *   number of correct answers
    * @param wrongAnswers
@@ -40,7 +42,7 @@ sealed trait ResultPanels:
       time: Int
   ): JPanel
 
-class ResultPanelsImpl extends ResultPanels:
+class ResultPanelsFactoryImpl extends ResultPanelsFactory:
   private val BORDER_INSET                                                                 = 50
   private val GRID_ROWS                                                                    = 3
   private val GRID_COLS                                                                    = 1

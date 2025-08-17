@@ -1,7 +1,7 @@
 package views
 
 import controllers.GameController
-import views.panels.{BackgroundImagePanel, GamePanelsFactoryImpl, ResultPanelsImpl}
+import views.panels.{BackgroundImagePanel, GamePanelsFactoryImpl, ResultPanelsFactoryImpl}
 import utils.constants.GUIConstants.*
 
 import javax.swing.*
@@ -9,7 +9,9 @@ import java.awt.*
 
 /**
  * This object represents the initial menu where the player can choose between Age Test and Brain
- * Training mode.
+ * Training mode or read the game rules.
+ * @param controller
+ *   the game controller used for managing game state
  */
 class MenuView(controller: GameController):
   private val MENU_BUTTON_W_SCALE_FACTOR  = 0.4
@@ -56,13 +58,13 @@ class MenuView(controller: GameController):
         "Age Test",
         () =>
           frame.dispose()
-          AgeTest(GamePanelsFactoryImpl(), ResultPanelsImpl()).show()
+          AgeTest(GamePanelsFactoryImpl(), ResultPanelsFactoryImpl()).show()
       ),
       (
         "Training",
         () =>
           frame.dispose()
-          BrainTraining(ResultPanelsImpl()).show(GamePanelsFactoryImpl())
+          BrainTraining(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
       ),
       ("Game Rules", () => showGameRulesDialog())
     )

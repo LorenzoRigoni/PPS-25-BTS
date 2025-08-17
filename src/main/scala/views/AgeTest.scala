@@ -4,7 +4,7 @@ import controllers.{GameController, GameViewCallback}
 import models.*
 import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
 import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
-import views.panels.{GamePanelsFactory, ResultPanels}
+import views.panels.{GamePanelsFactory, ResultPanelsFactory}
 import utils.constants.GUIConstants.*
 import utils.enums.MiniGames
 import views.panels.GamePanelMapper.*
@@ -13,9 +13,15 @@ import javax.swing.*
 import java.awt.*
 
 /**
- * This class represents the view of the age test. The user will play 3 random mini-games.
+ * This class represents the view of the age test. The user will play 3 random mini-games. At the
+ * end, their brain age will be calculated and displayed.
+ * @param gamePanels
+ *   a factory that provides panels for each mini-game
+ * @param resultPanels
+ *   a factory that provides result panels for displaying final scores or test results
  */
-case class AgeTest(gamePanels: GamePanelsFactory, resultPanels: ResultPanels) extends GameViewCallback:
+case class AgeTest(gamePanels: GamePanelsFactory, resultPanels: ResultPanelsFactory)
+    extends GameViewCallback:
   private val frame          = new JFrame("Let's play!")
   private val mainPanel      = new JPanel(new BorderLayout())
   private val centerPanel    = new JPanel(new BorderLayout())
@@ -62,9 +68,15 @@ case class AgeTest(gamePanels: GamePanelsFactory, resultPanels: ResultPanels) ex
     val (questionController, question) = controller.getQuestion
     question match
       case q: SimpleTextQuestion   =>
-        updatePanel(showGame(questionController, gamePanelsForSimpleText(miniGame), miniGame, q), miniGame)
+        updatePanel(
+          showGame(questionController, gamePanelsForSimpleText(miniGame), miniGame, q),
+          miniGame
+        )
       case q: ColoredCountQuestion =>
-        updatePanel(showGame(questionController, gamePanels.coloredCountPanel, miniGame, q), miniGame)
+        updatePanel(
+          showGame(questionController, gamePanels.coloredCountPanel, miniGame, q),
+          miniGame
+        )
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>

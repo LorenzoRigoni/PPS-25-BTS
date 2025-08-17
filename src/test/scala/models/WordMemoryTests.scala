@@ -3,6 +3,9 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 import utils.SimpleTextQuestion
 
+/**
+ * This class tests the logic of the mini-game Word Memory.
+ */
 class WordMemoryTests extends AnyFunSuite:
   private val TEST_EXPRESSION_EASY            = SimpleTextQuestion("cow rainbow cat pillow")
   private val TEST_EXPRESSION_DIFFICULT       = SimpleTextQuestion("cow rainbow cat pillow dog")
