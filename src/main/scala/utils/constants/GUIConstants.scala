@@ -9,7 +9,6 @@ import java.io.File
 object GUIConstants:
   val HALF_DIVISOR                = 2
   val CENTER_FRAME_DIVISOR: Float = 1.5
-  val TIMER_WORD_MEMORY           = 10000
   val HOME_BUTTON_W               = 120
   val HOME_BUTTON_H               = 30
   val BORDER_VALUE                = 10

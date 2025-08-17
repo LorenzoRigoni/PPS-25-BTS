@@ -12,8 +12,10 @@ import javax.swing.*
  * This trait represents the views of the mini-games that have a question and an answer.
  */
 trait SimpleQuestionAnswerGamePanel[Q]:
-  private val textFieldCols   = 40
-  protected val inputField    = new JTextField(textFieldCols)
+  private val TEXTFIELD_COLS  = 40
+  private val BORDER_VALUE    = 5
+  private val FLOW_VALUE      = 10
+  protected val inputField    = new JTextField(TEXTFIELD_COLS)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
 
@@ -33,7 +35,6 @@ trait SimpleQuestionAnswerGamePanel[Q]:
    * @param validate
    *   the function that returns (updatedController, isCorrect)
    * @param renderQuestionContent
-   *
    * @return
    *   the panel created
    */
@@ -51,16 +52,14 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     gbc.weightx = 1.0
     gbc.gridx = 0
     gbc.gridy = 0
-    val borderValue            = 5
     val panel                  = new JPanel(new BorderLayout())
-    val flowValue              = 10
     val centerWrapper          = new JPanel(new GridBagLayout())
     centerWrapper.setBorder(
       BorderFactory.createEmptyBorder(
-        borderValue,
-        borderValue,
-        borderValue,
-        borderValue
+        BORDER_VALUE,
+        BORDER_VALUE,
+        BORDER_VALUE,
+        BORDER_VALUE
       )
     )
     val innerPanel             = new JPanel()
@@ -81,7 +80,7 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     questionPanelContainer.add(questionPanel, gbc)
     panel.add(questionPanelContainer, BorderLayout.CENTER)
     inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
-    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, flowValue, flowValue))
+    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_VALUE, FLOW_VALUE))
     val inputLabel             = new JLabel(textInputLabel)
     inputLabel.setFont(PIXEL_FONT8)
     inputPanel.add(inputLabel)

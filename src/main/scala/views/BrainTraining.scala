@@ -16,10 +16,10 @@ import java.awt.*
  * with all the mini-games.
  */
 case class BrainTraining(resultPanels: ResultPanels) extends GameViewCallback:
+  private val GAME_BUTTON_W     = 300
+  private val GAME_BUTTON_H     = 50
   private val frame             = new JFrame("Brain Training")
-  private val gameButtonW       = 300
-  private val gameButtonH       = 50
-  private val buttonDimension   = new Dimension(gameButtonW, gameButtonH)
+  private val buttonDimension   = new Dimension(GAME_BUTTON_W, GAME_BUTTON_H)
   private val mainPanel         = new JPanel(new BorderLayout())
   private val buttonPanel       = new JPanel()
   private val centerPanel       = new JPanel()

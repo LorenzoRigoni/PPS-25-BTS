@@ -14,7 +14,6 @@ case class WordMemoryLogic(
     difficulty: Int = 1,
     lastQuestion: Option[SimpleTextQuestion] = None
 ) extends MiniGameLogic[SimpleTextQuestion, String, Double]:
-
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, String, Double], SimpleTextQuestion) =
     val wordsNumber    = MIN_WORD_NUM + difficulty

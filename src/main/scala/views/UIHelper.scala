@@ -95,13 +95,13 @@ object UIHelper:
     new ImageIcon(resized)
 
   def createResultRow(iconName: String, text: String, iconSize: Int): JPanel =
+    val ROW_SPACE = 10
     val rowPanel  = new JPanel(new FlowLayout(FlowLayout.CENTER))
-    val rowSpace  = 10
     val iconLabel = new JLabel(loadIcon(iconName, iconSize))
     val textLabel = new JLabel(text)
     rowPanel.setOpaque(false)
     textLabel.setFont(PIXEL_FONT15)
     rowPanel.add(iconLabel)
-    rowPanel.add(Box.createRigidArea(new Dimension(rowSpace, 0)))
+    rowPanel.add(Box.createRigidArea(new Dimension(ROW_SPACE, 0)))
     rowPanel.add(textLabel)
     rowPanel

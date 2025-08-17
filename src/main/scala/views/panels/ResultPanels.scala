@@ -41,12 +41,16 @@ sealed trait ResultPanels:
   ): JPanel
 
 class ResultPanelsImpl extends ResultPanels:
-
+  private val BORDER_INSET                                                                 = 50
+  private val GRID_ROWS                                                                    = 3
+  private val GRID_COLS                                                                    = 1
+  private val GRID_H_GAP                                                                   = 10
+  private val GRID_V_GAP                                                                   = 20
+  private val ICON_SIZE_DIVISOR                                                            = 20
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
-    val borderInset = 50
     val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    panel.setBorder(new EmptyBorder(borderInset, borderInset, borderInset, borderInset))
+    panel.setBorder(new EmptyBorder(BORDER_INSET, BORDER_INSET, BORDER_INSET, BORDER_INSET))
     val title       = new JLabel(titleText)
     title.setFont(PIXEL_FONT25)
     title.setHorizontalAlignment(SwingConstants.CENTER)
@@ -83,21 +87,16 @@ class ResultPanelsImpl extends ResultPanels:
       wrongAnswers: Int,
       time: Int
   ): JPanel =
-    val gridRows        = 3
-    val gridCols        = 1
-    val gridHGap        = 10
-    val gridVGap        = 20
-    val iconSizeDivisor = 20
-    val iconSize        = UIHelper.getResponsiveIconSize(iconSizeDivisor)
-    val panel           = createBaseResultPanel(controller, "Your results:")
-    val resultsPanel    = new JPanel()
-    val rows            = List(
+    val iconSize     = UIHelper.getResponsiveIconSize(ICON_SIZE_DIVISOR)
+    val panel        = createBaseResultPanel(controller, "Your results:")
+    val resultsPanel = new JPanel()
+    val rows         = List(
       ("greenCheck.png", s"Correct Answers: $correctAnswers"),
       ("redCross.png", s"Wrong Answers: $wrongAnswers"),
       ("clock.png", s"Time: $time seconds")
     )
     resultsPanel.setOpaque(false)
-    resultsPanel.setLayout(new GridLayout(gridRows, gridCols, gridHGap, gridVGap))
+    resultsPanel.setLayout(new GridLayout(GRID_ROWS, GRID_COLS, GRID_H_GAP, GRID_V_GAP))
     rows
       .map((icon, text) => UIHelper.createResultRow(icon, text, iconSize))
       .foreach(resultsPanel.add)

@@ -1,7 +1,6 @@
 package views.panels
 
 import controllers.GameController
-import utils.constants.GUIConstants.TIMER_WORD_MEMORY
 import utils.SimpleTextQuestion
 
 import javax.swing.{JPanel, Timer}
@@ -12,7 +11,8 @@ class WordMemoryPanel(
     question: SimpleTextQuestion
 ) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
   def panel(): JPanel =
-    val (panel, _) = createSimpleQuestionAnswerGamePanel(
+    val TIMER_WORD_MEMORY = 10000
+    val (panel, _)        = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",
       question,
       "Write all words:",
@@ -22,7 +22,7 @@ class WordMemoryPanel(
       Some(simpleLabelRenderer)
     )
     inputField.setEnabled(false)
-    val timer      = new Timer(
+    val timer             = new Timer(
       TIMER_WORD_MEMORY,
       _ =>
         questionPanel.removeAll()

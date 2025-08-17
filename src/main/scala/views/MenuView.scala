@@ -12,9 +12,9 @@ import java.awt.*
  * Training mode.
  */
 class MenuView(controller: GameController):
-  private val menuButtonWidthScaleFactor  = 0.4
-  private val menuButtonHeightScaleFactor = 0.08
-  private val lastButtonDistance          = 120
+  private val MENU_BUTTON_W_SCALE_FACTOR  = 0.4
+  private val MENU_BUTTON_H_SCALE_FACTOR  = 0.08
+  private val LAST_BUTTON_DISTANCE        = 120
   private val frame                       = new JFrame("Menù")
   private def showGameRulesDialog(): Unit =
     val textArea   = new JTextArea(RULES)
@@ -39,8 +39,8 @@ class MenuView(controller: GameController):
     UIHelper.centerFrame(frame, 1)
     val buttonSize      =
       new Dimension(
-        (frame.getSize.width * menuButtonWidthScaleFactor).toInt,
-        (frame.getSize.height * menuButtonHeightScaleFactor).toInt
+        (frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt,
+        (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt
       )
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
@@ -72,7 +72,7 @@ class MenuView(controller: GameController):
       button.addActionListener(_ => btnData._2())
       val strut  =
         if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
-        else Box.createVerticalStrut(lastButtonDistance)
+        else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)
       Seq(button, strut)
     components.flatten.foreach(verticalPanel.add)
     buttonPanel.add(verticalPanel)
