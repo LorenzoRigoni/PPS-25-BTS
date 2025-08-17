@@ -45,9 +45,13 @@ Lo scopo principale di queste factory è creare e restituire pannelli già confi
 Inoltre _AgeTest.scala_ e _BrainTraining.scala_ contengono anche metodi che si occupano di reagire a eventi come _onGameFinished_ e 
 _onGameChanged_, implementando quindi il **pattern Observer**.
 
+![ViewDesign](img\UMLView1.png)
+
 Ciascun mini gioco dispone di un panel dedicato, che estende il trait _SimpleQuestionAnswerGamePanel.scala_: in questo caso è stato 
 adottato il pattern **Template Method**, poiché il trait definisce il comportamento comune a tutti i pannelli, 
 consentendo alle sottoclassi di ridefinire o personalizzare solo le parti necessarie, evitando duplicazioni di codice.
+
+![ViewDesign2](img\UMLView2.png)
 
 Infine, l’object _UIHelper_ rappresenta un esempio di **Singleton**, poiché incapsula in un’unica istanza la logica di creazione 
 e gestione di componenti UI comuni. In questo modo si ottiene una centralizzazione delle utility grafiche, rendendo il 
