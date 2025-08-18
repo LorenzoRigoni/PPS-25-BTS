@@ -12,8 +12,6 @@ class Leaf[A](val value: A) extends BinaryTree[A]:
       newValue: A,
       leftValue: Option[A],
       rightValue: Option[A]
-  )(using
-      rng: Random
   ): BinaryTree[A] =
     if (target != value) this
     else

@@ -24,9 +24,7 @@ object DirectionsTreeBuilder extends OperationBuilder[Token]:
           case (0, c) if c >= BINARY_OPERATOR_COMPLEXITY => BINARY_OPERATOR_COMPLEXITY
           case (c1, c2) if c1 != c2                      => UNARY_OPERATOR_COMPLEXITY
           case _                                         => SUBSTITUTE_OPERATOR_COMPLEXITY
-
-        given Random   = new Random()
-        val tokenToAdd = Token.randomOperatorUpTo(TokensNextComplexity)
+        val tokenToAdd           = Token.randomOperatorUpTo(TokensNextComplexity)
         expandTree(
           tokenToAdd.complexity match
             case BINARY_OPERATOR_COMPLEXITY     => root.expand(X, tokenToAdd, Some(X), Some(X))
