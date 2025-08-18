@@ -21,7 +21,7 @@ tramite pattern matching:
     case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
     case _                          => Seq("+", "-", "*")
 
-Un costrutto di programmazione funzionale avanzata che ho usato con frequenza è il for–yield, che semplifica molto 
+Un costrutto di programmazione funzionale avanzata che ho usato con frequenza è il **for–yield**, che semplifica molto 
 la generazione di strutture dati e rende semplifica molto la lettura del codice. 
 
     private def buildExpression(
@@ -39,25 +39,68 @@ La verifica della risposta non considera l’ordine ma solo la correttezza delle
 Double tra 0.0 e 1.0. Per semplicità, consideriamo corretta una risposta con punteggio superiore a 0.6.
 
 In questa porzione di logica ho utilizzato due costrutti Scala significativi:
-* Extension methods, per aggiungere funzionalità a String senza eredità. In particolare il seguente metodo consente di 
+* **Extension methods**, per aggiungere funzionalità a String senza ereditarietà. In particolare il seguente metodo consente di 
 convertire rapidamente una stringa in un set di parole, evitando duplicazioni di codice.
 
-    `   extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
-    `
+      extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
+    
 
-* fold sugli Option in modo da gestire il caso in cui non ci sia una domanda precedente (lastQuestion), ma evitando l’uso
+* **fold** sugli Option in modo da gestire il caso in cui non ci sia una domanda precedente (lastQuestion), ma evitando l’uso
 di if-else o controlli manuali su None, ottenendo un codice più compatto e funzionale.
    
-        `   override def validateAnswer(answer: String): Double =
-            lastQuestion.fold(0.0)(question =>
-            val expectedWordsNumber = question.text.toWordSet
-            val answerWordsNumber   = answer.toWordSet
-            answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
-            )
-        `
+        override def validateAnswer(answer: String): Double =
+        lastQuestion.fold(0.0)(question =>
+        val expectedWordsNumber = question.text.toWordSet
+        val answerWordsNumber   = answer.toWordSet
+        answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
+        )
 
 ## GUI 
+Il design e la struttura del codice relativo alle view sono stati già esaminati nel capitolo precedente, evidenziando 
+i vari pattern utilizzati.
+Essendo un gioco che utilizza una UI relativamente semplice, ma composta da diversi panel simili tra loro, lo sviluppo 
+si è concentrato sul riutilizzo del codice, cercando di rispettare al massimo il DRY principle.
+Le classi principali che favoriscono il riutilizzo del codice sono _UIHelper_, che contiene una serie di metodi utili 
+per comporre la GUI, e _SimpleAnswerQuestionGamePanel_, un trait che racchiude tutto il codice comune ai pannelli di gioco
+che richiedono solo un titolo, una domanda e un campo per inserire la risposta.
 
+Per semplificare la creazione dei bottoni, è stato creato il metodo createStyledButton, che oltre a impostare colore, 
+font, dimensioni ecc., definisce anche l’event handler da eseguire al momento del click sul bottone.
+Per maggiore chiarezza e semplicità di lettura del codice, ho scelto di utilizzare il meccanismo degli **alias**, definendo 
+il tipo EventHandler all’interno dell’object _UIHelper_:
+
+    private type EventHandler = ActionListener
+
+Segue un esempio di creazione di un bottone utilizzando il metodo dell'helper e il costrutto **for yield** citato anche 
+precedentemente:  
+
+    val buttonsData     = Seq(
+      (
+        "Age Test",
+        () =>
+          frame.dispose()
+          AgeTest(GamePanelsFactoryImpl(), ResultPanelsFactoryImpl()).show()
+      ),
+      (
+        "Training",
+        () =>
+          frame.dispose()
+          BrainTraining(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
+      ),
+      ("Game Rules", () => showGameRulesDialog())
+    )
+    val components      = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
+      val button =
+        UIHelper.createStyledButton(
+          btnData._1,
+          buttonSize,
+          PIXEL_FONT25,
+          handler = _ => { btnData._2() }
+        )
+      val strut  =
+        if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
+        else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)
+      Seq(button, strut)
 
 
 [Torna indietro](../Implementazione.md)
