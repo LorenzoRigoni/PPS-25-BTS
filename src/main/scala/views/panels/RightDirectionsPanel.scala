@@ -38,7 +38,9 @@ class RightDirectionsPanel(
 
     /**
      * @param key
+     *   The key that, when pressed, will trigger the callback function
      * @param direction
+     *   the direction that, as text, will be passed to the callback function
      */
     def bindKey(key: String, direction: String): Unit =
       inputMap.put(KeyStroke.getKeyStroke(key), key)

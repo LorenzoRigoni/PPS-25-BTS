@@ -43,9 +43,9 @@ trait SimpleQuestionAnswerGamePanel[Q]:
    * @param renderQuestionContent
    *   optional custom renderer for displaying the question content
    * @return
-   *   a tuple containing the constructed JPanel and a function
+   *   a tuple containing the constructed JPanel and a function, the function is a callback that
+   *   more specialised panels can call to submit an answer
    */
-  // TODO to complete function description in return
   def createSimpleQuestionAnswerGamePanel(
       title: String,
       initialQuestion: Q,
