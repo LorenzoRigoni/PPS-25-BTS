@@ -66,7 +66,9 @@ class FastCalcTests extends AnyFunSuite with Matchers:
   ) {
     val (newLogic, question) = logic.generateQuestion
     question.text should not be empty
-    newLogic.asInstanceOf[FastCalcLogic].difficulty shouldBe logic.difficulty + FAST_CALC_DIFFICULTY_STEP
+    newLogic
+      .asInstanceOf[FastCalcLogic]
+      .difficulty shouldBe logic.difficulty + FAST_CALC_DIFFICULTY_STEP
   }
 
   test("The method isMiniGameFinished should return false until rounds are reached") {

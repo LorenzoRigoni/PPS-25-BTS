@@ -11,7 +11,7 @@ class RightDirectionsTests extends AnyFunSuite:
   val operationWithoutResults =
     new Node(Token.And, new Leaf(Token.Up), Option(new Leaf(Token.Right)))
 
-  val operationWith1Not  = new Node(Token.Not, new Leaf(Token.Up), None)
+  val operationWith1Not = new Node(Token.Not, new Leaf(Token.Up), None)
   val operationWith2Not = new Node(Token.Not, operationWith1Not, None)
   val operationWith3Not = new Node(Token.Not, operationWith2Not, None)
 
@@ -26,8 +26,8 @@ class RightDirectionsTests extends AnyFunSuite:
   }
 
   test("Check if not gets correctly evaluated") {
-    val oneNotResult: Seq[Token] = evaluate(operationWith1Not.toString, List())
-    val twoNotResult: Seq[Token] = evaluate(operationWith2Not.toString, List())
+    val oneNotResult: Seq[Token]   = evaluate(operationWith1Not.toString, List())
+    val twoNotResult: Seq[Token]   = evaluate(operationWith2Not.toString, List())
     val threeNotResult: Seq[Token] = evaluate(operationWith3Not.toString, List())
 
     assert(oneNotResult.size == 3)

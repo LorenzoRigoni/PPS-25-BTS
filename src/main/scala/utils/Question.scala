@@ -11,15 +11,18 @@ sealed trait Question
 /**
  * The simple type of question wrapped in a string.
  *
- * @param text the text of the question
+ * @param text
+ *   the text of the question
  */
 case class SimpleTextQuestion(text: String) extends Question
 
 /**
  * The type of question for the mini-game "Colored Count".
  *
- * @param numbersWithColor A zipped sequence with (number, color)
- * @param colorRequired The color required
+ * @param numbersWithColor
+ *   A zipped sequence with (number, color)
+ * @param colorRequired
+ *   The color required
  */
 case class ColoredCountQuestion(
     numbersWithColor: Seq[(Int, ColoredCountColors)],
