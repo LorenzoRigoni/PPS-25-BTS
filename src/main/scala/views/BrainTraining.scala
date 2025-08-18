@@ -106,7 +106,7 @@ case class BrainTraining(resultPanels: ResultPanelsFactory) extends GameViewCall
       )
     backButton.addActionListener(_ => {
       frame.dispose()
-      if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
+      if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show
       else BrainTraining.apply(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
     })
     bottomPanel.add(backButton)

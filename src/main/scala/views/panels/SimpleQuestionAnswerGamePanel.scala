@@ -25,7 +25,7 @@ trait SimpleQuestionAnswerGamePanel[Q]:
    * @return
    *   the constructed JPanel
    */
-  def panel(): JPanel
+  def panel: JPanel
 
   /**
    * @param title

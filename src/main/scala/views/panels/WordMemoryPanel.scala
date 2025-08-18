@@ -19,7 +19,7 @@ class WordMemoryPanel(
     onNext: GameController => Unit,
     question: SimpleTextQuestion
 ) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
-  override def panel(): JPanel =
+  override def panel: JPanel =
     val TIMER_WORD_MEMORY = 10000
     val (panel, _)        = createSimpleQuestionAnswerGamePanel(
       "Try to remember these words",

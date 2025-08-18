@@ -22,7 +22,7 @@ class ColoredCountPanel(
     onNext: GameController => Unit,
     question: ColoredCountQuestion
 ) extends SimpleQuestionAnswerGamePanel[ColoredCountQuestion]:
-  override def panel(): JPanel =
+  override def panel: JPanel =
     val questionText = s"How many ${question.colorRequired.toString.toLowerCase} numbers?"
     val (panel, _)   = createSimpleQuestionAnswerGamePanel(
       questionText,

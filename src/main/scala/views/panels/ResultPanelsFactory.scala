@@ -65,7 +65,7 @@ class ResultPanelsFactoryImpl extends ResultPanelsFactory:
         CUSTOM_BLUE
       )
     homeButton.addActionListener(_ => {
-      MenuView(controller).show()
+      MenuView(controller).show
       SwingUtilities.getWindowAncestor(panel).dispose()
     })
     val bottomPanel = new JPanel()

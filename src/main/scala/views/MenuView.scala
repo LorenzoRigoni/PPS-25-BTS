@@ -14,11 +14,11 @@ import java.awt.*
  *   the game controller used for managing game state
  */
 class MenuView(controller: GameController):
-  private val MENU_BUTTON_W_SCALE_FACTOR  = 0.4
-  private val MENU_BUTTON_H_SCALE_FACTOR  = 0.08
-  private val LAST_BUTTON_DISTANCE        = 120
-  private val frame                       = new JFrame("Menù")
-  private def showGameRulesDialog(): Unit =
+  private val MENU_BUTTON_W_SCALE_FACTOR = 0.4
+  private val MENU_BUTTON_H_SCALE_FACTOR = 0.08
+  private val LAST_BUTTON_DISTANCE       = 120
+  private val frame                      = new JFrame("Menù")
+  private def showGameRulesDialog: Unit  =
     val textArea   = new JTextArea(RULES)
     textArea.setEditable(false)
     textArea.setLineWrap(true)
@@ -37,7 +37,7 @@ class MenuView(controller: GameController):
   /**
    * Show the Menu view.
    */
-  def show(): Unit =
+  def show: Unit =
     UIHelper.centerFrame(frame, 1)
     val buttonSize      =
       new Dimension(
@@ -58,7 +58,7 @@ class MenuView(controller: GameController):
         "Age Test",
         () =>
           frame.dispose()
-          AgeTest(GamePanelsFactoryImpl(), ResultPanelsFactoryImpl()).show()
+          AgeTest(GamePanelsFactoryImpl(), ResultPanelsFactoryImpl()).show
       ),
       (
         "Training",
@@ -66,7 +66,7 @@ class MenuView(controller: GameController):
           frame.dispose()
           BrainTraining(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
       ),
-      ("Game Rules", () => showGameRulesDialog())
+      ("Game Rules", () => showGameRulesDialog)
     )
     val components      = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
       val button =

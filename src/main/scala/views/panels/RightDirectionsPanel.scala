@@ -21,7 +21,7 @@ class RightDirectionsPanel(
     onNext: GameController => Unit,
     question: SimpleTextQuestion
 ) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
-  override def panel(): JPanel =
+  override def panel: JPanel =
     val (panel, externalSubmit) = createSimpleQuestionAnswerGamePanel(
       "Follow directions",
       question,
