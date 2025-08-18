@@ -6,13 +6,19 @@ import utils.{ColoredCountQuestion, SimpleTextQuestion}
 import javax.swing.*
 
 /**
- * This trait represents the possible mini-games panels.
+ * Factory trait for creating mini-games panels.
  */
-sealed trait GamePanels:
+sealed trait GamePanelsFactory:
   /**
    * Create a panel for Fast Calc mini-game.
+   * @param controller
+   *   the game controller managing the game logic
+   * @param onNext
+   *   callback invoked when the player completes the current question
+   * @param question
+   *   the question to display in the panel
    * @return
-   *   the created panel
+   *   the game panel for the mini-game
    */
   def fastCalcPanel(
       controller: GameController,
@@ -22,9 +28,14 @@ sealed trait GamePanels:
 
   /**
    * Create a panel for Count Words mini-game.
-   *
+   * @param controller
+   *   the game controller managing the game logic
+   * @param onNext
+   *   callback invoked when the player completes the current question
+   * @param question
+   *   the question to display in the panel
    * @return
-   *   the created panel
+   *   the game panel for the mini-game
    */
   def countWordsPanel(
       controller: GameController,
@@ -34,9 +45,14 @@ sealed trait GamePanels:
 
   /**
    * Create a panel for Right Directions mini-game.
-   *
+   * @param controller
+   *   the game controller managing the game logic
+   * @param onNext
+   *   callback invoked when the player completes the current question
+   * @param question
+   *   the question to display in the panel
    * @return
-   *   the created panel
+   *   the game panel for the mini-game
    */
   def rightDirectionsPanel(
       controller: GameController,
@@ -44,19 +60,41 @@ sealed trait GamePanels:
       question: SimpleTextQuestion
   ): JPanel
 
+  /**
+   * Create a panel for Word Memory mini-game.
+   * @param controller
+   *   the game controller managing the game logic
+   * @param onNext
+   *   callback invoked when the player completes the current question
+   * @param question
+   *   the question to display in the panel
+   * @return
+   *   the game panel for the mini-game
+   */
   def wordMemoryPanel(
       controller: GameController,
       onNext: GameController => Unit,
       question: SimpleTextQuestion
   ): JPanel
 
+  /**
+   * Create a panel for Colored Count mini-game.
+   * @param controller
+   *   the game controller managing the game logic
+   * @param onNext
+   *   callback invoked when the player completes the current question
+   * @param question
+   *   the question to display in the panel
+   * @return
+   *   the game panel for the mini-game
+   */
   def coloredCountPanel(
       controller: GameController,
       onNext: GameController => Unit,
       question: ColoredCountQuestion
   ): JPanel
 
-class GamePanelsImpl extends GamePanels:
+class GamePanelsFactoryImpl extends GamePanelsFactory:
   override def fastCalcPanel(
       controller: GameController,
       onNext: GameController => Unit,

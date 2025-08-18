@@ -2,7 +2,7 @@ package views.panels
 
 import controllers.GameController
 import views.*
-import utils.GUIConstants.*
+import utils.constants.GUIConstants.*
 import scala.List
 
 import java.awt.*
@@ -10,21 +10,23 @@ import javax.swing.*
 import javax.swing.border.EmptyBorder
 
 /**
- * This trait represents the possible result panels.
+ * This is a factory trait to create panels to show results.
  */
-sealed trait ResultPanels:
+sealed trait ResultPanelsFactory:
   /**
    * Creates the panel that shows the age calculated during the Age Test.
    * @param controller
+   *   the controller that manages the game logic and state
    * @param age
    *   calculated
    * @return
    */
-  def TestResultPanel(controller: GameController, age: Int): JPanel
+  def testResultPanel(controller: GameController, age: Int): JPanel
 
   /**
    * Creates the panel that shows the results of the minigame just completed.
    * @param controller
+   *   the controller that manages the game logic and state
    * @param correctAnswers
    *   number of correct answers
    * @param wrongAnswers
@@ -33,20 +35,24 @@ sealed trait ResultPanels:
    *   needed to complete the minigame
    * @return
    */
-  def GameResultPanel(
+  def gameResultPanel(
       controller: GameController,
       correctAnswers: Int,
       wrongAnswers: Int,
       time: Int
   ): JPanel
 
-class ResultPanelsImpl extends ResultPanels:
-
+class ResultPanelsFactoryImpl extends ResultPanelsFactory:
+  private val BORDER_INSET                                                                 = 50
+  private val GRID_ROWS                                                                    = 3
+  private val GRID_COLS                                                                    = 1
+  private val GRID_H_GAP                                                                   = 10
+  private val GRID_V_GAP                                                                   = 20
+  private val ICON_SIZE_DIVISOR                                                            = 20
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
-    val borderInset = 50
     val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
-    panel.setBorder(new EmptyBorder(borderInset, borderInset, borderInset, borderInset))
+    panel.setBorder(new EmptyBorder(BORDER_INSET, BORDER_INSET, BORDER_INSET, BORDER_INSET))
     val title       = new JLabel(titleText)
     title.setFont(PIXEL_FONT25)
     title.setHorizontalAlignment(SwingConstants.CENTER)
@@ -69,7 +75,7 @@ class ResultPanelsImpl extends ResultPanels:
     panel.add(bottomPanel, BorderLayout.SOUTH)
     panel
 
-  override def TestResultPanel(controller: GameController, age: Int): JPanel =
+  override def testResultPanel(controller: GameController, age: Int): JPanel =
     val panel    = createBaseResultPanel(controller, "Your brain age is:")
     val ageLabel = new JLabel(age.toString)
     ageLabel.setFont(PIXEL_FONT70)
@@ -77,27 +83,22 @@ class ResultPanelsImpl extends ResultPanels:
     panel.add(ageLabel, BorderLayout.CENTER)
     panel
 
-  override def GameResultPanel(
+  override def gameResultPanel(
       controller: GameController,
       correctAnswers: Int,
       wrongAnswers: Int,
       time: Int
   ): JPanel =
-    val gridRows        = 3
-    val gridCols        = 1
-    val gridHGap        = 10
-    val gridVGap        = 20
-    val iconSizeDivisor = 20
-    val iconSize        = UIHelper.getResponsiveIconSize(iconSizeDivisor)
-    val panel           = createBaseResultPanel(controller, "Your results:")
-    val resultsPanel    = new JPanel()
-    val rows            = List(
+    val iconSize     = UIHelper.getResponsiveIconSize(ICON_SIZE_DIVISOR)
+    val panel        = createBaseResultPanel(controller, "Your results:")
+    val resultsPanel = new JPanel()
+    val rows         = List(
       ("greenCheck.png", s"Correct Answers: $correctAnswers"),
       ("redCross.png", s"Wrong Answers: $wrongAnswers"),
       ("clock.png", s"Time: $time seconds")
     )
     resultsPanel.setOpaque(false)
-    resultsPanel.setLayout(new GridLayout(gridRows, gridCols, gridHGap, gridVGap))
+    resultsPanel.setLayout(new GridLayout(GRID_ROWS, GRID_COLS, GRID_H_GAP, GRID_V_GAP))
     rows
       .map((icon, text) => UIHelper.createResultRow(icon, text, iconSize))
       .foreach(resultsPanel.add)

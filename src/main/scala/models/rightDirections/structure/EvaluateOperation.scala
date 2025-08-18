@@ -6,19 +6,15 @@ object EvaluateOperation:
 
   def evaluateOperationFromString(input: String, currentList: Seq[Token]): Seq[Token] =
     val trimmedInput = stripParentheses(input)
-
     trimmedInput match
       case operation if operation.contains("and") =>
         val Array(left, right) = operation.split("and")
         combineAnd(left, right)
-
       case operation if operation.contains("or") =>
         val Array(left, right) = operation.split("or")
         combineOr(left, right)
-
       case operation if !(operation.contains("x") || operation.contains("not")) =>
         Seq(Token.fromString(stripParentheses(operation)))
-
       case operation =>
         handleNotCondition(operation)
 
@@ -37,6 +33,5 @@ object EvaluateOperation:
         .lastOption
         .getOrElse("")
     val numberOfNegations = trimmed.split(" ").count(_ == "not")
-
     if numberOfNegations % 2 == 0 then Seq(operator)
     else Token.directions.filterNot(_ == operator)

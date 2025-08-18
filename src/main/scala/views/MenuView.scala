@@ -1,17 +1,22 @@
 package views
 
 import controllers.GameController
-import views.panels.{BackgroundImagePanel, GamePanelsImpl, ResultPanelsImpl}
-import utils.GUIConstants.*
+import views.panels.{BackgroundImagePanel, GamePanelsFactoryImpl, ResultPanelsFactoryImpl}
+import utils.constants.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
 
 /**
  * This object represents the initial menu where the player can choose between Age Test and Brain
- * Training mode.
+ * Training mode or read the game rules.
+ * @param controller
+ *   the game controller used for managing game state
  */
 class MenuView(controller: GameController):
+  private val MENU_BUTTON_W_SCALE_FACTOR  = 0.4
+  private val MENU_BUTTON_H_SCALE_FACTOR  = 0.08
+  private val LAST_BUTTON_DISTANCE        = 120
   private val frame                       = new JFrame("Menù")
   private def showGameRulesDialog(): Unit =
     val textArea   = new JTextArea(RULES)
@@ -34,50 +39,42 @@ class MenuView(controller: GameController):
    */
   def show(): Unit =
     UIHelper.centerFrame(frame, 1)
-    val menuButtonWidthScaleFactor  = 0.4
-    val menuButtonHeightScaleFactor = 0.08
-    val lastButtonDistance          = 120
-    val buttonSize                  =
+    val buttonSize      =
       new Dimension(
-        (frame.getSize.width * menuButtonWidthScaleFactor).toInt,
-        (frame.getSize.height * menuButtonHeightScaleFactor).toInt
+        (frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt,
+        (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt
       )
-
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
-
-    val buttonPanel = new JPanel()
+    val buttonPanel     = new JPanel()
     buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT))
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, BUTTON_DISTANCE))
     buttonPanel.setOpaque(false)
-
-    val verticalPanel = new JPanel()
+    val verticalPanel   = new JPanel()
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
-
-    val buttonsData = Seq(
+    val buttonsData     = Seq(
       (
         "Age Test",
         () =>
           frame.dispose()
-          AgeTest(GamePanelsImpl(), ResultPanelsImpl()).show()
+          AgeTest(GamePanelsFactoryImpl(), ResultPanelsFactoryImpl()).show()
       ),
       (
         "Training",
         () =>
           frame.dispose()
-          BrainTraining(ResultPanelsImpl()).show(GamePanelsImpl())
+          BrainTraining(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
       ),
       ("Game Rules", () => showGameRulesDialog())
     )
-
-    val components = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
+    val components      = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
       val button =
         UIHelper.createStyledButton(btnData._1, buttonSize, PIXEL_FONT25)
       button.addActionListener(_ => btnData._2())
       val strut  =
         if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
-        else Box.createVerticalStrut(lastButtonDistance)
+        else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)
       Seq(button, strut)
     components.flatten.foreach(verticalPanel.add)
     buttonPanel.add(verticalPanel)

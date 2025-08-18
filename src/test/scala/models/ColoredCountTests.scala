@@ -1,18 +1,19 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
-import utils.ColoredCountConstants.COLORED_COUNT_TURNS
-import utils.{ColoredCountColors, ColoredCountQuestion}
+import org.scalatest.matchers.should.Matchers
+import utils.constants.ColoredCountConstants.COLORED_COUNT_TURNS
+import utils.ColoredCountQuestion
+import utils.enums.ColoredCountColors
 
 /**
  * This class tests the logic of the mini-game Colored Count.
  */
-class ColoredCountTests extends AnyFunSuite:
-  private val NUMBERS       = Seq(1, 2, 3, 4)
-  private val TEST_QUESTION = generateTestQuestion._1
-  private val RIGHT_ANSWER  = generateTestQuestion._2
-  private val WRONG_ANSWER  = RIGHT_ANSWER + 1
-
+class ColoredCountTests extends AnyFunSuite with Matchers:
+  private val NUMBERS           = Seq(1, 2, 3, 4)
+  private val TEST_QUESTION     = generateTestQuestion._1
+  private val RIGHT_ANSWER      = generateTestQuestion._2
+  private val WRONG_ANSWER      = RIGHT_ANSWER + 1
   private val coloredCountLogic = ColoredCountLogic(
     COLORED_COUNT_TURNS,
     lastQuestion = Some(TEST_QUESTION)
@@ -21,15 +22,15 @@ class ColoredCountTests extends AnyFunSuite:
   private def generateTestQuestion: (ColoredCountQuestion, Int) =
     val colors        = ColoredCountColors.values
     val colorRequired = colors(1)
-    val question      = NUMBERS.zip(colors)
+    val question      = NUMBERS zip colors
     (ColoredCountQuestion(question, colorRequired), colors.count(_ == colorRequired))
 
   test("The validator of the mini-game should return true for the correct answers") {
-    assert(coloredCountLogic.validateAnswer(RIGHT_ANSWER))
+    coloredCountLogic.validateAnswer(RIGHT_ANSWER) shouldBe true
   }
 
   test("The validator of the mini-game should return false for the wrong answers") {
-    assert(!coloredCountLogic.validateAnswer(WRONG_ANSWER))
+    coloredCountLogic.validateAnswer(WRONG_ANSWER) shouldBe false
   }
 
   test("The question generator should increase the numbers with the difficulty") {
@@ -43,5 +44,5 @@ class ColoredCountTests extends AnyFunSuite:
     val lastMiniGameLogic = coloredCountLogic.copy(
       currentRound = COLORED_COUNT_TURNS
     )
-    assert(lastMiniGameLogic.isMiniGameFinished)
+    lastMiniGameLogic.isMiniGameFinished shouldBe true
   }

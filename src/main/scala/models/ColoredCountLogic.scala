@@ -1,15 +1,20 @@
 package models
 
 import scala.util.Random
-import utils.ColoredCountColors
 import utils.ColoredCountQuestion
+import utils.enums.ColoredCountColors
 
 /**
  * This case class manage the logic of the mini-game "Colored Count"
- * @param rounds The total number of rounds
- * @param currentRound The current round
- * @param difficulty The current difficulty
- * @param lastQuestion The last question generated
+ *
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
  */
 case class ColoredCountLogic(
     rounds: Int,
@@ -42,10 +47,7 @@ case class ColoredCountLogic(
       question
     )
 
-  override def parseAnswer(answer: String): Int =
-    answer.trim.toIntOption.getOrElse(
-      throw IllegalArgumentException(s"$answer is not an Int")
-    )
+  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
 
   override def validateAnswer(answer: Int): Boolean =
     lastQuestion match

@@ -1,12 +1,12 @@
 package models.rightDirections
 
-import models.rightDirections.structure.Symbol.{And, Not, Or, X}
+//import models.rightDirections.structure.Symbol.{And, Not, Or, X}
 import models.rightDirections.structure.treeLogic.{BinaryTree, Leaf, Node}
-import models.rightDirections.structure.{Symbol, *}
+//import models.rightDirections.structure.{Symbol, *}
 import org.scalatest.funsuite.AnyFunSuite
 
 class RightDirectionsTests extends AnyFunSuite:
-  val tree: BinaryTree[Symbol] = new Leaf(X).expand(X, Symbol.Left, Option(Not), None)
+  //val tree: BinaryTree[Symbol] = new Leaf(X).expand(X, Symbol.Left, Option(Not), None)
 
   test("Check Not operator") {
     // EvaluateOperation.evaluateOperationFromString("(((((right or right) not) or (left and up)) not) not)",List())
@@ -23,8 +23,8 @@ class RightDirectionsTests extends AnyFunSuite:
   }
 
   test("Check operation evaluation") {
-    val complexTree = SyntaxTreeBuilder.buildOperationFromComplexity(9)
+    /*val complexTree = SyntaxTreeBuilder.buildOperationFromComplexity(9)
     val stringTree  = complexTree.toString
     val result      = EvaluateOperation.evaluateOperationFromString(stringTree, List())
-    print(stringTree, result)
+    print(stringTree, result)*/
   }

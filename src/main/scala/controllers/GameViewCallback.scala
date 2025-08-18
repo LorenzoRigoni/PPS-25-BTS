@@ -1,6 +1,6 @@
 package controllers
 
-import utils.MiniGames
+import utils.enums.MiniGames
 
 /**
  * This trait represents the callback used by the controller to notify the view of an event

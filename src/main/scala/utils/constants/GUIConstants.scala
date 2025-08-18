@@ -1,20 +1,22 @@
-package utils
+package utils.constants
 
 import java.awt.{Color, Font, Toolkit}
 import java.io.File
 
+/**
+ * This object contains the constants for the GUI
+ */
 object GUIConstants:
   val HALF_DIVISOR                = 2
   val CENTER_FRAME_DIVISOR: Float = 1.5
-  val TIMER_WORD_MEMORY           = 10000
   val HOME_BUTTON_W               = 120
   val HOME_BUTTON_H               = 30
   val BORDER_VALUE                = 10
   val BUTTON_DISTANCE             = 30
-  val SCREEN_WIDTH: Int  = Toolkit.getDefaultToolkit.getScreenSize.width
-  val SCREEN_HEIGHT: Int = Toolkit.getDefaultToolkit.getScreenSize.height
-  val CUSTOM_BLUE        = new Color(120, 180, 210)
-  val PIXEL_FONT70: Font =
+  val SCREEN_WIDTH: Int           = Toolkit.getDefaultToolkit.getScreenSize.width
+  val SCREEN_HEIGHT: Int          = Toolkit.getDefaultToolkit.getScreenSize.height
+  val CUSTOM_BLUE                 = new Color(120, 180, 210)
+  val PIXEL_FONT70: Font          =
     Font
       .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
       .deriveFont(70f)

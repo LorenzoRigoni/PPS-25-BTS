@@ -1,4 +1,4 @@
-package utils
+package utils.enums
 
 import java.awt.Color
 

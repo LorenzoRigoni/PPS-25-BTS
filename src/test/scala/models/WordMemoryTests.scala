@@ -3,22 +3,23 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 import utils.SimpleTextQuestion
 
+/**
+ * This class tests the logic of the mini-game Word Memory.
+ */
 class WordMemoryTests extends AnyFunSuite:
-  private val TEST_EXPRESSION_EASY      = SimpleTextQuestion("cow rainbow cat pillow")
-  private val TEST_EXPRESSION_DIFFICULT = SimpleTextQuestion("cow rainbow cat pillow dog")
-
-  private val gameLogic =
-    WordMemoryLogic(
-      rounds = 3,
-      lastQuestion = Some(TEST_EXPRESSION_EASY)
-    )
-
+  private val TEST_EXPRESSION_EASY            = SimpleTextQuestion("cow rainbow cat pillow")
+  private val TEST_EXPRESSION_DIFFICULT       = SimpleTextQuestion("cow rainbow cat pillow dog")
   private val COMPLETE_ANSWER_SAME_ORDER      = "cow rainbow cat pillow"
   private val COMPLETE_ANSWER_DIFFERENT_ORDER = "cow rainbow cat pillow"
   private val PARTIAL_ANSWER_SAME_ORDER       = "cow"
   private val PARTIAL_ANSWER_DIFFERENT_ORDER  = "rainbow cow"
   private val WRONG_SPELL_ANSWER              = "cow rainbw cat pillow "
   private val WRONG_EMPTY_ANSWER              = ""
+  private val gameLogic                       =
+    WordMemoryLogic(
+      rounds = 3,
+      lastQuestion = Some(TEST_EXPRESSION_EASY)
+    )
 
   test("The validator returns 1.0 for complete answer in same order") {
     val score = gameLogic.validateAnswer(COMPLETE_ANSWER_SAME_ORDER)

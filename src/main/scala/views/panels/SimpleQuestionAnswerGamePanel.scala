@@ -3,39 +3,48 @@ package views.panels
 import controllers.GameController
 import views.*
 import utils.{Question, SimpleTextQuestion}
-import utils.GUIConstants.*
+import utils.constants.GUIConstants.*
 
 import java.awt.*
 import javax.swing.*
 
 /**
- * This trait represents the views of the mini-games that have a question and an answer.
+ * This trait represents the views of the mini-games that need simple panel that only contains a
+ * title, a question and a textfield for the answer.
  */
 trait SimpleQuestionAnswerGamePanel[Q]:
-  private val textFieldCols   = 40
-  protected val inputField    = new JTextField(textFieldCols)
+  private val TEXTFIELD_COLS  = 40
+  private val BORDER_VALUE    = 5
+  private val FLOW_VALUE      = 10
+  protected val inputField    = new JTextField(TEXTFIELD_COLS)
   protected val titleArea     = new JTextArea()
   protected val questionPanel = new JPanel()
 
   /**
-   * Create the panel with a question and an answer.
-   * @param title
-   *   the initial question of the mini-game
-   * @param textInputLabel
-   *   the label of the input
-   * @param controller
-   *   the game controller
-   * @param onNext
-   *   callback to notify when the mini-game ends
-   * @param updateLogicAndQuestion
-   *   callback that takes the controller and returns (updatedController, newQuestion) (i.e.,
-   *   similar to `getQuestion`)
-   * @param validate
-   *   the function that returns (updatedController, isCorrect)
-   * @param renderQuestionContent
-   *
+   * Creates the Swing panel associated with this mini-game.
    * @return
-   *   the panel created
+   *   the constructed JPanel
+   */
+  def panel(): JPanel
+
+  /**
+   * @param title
+   *   the title displayed at the top of the panel
+   * @param initialQuestion
+   *   the initial question to render
+   * @param textInputLabel
+   *   the label describing the input field
+   * @param controller
+   *   the current GameController managing game state
+   * @param onNext
+   *   callback invoked when the user submits an answer
+   * @param validate
+   *   a function to check the submitted answer
+   * @param renderQuestionContent
+   *   optional custom renderer for displaying the question content
+   * @return
+   *   a tuple containing the constructed JPanel and a function, the function is a callback that
+   *   more specialised panels can call to submit an answer
    */
   def createSimpleQuestionAnswerGamePanel(
       title: String,
@@ -51,16 +60,14 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     gbc.weightx = 1.0
     gbc.gridx = 0
     gbc.gridy = 0
-    val borderValue            = 5
     val panel                  = new JPanel(new BorderLayout())
-    val flowValue              = 10
     val centerWrapper          = new JPanel(new GridBagLayout())
     centerWrapper.setBorder(
       BorderFactory.createEmptyBorder(
-        borderValue,
-        borderValue,
-        borderValue,
-        borderValue
+        BORDER_VALUE,
+        BORDER_VALUE,
+        BORDER_VALUE,
+        BORDER_VALUE
       )
     )
     val innerPanel             = new JPanel()
@@ -81,7 +88,7 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     questionPanelContainer.add(questionPanel, gbc)
     panel.add(questionPanelContainer, BorderLayout.CENTER)
     inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
-    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, flowValue, flowValue))
+    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_VALUE, FLOW_VALUE))
     val inputLabel             = new JLabel(textInputLabel)
     inputLabel.setFont(PIXEL_FONT8)
     inputPanel.add(inputLabel)
@@ -105,16 +112,10 @@ trait SimpleQuestionAnswerGamePanel[Q]:
     onNext(updatedController)
     updatedController
 
-  protected def showNewQuestion(
-      newQuestion: Q,
-      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
-  ): Unit =
-    inputField.setText("")
-    questionPanel.removeAll()
-    renderQuestionContent.foreach(renderer => renderer(questionPanel, newQuestion))
-    questionPanel.revalidate()
-    questionPanel.repaint()
-
+  /**
+   * Default renderer for simple text questions. Adds the question text into the provided container
+   * JPanel.
+   */
   protected def simpleLabelRenderer: (JPanel, Q) => Unit =
     (container, questionText) =>
       container.setLayout(new BorderLayout(BORDER_VALUE, BORDER_VALUE))

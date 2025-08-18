@@ -1,4 +1,4 @@
-package utils
+package utils.enums
 
 /**
  * This enum represents the possible mini-games.

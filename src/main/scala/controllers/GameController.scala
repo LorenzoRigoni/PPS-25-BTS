@@ -2,17 +2,19 @@ package controllers
 
 import models.*
 import models.rightDirections.RightDirectionsLogic
-import utils.CountWordsConstants.COUNT_WORDS_TURNS
-import utils.ColoredCountConstants.COLORED_COUNT_TURNS
-import utils.WordMemoryConstants.WORD_MEMORY_TURNS
-import utils.RightDirectionsConstants.*
-import utils.FastCalcConstants.*
-import utils.{FastCalcConstants, MiniGames}
-import utils.MiniGames.*
-import utils.GameControllerConstants.*
+import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
+import utils.constants.ColoredCountConstants.COLORED_COUNT_TURNS
+import utils.constants.WordMemoryConstants.WORD_MEMORY_TURNS
+import utils.constants.RightDirectionsConstants.*
+import utils.constants.FastCalcConstants.*
+import utils.enums.MiniGames.*
+import utils.constants.GameControllerConstants.*
 import utils.QuestionResult
 import utils.Question
+import utils.constants.FastCalcConstants
+import utils.enums.MiniGames
 
+import java.awt.desktop.SystemSleepEvent
 import scala.util.Random
 
 /**
@@ -34,7 +36,7 @@ import scala.util.Random
  */
 case class GameController(
     currentGame: Option[(MiniGameLogic[_, _, _], MiniGames)] = None,
-    remainingMiniGames: Seq[MiniGames] = MiniGames.values.toList,
+    remainingMiniGames: Seq[MiniGames] = MiniGames.values.toSeq,
     results: List[utils.QuestionResult] = List.empty,
     numMiniGamesPlayed: Int = 0,
     startTime: Option[Long] = None,
@@ -109,15 +111,18 @@ case class GameController(
    */
   def checkAnswer(answer: String): Option[(GameController, Boolean)] =
     for
-      game      <- currentGame
-      startTime <- startTime
+      game  <- currentGame
+      start <- startTime
     yield
-      val parsedAnswer      = game._1.parseAnswer(answer)
-      val elapsedTime       = System.currentTimeMillis() - startTime
-      val isAnswerCorrect   = game._1.validateAnswer(parsedAnswer) match
-        case b: Boolean => b
-        case d: Double  => d >= PERCENT_ACCETTABLE_ANSWER
-        case _          => false
+      val elapsedTime       = System.currentTimeMillis() - start
+      val isAnswerCorrect   = game._1.parseAnswer(answer) match
+        case Some(parsedAnswer) =>
+          game._1.validateAnswer(parsedAnswer) match
+            case b: Boolean => b
+            case d: Double  => d >= PERCENT_ACCETTABLE_ANSWER
+            case _          => false
+        case _                  =>
+          false
       val updatedController = this.copy(
         currentGame = Some(game),
         results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results

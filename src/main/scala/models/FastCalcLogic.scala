@@ -1,11 +1,19 @@
 package models
 
-import utils.FastCalcConstants.*
+import utils.constants.FastCalcConstants.*
 import scala.util.Random
 import utils.SimpleTextQuestion
 
 /**
- * This case class manages the logic of the Fast Calc mini-game.
+ * This case class manage the logic of the mini-game "Fast Calc"
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
  */
 case class FastCalcLogic(
     rounds: Int,
@@ -13,17 +21,19 @@ case class FastCalcLogic(
     difficulty: Int = 1,
     lastQuestion: Option[SimpleTextQuestion] = None
 ) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]:
+  private val NUM_SIMPLE_ROUNDS = 3
+  private val NUM_MEDIUM_ROUNDS = 6
+  private val MAX_NUM_TERMS     = 4
+  private val MAX_NUM           = 10
 
   private def getRandomNumber(maxNumber: Int): Int =
     Random.nextInt(maxNumber) + 1
 
   private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] =
-    val numSimpleRounds = 3
-    val numMediumRounds = 6
     difficulty match
-      case d if d < numSimpleRounds => Seq("+")
-      case d if d < numMediumRounds => Seq("+", "-")
-      case _                        => Seq("+", "-", "*")
+      case d if d < NUM_SIMPLE_ROUNDS => Seq("+")
+      case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
+      case _                          => Seq("+", "-", "*")
 
   private def getRandomOperator(operators: Seq[String]): String =
     val operatorIndex = Random.nextInt(operators.length)
@@ -38,26 +48,57 @@ case class FastCalcLogic(
       token   <- List(n, op) if token.nonEmpty
     yield token
 
+  /**
+   * Method to get a list of tokens (numbers and operators) from an expression string.
+   * @param expression
+   *   string that contains the expression
+   * @return
+   *   a list of numbers and operators
+   */
   def getListFromExpression(expression: String): List[String] =
     expression.split(" ").toList
 
+  /**
+   * Evaluates a mathematical expression represented as a list of tokens.
+   * @param expression
+   *   expression represented as a list of tokens (numbers and operators)
+   * @return
+   *   The result of the expression as an Int
+   */
   def calculateResult(expression: List[String]): Int =
+    /**
+     * @param expr
+     *   current expression as a list of tokens
+     * @param ops
+     *   set of operators to search for
+     * @param f
+     *   a function that combines the results of the left and right sub-expressions
+     * @return
+     *   Some(result) if an operator from `ops` was found and applied, None otherwise
+     */
     def evalOperators(
         expr: List[String],
         ops: Set[String],
         f: (Int, Int, String) => Int
     ): Option[Int] =
-      val index = expr.lastIndexWhere(ops.contains)
-      if index == -1 then None
-      else
-        val (left, right) = expr.splitAt(index)
-        right match
-          case op :: rightPart =>
-            val l = calculate(left)
-            val r = calculate(rightPart)
-            Some(f(l, r, op))
-          case _               => throw new IllegalArgumentException("Malformed expression")
+      expr.zipWithIndex.findLast { case (token, _) => ops.contains(token) } match
+        case Some((operator, index)) =>
+          val (left, right) = expr.splitAt(index)
+          right match
+            case op :: rightPart =>
+              val l = calculate(left)
+              val r = calculate(rightPart)
+              Some(f(l, r, op))
+            case _               => throw new IllegalArgumentException("Malformed expression")
+        case _                       => None
 
+    /**
+     * Evaluates an expression, first checking for + and -, then *
+     * @param expr
+     *   current expression as a list of tokens
+     * @return
+     *   an int as a result of the expression
+     */
     def calculate(expr: List[String]): Int = expr match
       case n :: Nil => n.toInt
       case _        =>
@@ -71,16 +112,15 @@ case class FastCalcLogic(
             ) match
               case Some(value) => value
               case None        => throw new IllegalArgumentException("Malformed expression")
+
     calculate(expression)
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
-    val maxNumTerms  = 4
-    val maxNumber    = 10
-    val numTerms     = Math.min(difficulty + 1, maxNumTerms)
+    val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
     val operatorsSeq = getOperatorsForDifficultyLevel(difficulty)
-    val numbers      = (1 to numTerms).map(_ => getRandomNumber(maxNumber).toString).toList
-    val operators    = (1 until numTerms).map(_ => getRandomOperator(operatorsSeq)).toList
+    val numbers      = (for _ <- 1 to numTerms yield getRandomNumber(MAX_NUM).toString).toList
+    val operators    = (for _ <- 1 until numTerms yield getRandomOperator(operatorsSeq)).toList
     val expression   = buildExpression(numbers, operators).mkString(" ")
     val question     = SimpleTextQuestion(expression)
     (
@@ -92,13 +132,10 @@ case class FastCalcLogic(
       question
     )
 
-  override def parseAnswer(answer: String): Int =
-    answer.trim.toIntOption.getOrElse(
-      throw IllegalArgumentException(s"$answer is not an Int")
-    )
+  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
 
   override def validateAnswer(answer: Int): Boolean =
     calculateResult(getListFromExpression(lastQuestion.get.text)) == answer
 
   override def isMiniGameFinished: Boolean =
-    !(currentRound < rounds)
+    currentRound == rounds

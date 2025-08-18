@@ -1,15 +1,19 @@
 package models
 
 import scala.util.Random
-import utils.WordsForMiniGames.WORDS
+import utils.constants.WordsForMiniGames.WORDS
 import utils.SimpleTextQuestion
 
 /**
  * This case class manage the logic of the mini-game "Count Words"
- * @param rounds The total number of rounds
- * @param currentRound The current round
- * @param difficulty The current difficulty
- * @param lastQuestion The last question generated
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
  */
 case class CountWordsLogic(
     rounds: Int,
@@ -29,7 +33,6 @@ case class CountWordsLogic(
       else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
     val wordsGenerated = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
     val question       = SimpleTextQuestion(wordsGenerated)
-
     (
       this.copy(
         currentRound = currentRound + 1,
@@ -39,10 +42,7 @@ case class CountWordsLogic(
       question
     )
 
-  override def parseAnswer(answer: String): Int =
-    answer.trim.toIntOption.getOrElse(
-      throw IllegalArgumentException(s"$answer is not an Int")
-    )
+  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
 
   override def validateAnswer(answer: Int): Boolean =
     lastQuestion match
