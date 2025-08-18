@@ -6,6 +6,10 @@ import models.rightDirections.structure.*
 import utils.RightDirectionsConstants.*
 import scala.annotation.tailrec
 
+private val DIFFICULTY_STEP: Float        = 0.25
+private val MAX_NUMBER_OF_ROUNDS          = 15
+private val CAN_GENERATE_WRONG_OPERATIONS = false
+
 case class RightDirectionsLogic(
     rounds: Int,
     difficulty: Float = 0,
@@ -14,7 +18,7 @@ case class RightDirectionsLogic(
 ) extends MiniGameLogic[String, Boolean]:
 
   override def generateQuestion: (MiniGameLogic[String, Boolean], String) =
-    val question = (generateOperation)
+    val question = generateOperation
     (
       this.copy(
         currentRound = currentRound + 1,
