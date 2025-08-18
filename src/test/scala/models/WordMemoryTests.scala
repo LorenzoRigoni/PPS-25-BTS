@@ -1,61 +1,64 @@
 package models
 
 import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.should.Matchers.shouldBe
+import utils.SimpleTextQuestion
 
-class WordMemoryTests extends AnyFunSuite:
-  private val TEST_EXPRESSION_EASY      = "cow rainbow cat pillow"
-  private val TEST_EXPRESSION_DIFFICULT = "cow rainbow cat pillow dog"
-
-  private val gameLogic =
-    WordMemoryLogic(
-      rounds = 3,
-      lastQuestion = Some(TEST_EXPRESSION_EASY)
-    )
-
+/**
+ * This class tests the logic of the mini-game Word Memory.
+ */
+class WordMemoryTests extends AnyFunSuite with Matchers:
+  private val TEST_EXPRESSION_EASY            = SimpleTextQuestion("cow rainbow cat pillow")
+  private val TEST_EXPRESSION_DIFFICULT       = SimpleTextQuestion("cow rainbow cat pillow dog")
   private val COMPLETE_ANSWER_SAME_ORDER      = "cow rainbow cat pillow"
   private val COMPLETE_ANSWER_DIFFERENT_ORDER = "cow rainbow cat pillow"
   private val PARTIAL_ANSWER_SAME_ORDER       = "cow"
   private val PARTIAL_ANSWER_DIFFERENT_ORDER  = "rainbow cow"
   private val WRONG_SPELL_ANSWER              = "cow rainbw cat pillow "
-  private val WRONG_EMPTY_ANSWER              = ""
+  private val gameLogic                       =
+    WordMemoryLogic(
+      rounds = 3,
+      lastQuestion = Some(TEST_EXPRESSION_EASY)
+    )
 
   test("The validator returns 1.0 for complete answer in same order") {
     val score = gameLogic.validateAnswer(COMPLETE_ANSWER_SAME_ORDER)
-    assert(score == 1.0)
+    score shouldBe 1.0
   }
 
   test("The validator returns 1.0 for complete answer in different order") {
     val score = gameLogic.validateAnswer(COMPLETE_ANSWER_DIFFERENT_ORDER)
-    assert(score == 1.0)
+    score shouldBe 1.0
   }
 
   test("The validator returns partial score for partial correct answers (same order)") {
     val score = gameLogic.validateAnswer(PARTIAL_ANSWER_SAME_ORDER)
-    assert(score < 1.0)
+    score should be < 1.0
   }
 
   test("The validator returns partial score for partial correct answers (different order)") {
     val score = gameLogic.validateAnswer(PARTIAL_ANSWER_DIFFERENT_ORDER)
-    assert(score < 1.0)
+    score should be < 1.0
   }
 
   test("The validator does not count wrong spelled answer") {
     val score = gameLogic.validateAnswer(WRONG_SPELL_ANSWER)
-    assert(score < 1.0)
+    score should be < 1.0
   }
 
   test("The validator returns 0.0 for empty answer") {
-    val score = gameLogic.validateAnswer(WRONG_EMPTY_ANSWER)
-    assert(score == 0.0)
+    val score = gameLogic.validateAnswer("")
+    score shouldBe 0.0
   }
 
   test("generateQuestion should return a non-empty string") {
-    assert(gameLogic.generateQuestion._2 != WRONG_EMPTY_ANSWER)
+    gameLogic.generateQuestion._2.text should not be empty
   }
 
   test("generateQuestion should return more words as difficulty increases") {
     val (gameLogicCopy, easyQuestion) = gameLogic.generateQuestion
-    val countEasy                     = easyQuestion.split(" ").length
-    val countDifficult                = gameLogicCopy.generateQuestion._2.split(" ").length
-    assert(countEasy < countDifficult)
+    val countEasy                     = easyQuestion.text.split(" ").length
+    val countDifficult                = gameLogicCopy.generateQuestion._2.text.split(" ").length
+    countEasy should be < countDifficult
   }

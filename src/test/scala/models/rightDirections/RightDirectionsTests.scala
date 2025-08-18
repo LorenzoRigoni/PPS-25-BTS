@@ -29,7 +29,7 @@ class RightDirectionsTests extends AnyFunSuite:
     val oneNotResult: Seq[Token] = evaluate(operationWith1Not.toString, List())
     val twoNotResult: Seq[Token] = evaluate(operationWith2Not.toString, List())
     val threeNotResult: Seq[Token] = evaluate(operationWith3Not.toString, List())
-    
+
     assert(oneNotResult.size == 3)
     assert(twoNotResult.size == 1 && twoNotResult.contains(Up))
     assert(oneNotResult equals threeNotResult)

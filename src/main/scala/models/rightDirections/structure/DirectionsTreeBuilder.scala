@@ -4,7 +4,7 @@ import models.rightDirections.structure.Token.X
 import models.rightDirections.structure.treeLogic.*
 
 import scala.util.Random
-import utils.RightDirectionsConstants.*
+import utils.constants.RightDirectionsConstants.*
 
 import scala.annotation.tailrec
 

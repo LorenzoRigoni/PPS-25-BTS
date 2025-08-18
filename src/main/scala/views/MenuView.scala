@@ -1,79 +1,88 @@
 package views
 
 import controllers.GameController
-import views.panels.{GamePanels, GamePanelsImpl, ResultPanelsImpl}
+import views.panels.{BackgroundImagePanel, GamePanelsFactoryImpl, ResultPanelsFactoryImpl}
+import utils.constants.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
-import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
+import java.awt.event.ActionEvent
 
 /**
  * This object represents the initial menu where the player can choose between Age Test and Brain
- * Training mode.
+ * Training mode or read the game rules.
+ * @param controller
+ *   the game controller used for managing game state
  */
-class MenuView(controller: GameController) extends BaseView:
-  private val frame = new JFrame("Menù")
-
-  /**
-   * This class is a helper for set the background image from resources.
-   * @param imagePath
-   *   the path of the background image
-   */
-  private class BackgroundImagePanel(imagePath: String) extends JPanel:
-    private val image: BufferedImage =
-      val file = new File(imagePath)
-      if !file.exists() then throw new RuntimeException(s"File not found: ${file.getAbsolutePath}")
-      ImageIO.read(file)
-
-    override def paintComponent(g: Graphics): Unit =
-      super.paintComponent(g)
-      g.drawImage(image, 0, 0, getWidth, getHeight, this)
+class MenuView(controller: GameController):
+  private val MENU_BUTTON_W_SCALE_FACTOR = 0.4
+  private val MENU_BUTTON_H_SCALE_FACTOR = 0.08
+  private val LAST_BUTTON_DISTANCE       = 120
+  private val frame                      = new JFrame("Menù")
+  private def showGameRulesDialog(): Unit  =
+    val textArea   = new JTextArea(RULES)
+    textArea.setEditable(false)
+    textArea.setLineWrap(true)
+    textArea.setWrapStyleWord(true)
+    textArea.setFont(PIXEL_FONT15)
+    val scrollPane = new JScrollPane(textArea)
+    val size       = Math.min(SCREEN_WIDTH, SCREEN_HEIGHT) / HALF_DIVISOR
+    scrollPane.setPreferredSize(new Dimension(size, size))
+    JOptionPane.showMessageDialog(
+      frame,
+      scrollPane,
+      "Game Rules",
+      JOptionPane.INFORMATION_MESSAGE
+    )
 
   /**
    * Show the Menu view.
    */
   def show(): Unit =
-
-    centerFrame(frame, 1)
-    val buttonSize =
-      new Dimension((frame.getSize.width * 0.4).toInt, (frame.getSize.height * 0.08).toInt)
-
+    UIHelper.centerFrame(frame, 1)
+    val buttonSize      =
+      new Dimension(
+        (frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt,
+        (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt
+      )
     val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
-
-    val buttonPanel = new JPanel()
+    val buttonPanel     = new JPanel()
     buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT))
-    buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 30))
-
-    val verticalPanel = new JPanel()
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, BUTTON_DISTANCE))
+    buttonPanel.setOpaque(false)
+    val verticalPanel   = new JPanel()
     verticalPanel.setLayout(new BoxLayout(verticalPanel, BoxLayout.Y_AXIS))
     verticalPanel.setOpaque(false)
-
-    val brainAgingButton    =
-      createStyledButton("Age Test", buttonSize, pixelFont15, customBlueColor, whiteColor)
-    val brainTrainingButton =
-      createStyledButton("Training", buttonSize, pixelFont15, customBlueColor, whiteColor)
-
-    brainAgingButton.addActionListener(_ => {
-      frame.dispose()
-      AgeTest.apply(GamePanelsImpl(), ResultPanelsImpl()).show()
-    })
-
-    brainTrainingButton.addActionListener(_ =>
-      frame.dispose()
-      BrainTraining.apply(ResultPanelsImpl()).show(GamePanelsImpl())
+    val buttonsData     = Seq(
+      (
+        "Age Test",
+        () =>
+          frame.dispose()
+          AgeTest(GamePanelsFactoryImpl(), ResultPanelsFactoryImpl()).show()
+      ),
+      (
+        "Training",
+        () =>
+          frame.dispose()
+          BrainTraining(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
+      ),
+      ("Game Rules", () => showGameRulesDialog())
     )
-
-    verticalPanel.add(brainAgingButton)
-    verticalPanel.add(Box.createVerticalStrut(30))
-    verticalPanel.add(brainTrainingButton)
-    verticalPanel.add(Box.createVerticalStrut(120))
-
-    buttonPanel.setOpaque(false)
+    val components      = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
+      val button =
+        UIHelper.createStyledButton(
+          btnData._1,
+          buttonSize,
+          PIXEL_FONT25,
+          handler = _ => { btnData._2() }
+        )
+      val strut  =
+        if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
+        else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)
+      Seq(button, strut)
+    components.flatten.foreach(verticalPanel.add)
     buttonPanel.add(verticalPanel)
     backgroundPanel.add(buttonPanel, BorderLayout.SOUTH)
-
     frame.getContentPane.add(backgroundPanel)
     frame.setVisible(true)

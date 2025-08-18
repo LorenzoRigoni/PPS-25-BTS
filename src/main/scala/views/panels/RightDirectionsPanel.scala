@@ -1,35 +1,45 @@
 package views.panels
 
 import controllers.GameController
+import utils.SimpleTextQuestion
 
 import javax.swing.*
 import java.awt.*
 import java.awt.event.ActionEvent
 
+/**
+ * Class used to create the panel for the game "Right Directions"
+ * @param controller
+ *   the controller that manages the game logic and state
+ * @param onNext
+ *   callback invoked when the player completes the current question
+ * @param question
+ *   the question to display
+ */
 class RightDirectionsPanel(
     controller: GameController,
     onNext: GameController => Unit,
-    question: String
-) extends SimpleQuestionAnswerGamePanel:
-
-  def panel(): JPanel =
+    question: SimpleTextQuestion
+) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
+  override def panel: JPanel =
     val (panel, externalSubmit) = createSimpleQuestionAnswerGamePanel(
       "Follow directions",
       question,
       "Your answer:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
+      (ctrl, input) => ctrl.checkAnswer(input).get,
       Some(simpleLabelRenderer)
     )
-
-    // Handle keyboard input
     panel.setFocusable(true)
     panel.requestFocusInWindow()
+    val actionMap               = panel.getActionMap
+    val inputMap                = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 
-    val actionMap = panel.getActionMap
-    val inputMap  = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-
+    /**
+     * @param key
+     * @param direction
+     */
     def bindKey(key: String, direction: String): Unit =
       inputMap.put(KeyStroke.getKeyStroke(key), key)
       actionMap.put(
@@ -40,7 +50,6 @@ class RightDirectionsPanel(
             externalSubmit(direction)
         }
       )
-
     bindKey("W", "up")
     bindKey("UP", "up")
     bindKey("A", "left")
@@ -49,7 +58,5 @@ class RightDirectionsPanel(
     bindKey("DOWN", "down")
     bindKey("D", "right")
     bindKey("RIGHT", "right")
-
     bindKey("N", "")
-
     panel

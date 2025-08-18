@@ -50,7 +50,6 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
   override def toString: String =
     val leftStr  = left.fold("")(_.toString)
     val rightStr = right.fold("")(_.toString)
-
     (leftStr, rightStr) match
       case ("", "") => value.toString
       case (_, "")  => s"($value $leftStr)"

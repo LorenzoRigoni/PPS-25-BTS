@@ -1,25 +1,43 @@
 package models
 
 import scala.util.Random
-import utils.ColoredCountConstants.{COLORS, MIN_NUMBERS, COLORED_COUNT_DIFFICULTY_STEP}
+import utils.ColoredCountQuestion
+import utils.enums.ColoredCountColors
 
+/**
+ * This case class manage the logic of the mini-game "Colored Count"
+ *
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
+ */
 case class ColoredCountLogic(
     rounds: Int,
     currentRound: Int = 0,
     difficulty: Int = 1,
-    lastQuestion: Option[String] = None
-) extends MiniGameLogic[Int, Boolean]:
+    lastQuestion: Option[ColoredCountQuestion] = None
+) extends MiniGameLogic[ColoredCountQuestion, Int, Boolean]:
+  private val MIN_NUMBERS                   = 3
+  private val COLORED_COUNT_DIFFICULTY_STEP = 1
+  private val MULT_DIFFICULTY               = 2
+  private val MIN_POSSIBLE_NUMBER           = 1
+  private val MAX_POSSIBLE_NUMBER           = 10
 
-  override def generateQuestion: (MiniGameLogic[Int, Boolean], String) =
-    val totalNumbers = MIN_NUMBERS + difficulty * 2
-    val numbers      = List.fill(totalNumbers)(Random.between(1, 10))
-    val colorList    = List.fill(totalNumbers)(COLORS(Random.nextInt(COLORS.length)))
-    val zipped       = numbers.zip(colorList)
-
-    val questionColor = COLORS(Random.nextInt(COLORS.length))
-    val numbersPart   = zipped.map((n, c) => s"$n:$c").mkString(" ")
-    val question      = s"$numbersPart | $questionColor"
-
+  override def generateQuestion
+      : (MiniGameLogic[ColoredCountQuestion, Int, Boolean], ColoredCountQuestion) =
+    val totalNumbers  = MIN_NUMBERS + difficulty * MULT_DIFFICULTY
+    val numbers       = Seq.fill(totalNumbers)(Random.between(MIN_POSSIBLE_NUMBER, MAX_POSSIBLE_NUMBER))
+    val colorList     = Seq.fill(totalNumbers)(
+      ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
+    )
+    val zipped        = numbers zip colorList
+    val questionColor = ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
+    val question      = ColoredCountQuestion(zipped, questionColor)
     (
       this.copy(
         currentRound = currentRound + 1,
@@ -29,11 +47,11 @@ case class ColoredCountLogic(
       question
     )
 
-  override def validateAnswer(answer: Int): Boolean =
-    val questionParts     = lastQuestion.get.split("\\|").map(_.trim)
-    val coloredNumberPart = questionParts(0).split(" ").toList
-    val targetColor       = questionParts(1)
+  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
 
-    answer == coloredNumberPart.count(_.split(':')(1) == targetColor)
+  override def validateAnswer(answer: Int): Boolean =
+    lastQuestion match
+      case Some(q) => answer == q.numbersWithColor.count((_, c) => c == q.colorRequired)
+      case _       => false
 
   override def isMiniGameFinished: Boolean = currentRound == rounds

@@ -1,59 +1,45 @@
 package views.panels
 
 import controllers.GameController
+import utils.ColoredCountQuestion
+import utils.constants.GUIConstants.*
+import utils.enums.ColoredCountColors
 
 import java.awt.*
 import javax.swing.*
 
+/**
+ * Class used to create the panel for the game "Colored Count"
+ * @param controller
+ *   the controller that manages the game logic and state
+ * @param onNext
+ *   callback invoked when the player completes the current question
+ * @param question
+ *   the question to display
+ */
 class ColoredCountPanel(
     controller: GameController,
     onNext: GameController => Unit,
-    question: String
-) extends SimpleQuestionAnswerGamePanel:
-
-  def panel(): JPanel =
-    val Array(numbersPart, targetColor) = question.split("\\|").map(_.trim)
-    val questionText                    = s"How many $targetColor numbers?"
-    val (panel, _)                      = createSimpleQuestionAnswerGamePanel(
+    question: ColoredCountQuestion
+) extends SimpleQuestionAnswerGamePanel[ColoredCountQuestion]:
+  override def panel: JPanel =
+    val questionText = s"How many ${question.colorRequired.toString.toLowerCase} numbers?"
+    val (panel, _)   = createSimpleQuestionAnswerGamePanel(
       questionText,
       question,
       "Your answer:",
       controller,
       onNext,
-      (ctrl, input) => ctrl.checkAnswer(input),
-      Some((container, _) => renderNumbers(container, numbersPart))
+      (ctrl, input) => ctrl.checkAnswer(input).get,
+      Some((container, q) => renderNumbers(container, q.numbersWithColor))
     )
     panel
 
-  override protected def showNewQuestion(
-      newQuestion: String,
-      renderQuestionContent: Option[(JPanel, String) => Unit]
-  ): Unit =
-    val Array(numbersPart, targetColor) = newQuestion.split("\\|").map(_.trim)
-    titleArea.setText(s"How many $targetColor numbers?")
-    inputField.setText("")
-    questionPanel.removeAll()
-    renderNumbers(questionPanel, numbersPart)
-    questionPanel.revalidate()
-    questionPanel.repaint()
-
-  private def renderNumbers(container: JPanel, numbersPart: String): Unit =
+  private def renderNumbers(container: JPanel, numbersPart: Seq[(Int, ColoredCountColors)]): Unit =
     container.setLayout(new FlowLayout())
-    numbersPart
-      .split("\\s+")
-      .toList
-      .map(pair => {
-        val Array(num, colorName) = pair.split(":")
-        val color                 = colorName.toUpperCase match
-          case "RED"    => Color.RED
-          case "BLUE"   => Color.BLUE
-          case "GREEN"  => Color.GREEN
-          case "YELLOW" => Color.YELLOW
-          case _        => Color.BLACK
-
-        val label = new JLabel(num)
-        label.setForeground(color)
-        label.setFont(pixelFont25)
-        label
-      })
-      .foreach(container.add)
+    numbersPart.foreach((num, color) =>
+      val label = new JLabel(num.toString)
+      label.setForeground(color.color)
+      label.setFont(PIXEL_FONT25)
+      container.add(label)
+    )
