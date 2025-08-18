@@ -100,32 +100,32 @@ class GamePanelsFactoryImpl extends GamePanelsFactory:
       onNext: GameController => Unit,
       question: SimpleTextQuestion
   ): JPanel =
-    FastCalcPanel(controller, onNext, question).panel()
+    FastCalcPanel(controller, onNext, question).panel
 
   override def countWordsPanel(
       controller: GameController,
       onNext: GameController => Unit,
       question: SimpleTextQuestion
   ): JPanel =
-    CountWordsPanel(controller, onNext, question).panel()
+    CountWordsPanel(controller, onNext, question).panel
 
   override def rightDirectionsPanel(
       controller: GameController,
       onNext: GameController => Unit,
       question: SimpleTextQuestion
   ): JPanel =
-    RightDirectionsPanel(controller, onNext, question).panel()
+    RightDirectionsPanel(controller, onNext, question).panel
 
   override def wordMemoryPanel(
       controller: GameController,
       onNext: GameController => Unit,
       question: SimpleTextQuestion
   ): JPanel =
-    WordMemoryPanel(controller, onNext, question).panel()
+    WordMemoryPanel(controller, onNext, question).panel
 
   override def coloredCountPanel(
       controller: GameController,
       onNext: GameController => Unit,
       question: ColoredCountQuestion
   ): JPanel =
-    ColoredCountPanel(controller, onNext, question).panel()
+    ColoredCountPanel(controller, onNext, question).panel

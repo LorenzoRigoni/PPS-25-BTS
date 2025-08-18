@@ -4,10 +4,7 @@ package utils.constants
  * This object contains the constants of the mini-game "Right Directions"
  */
 object RightDirectionsConstants:
-  val DIFFICULTY_STEP: Float        = 0.25
-  val MAX_NUMBER_OF_ROUNDS          = 15
-  val CAN_GENERATE_WRONG_OPERATIONS = false
-
+  val MAX_NUMBER_OF_ROUNDS           = 15
   val SUBSTITUTE_OPERATOR_COMPLEXITY = 0
   val UNARY_OPERATOR_COMPLEXITY      = 1
   val BINARY_OPERATOR_COMPLEXITY     = 2

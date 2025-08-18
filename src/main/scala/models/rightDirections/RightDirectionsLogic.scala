@@ -14,6 +14,8 @@ case class RightDirectionsLogic(
     lastQuestion: Option[SimpleTextQuestion] = None,
     currentRound: Int = 0
 ) extends MiniGameLogic[SimpleTextQuestion, String, Boolean]:
+  private val DIFFICULTY_STEP: Float        = 0.25
+  private val CAN_GENERATE_WRONG_OPERATIONS = false
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, String, Boolean], SimpleTextQuestion) =

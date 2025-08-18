@@ -21,12 +21,27 @@ case class ColoredCountLogic(
     currentRound: Int = 0,
     difficulty: Int = 1,
     lastQuestion: Option[ColoredCountQuestion] = None
-) extends MiniGameLogic[ColoredCountQuestion, Int, Boolean]:
+) extends MiniGameLogic[ColoredCountQuestion, Int, Boolean]
+    with MathMiniGameLogic[ColoredCountQuestion]:
   private val MIN_NUMBERS                   = 3
   private val COLORED_COUNT_DIFFICULTY_STEP = 1
   private val MULT_DIFFICULTY               = 2
   private val MIN_POSSIBLE_NUMBER           = 1
   private val MAX_POSSIBLE_NUMBER           = 10
+
+  override protected def difficultyStep: Int = COLORED_COUNT_DIFFICULTY_STEP
+
+  override protected def withNewQuestion(
+      question: ColoredCountQuestion
+  ): MiniGameLogic[ColoredCountQuestion, Int, Boolean] =
+    this.copy(
+      currentRound = currentRound + 1,
+      difficulty = difficulty + difficultyStep,
+      lastQuestion = Some(question)
+    )
+
+  override protected def correctAnswer(question: ColoredCountQuestion): Int =
+    question.numbersWithColor.count((_, c) => c == question.colorRequired)
 
   override def generateQuestion
       : (MiniGameLogic[ColoredCountQuestion, Int, Boolean], ColoredCountQuestion) =
@@ -38,20 +53,6 @@ case class ColoredCountLogic(
     val zipped        = numbers zip colorList
     val questionColor = ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
     val question      = ColoredCountQuestion(zipped, questionColor)
-    (
-      this.copy(
-        currentRound = currentRound + 1,
-        difficulty = difficulty + COLORED_COUNT_DIFFICULTY_STEP,
-        lastQuestion = Some(question)
-      ),
-      question
-    )
-
-  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
-
-  override def validateAnswer(answer: Int): Boolean =
-    lastQuestion match
-      case Some(q) => answer == q.numbersWithColor.count((_, c) => c == q.colorRequired)
-      case _       => false
+    advance(question)
 
   override def isMiniGameFinished: Boolean = currentRound == rounds

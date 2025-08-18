@@ -7,15 +7,15 @@ object EvaluateOperation:
   def evaluateOperationFromString(input: String, currentList: Seq[Token]): Seq[Token] =
     val trimmedInput = stripParentheses(input)
     trimmedInput match
-      case operation if operation.contains("and") =>
+      case operation if operation.contains("and")                               =>
         val Array(left, right) = operation.split("and")
         combineAnd(left, right)
-      case operation if operation.contains("or") =>
+      case operation if operation.contains("or")                                =>
         val Array(left, right) = operation.split("or")
         combineOr(left, right)
       case operation if !(operation.contains("x") || operation.contains("not")) =>
         Seq(Token.fromString(stripParentheses(operation)))
-      case operation =>
+      case operation                                                            =>
         handleNotCondition(operation)
 
   private def combineAnd(left: String, right: String): Seq[Token] =

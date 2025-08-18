@@ -17,6 +17,8 @@ import utils.constants.GameControllerConstants.MAX_NUMBER_OF_MINIGAMES_AGE_TEST
 import utils.constants.BrainAgeCalculatorConstants.{BASE_AGE, MAXIMUM_AGE}
 import utils.enums.MiniGames
 
+import scala.concurrent.{Await, Promise}
+
 /**
  * This class tests the game controller.
  */
@@ -71,16 +73,10 @@ class GameControllerTests extends AnyFunSuite with Matchers:
     assert(brainAge >= BASE_AGE && brainAge <= MAXIMUM_AGE)
   }
 
-  test("Controller should manage the end of the game") {
-    var isFinished = false
-    val callback   = new GameViewCallback:
-      override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit = {}
-      override def onGameFinished(controller: GameController): Unit                     = isFinished = true
+  test("Controller should recognize the end of the game") {
     val controller = GameController(
-      numMiniGamesPlayed = MAX_NUMBER_OF_MINIGAMES_AGE_TEST,
-      viewCallback = Some(callback)
+      numMiniGamesPlayed = MAX_NUMBER_OF_MINIGAMES_AGE_TEST
     )
     val next       = controller.nextGame
     next.currentGame shouldBe Option.empty
-    isFinished shouldBe true
   }

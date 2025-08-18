@@ -20,10 +20,25 @@ case class CountWordsLogic(
     currentRound: Int = 0,
     difficulty: Int = 1,
     lastQuestion: Option[SimpleTextQuestion] = None
-) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]:
+) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]
+    with MathMiniGameLogic[SimpleTextQuestion]:
   private val COUNT_WORDS_DIFFICULTY_STEP = 1
   private val MIN_NUMBER_WORDS            = 3
   private val MIN_DIFFICULTY              = 2
+
+  override protected def difficultyStep: Int = COUNT_WORDS_DIFFICULTY_STEP
+
+  override protected def withNewQuestion(
+      question: SimpleTextQuestion
+  ): MiniGameLogic[SimpleTextQuestion, Int, Boolean] =
+    this.copy(
+      currentRound = currentRound + 1,
+      difficulty = difficulty + difficultyStep,
+      lastQuestion = Some(question)
+    )
+
+  override protected def correctAnswer(question: SimpleTextQuestion): Int =
+    question.text.split("\\s+").count(_.nonEmpty)
 
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
@@ -33,20 +48,6 @@ case class CountWordsLogic(
       else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
     val wordsGenerated = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
     val question       = SimpleTextQuestion(wordsGenerated)
-    (
-      this.copy(
-        currentRound = currentRound + 1,
-        difficulty = difficulty + COUNT_WORDS_DIFFICULTY_STEP,
-        lastQuestion = Some(question)
-      ),
-      question
-    )
-
-  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
-
-  override def validateAnswer(answer: Int): Boolean =
-    lastQuestion match
-      case Some(q) => answer == q.text.split("\\s+").count(_.nonEmpty)
-      case _       => false
+    advance(question)
 
   override def isMiniGameFinished: Boolean = currentRound == rounds

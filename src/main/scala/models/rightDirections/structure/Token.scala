@@ -45,12 +45,12 @@ object Token:
       val tied   = filtered.filter(_.complexity == maxVal)
       Some(tied(Random.nextInt(tied.length)))
 
-  def randomOperatorUpTo(maxComplexity: Int)(using rng: Random): Token =
+  def randomOperatorUpTo(maxComplexity: Int): Token =
     val complexityToUse =
-      if maxComplexity >= 2 then rng.nextInt(3) + 1
+      if maxComplexity >= 2 then Random.nextInt(3) + 1
       else maxComplexity
 
-    val filtered = rng
+    val filtered = Random
       .shuffle(operators concat directions)
       .filter(_.complexity <= complexityToUse)
     filtered.maxBy(_.complexity)

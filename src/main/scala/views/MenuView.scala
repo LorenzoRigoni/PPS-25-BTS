@@ -6,6 +6,7 @@ import utils.constants.GUIConstants.*
 
 import javax.swing.*
 import java.awt.*
+import java.awt.event.ActionEvent
 
 /**
  * This object represents the initial menu where the player can choose between Age Test and Brain
@@ -70,8 +71,12 @@ class MenuView(controller: GameController):
     )
     val components      = for ((btnData, idx) <- buttonsData.zipWithIndex) yield
       val button =
-        UIHelper.createStyledButton(btnData._1, buttonSize, PIXEL_FONT25)
-      button.addActionListener(_ => btnData._2())
+        UIHelper.createStyledButton(
+          btnData._1,
+          buttonSize,
+          PIXEL_FONT25,
+          handler = _ => { btnData._2() }
+        )
       val strut  =
         if (idx < buttonsData.size - 1) Box.createVerticalStrut(BUTTON_DISTANCE)
         else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)

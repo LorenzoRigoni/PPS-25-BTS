@@ -2,8 +2,10 @@ package utils
 
 /**
  * This case class contains the response of the user to a question.
- * 
- * @param responseTime The time used to answer
- * @param isCorrect The correctness of the answer
+ *
+ * @param responseTime
+ *   The time used to answer
+ * @param isCorrect
+ *   The correctness of the answer
  */
-case class QuestionResult (responseTime: Long, isCorrect: Boolean)
+case class QuestionResult(responseTime: Long, isCorrect: Boolean)

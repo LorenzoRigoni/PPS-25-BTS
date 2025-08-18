@@ -3,9 +3,10 @@ package views.panels
 import controllers.GameController
 import views.*
 import utils.constants.GUIConstants.*
-import scala.List
 
+import scala.List
 import java.awt.*
+import java.awt.event.ActionListener
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 
@@ -62,12 +63,12 @@ class ResultPanelsFactoryImpl extends ResultPanelsFactory:
         Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
         PIXEL_FONT15,
         Color.WHITE,
-        CUSTOM_BLUE
+        CUSTOM_BLUE,
+        _ => {
+          MenuView(controller).show()
+          SwingUtilities.getWindowAncestor(panel).dispose()
+        }
       )
-    homeButton.addActionListener(_ => {
-      MenuView(controller).show()
-      SwingUtilities.getWindowAncestor(panel).dispose()
-    })
     val bottomPanel = new JPanel()
     bottomPanel.setOpaque(false)
     bottomPanel.add(homeButton)

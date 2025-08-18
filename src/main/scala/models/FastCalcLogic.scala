@@ -20,7 +20,8 @@ case class FastCalcLogic(
     currentRound: Int = 0,
     difficulty: Int = 1,
     lastQuestion: Option[SimpleTextQuestion] = None
-) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]:
+) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]
+    with MathMiniGameLogic[SimpleTextQuestion]:
   private val NUM_SIMPLE_ROUNDS = 3
   private val NUM_MEDIUM_ROUNDS = 6
   private val MAX_NUM_TERMS     = 4
@@ -115,6 +116,20 @@ case class FastCalcLogic(
 
     calculate(expression)
 
+  override protected def difficultyStep: Int = FAST_CALC_DIFFICULTY_STEP
+
+  override protected def withNewQuestion(
+      question: SimpleTextQuestion
+  ): MiniGameLogic[SimpleTextQuestion, Int, Boolean] =
+    this.copy(
+      currentRound = currentRound + 1,
+      difficulty = difficulty + 1 * difficultyStep,
+      lastQuestion = Some(question)
+    )
+
+  override protected def correctAnswer(question: SimpleTextQuestion): Int =
+    calculateResult(getListFromExpression(lastQuestion.get.text))
+
   override def generateQuestion
       : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
     val numTerms     = Math.min(difficulty + 1, MAX_NUM_TERMS)
@@ -123,19 +138,7 @@ case class FastCalcLogic(
     val operators    = (for _ <- 1 until numTerms yield getRandomOperator(operatorsSeq)).toList
     val expression   = buildExpression(numbers, operators).mkString(" ")
     val question     = SimpleTextQuestion(expression)
-    (
-      this.copy(
-        currentRound = currentRound + 1,
-        difficulty = difficulty + 1 * FAST_CALC_DIFFICULTY_STEP,
-        lastQuestion = Some(question)
-      ),
-      question
-    )
-
-  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
-
-  override def validateAnswer(answer: Int): Boolean =
-    calculateResult(getListFromExpression(lastQuestion.get.text)) == answer
+    advance(question)
 
   override def isMiniGameFinished: Boolean =
     currentRound == rounds

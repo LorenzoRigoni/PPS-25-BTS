@@ -46,14 +46,10 @@ trait BinaryTree[A]:
    *   optional value for the left child of the new node
    * @param rightValue
    *   optional value for the right child of the new node
-   * @param rng
-   *   implicit random number generator for any randomness involved in expansion
    * @return
    *   a new binary tree with the expansion applied
    */
-  def expand(target: A, newValue: A, leftValue: Option[A], rightValue: Option[A])(using
-      rng: Random
-  ): BinaryTree[A]
+  def expand(target: A, newValue: A, leftValue: Option[A], rightValue: Option[A]): BinaryTree[A]
 
   /**
    * Returns a string representation of this binary tree node.
