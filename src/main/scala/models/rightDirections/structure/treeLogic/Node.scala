@@ -16,7 +16,7 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
       newValue: A,
       leftValue: Option[A],
       rightValue: Option[A]
-  )(using rng: Random): BinaryTree[A] =
+  ): BinaryTree[A] =
     if value == target then new Node(newValue, this, None)
     else
       val expandedLeft = left.get.expand(target, newValue, leftValue, rightValue)
@@ -28,7 +28,7 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
   private def expandBothBranchNode(
       expandedLeft: BinaryTree[A],
       expandedRight: BinaryTree[A]
-  )(using rng: Random): BinaryTree[A] =
+  ): BinaryTree[A] =
     (expandedLeft, expandedRight) match
       case (l, r) if !l.equals(left.get) && !r.equals(right.get) =>
         expandRandomBranch(expandedLeft, expandedRight)
@@ -40,8 +40,8 @@ class Node[A](val value: A, leftNode: BinaryTree[A], rightNode: Option[BinaryTre
   private def expandRandomBranch(
       expandedLeft: BinaryTree[A],
       expandedRight: BinaryTree[A]
-  )(using rng: Random): Node[A] =
-    if rng.nextBoolean() then Node(value, expandedLeft, right)
+  ): Node[A] =
+    if Random.nextBoolean() then Node(value, expandedLeft, right)
     else Node(value, left.get, Option(expandedRight))
 
   override def contains(value: A): Boolean =
