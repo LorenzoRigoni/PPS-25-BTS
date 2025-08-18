@@ -3,6 +3,8 @@ Nel corso del processo di sviluppo mi sono occupata dei seguenti componenti:
 * Logica e test del mini gioco Fast Calc
 * Logica e test del mini gioco Word Memory 
 * GUI
+I primi due punti sono stati svolti prevalentemente in autonomia, mentre il terzo punto è stato sviluppato in
+collaborazione con il collega Lorenzo Rigoni.
 
 ## Fast Calc e Word Memory 
 Durante il secondo e il terzo sprint mi sono dedicata allo sviluppo dei due mini giochi Fast Calc e Word Memory.
