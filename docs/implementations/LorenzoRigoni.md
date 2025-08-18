@@ -23,6 +23,9 @@ In entrambi i casi, i mini-giochi sono implementati come *case class* che hanno 
 Nel caso di *Count Words*, le domande vengono generate aumentando il numero di parole da contare.
 
 ```
+override protected def correctAnswer(question: SimpleTextQuestion): Int =
+    question.text.split("\\s+").count(_.nonEmpty)
+
 override def generateQuestion: (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
     val minRand        = math.max(1, difficulty - 1)
     val numOfWords     =
@@ -30,25 +33,15 @@ override def generateQuestion: (MiniGameLogic[SimpleTextQuestion, Int, Boolean],
       else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
     val wordsGenerated = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
     val question       = SimpleTextQuestion(wordsGenerated)
-
-    (
-      this.copy(
-        currentRound = currentRound + 1,
-        difficulty = difficulty + COUNT_WORDS_DIFFICULTY_STEP,
-        lastQuestion = Some(question)
-      ),
-      question
-    )
-
-override def validateAnswer(answer: Int): Boolean =
-    lastQuestion match
-        case Some(q) => answer == q.text.split("\\s+").count(_.nonEmpty)
-        case _       => false
+    advance(question)
 ```
 
 Nel caso di *Colored Count*, invece, vengono aumentati i numeri mostrati.
 
 ```
+override protected def correctAnswer(question: ColoredCountQuestion): Int =
+    question.numbersWithColor.count((_, c) => c == question.colorRequired)
+
 override def generateQuestion: (MiniGameLogic[ColoredCountQuestion, Int, Boolean], ColoredCountQuestion) =
     val totalNumbers  = MIN_NUMBERS + difficulty * MULT_DIFFICULTY
     val numbers       = Seq.fill(totalNumbers)(Random.between(MIN_POSSIBLE_NUMBER, MAX_POSSIBLE_NUMBER))
@@ -58,20 +51,7 @@ override def generateQuestion: (MiniGameLogic[ColoredCountQuestion, Int, Boolean
     val zipped        = numbers zip colorList
     val questionColor = ColoredCountColors.values(Random.nextInt(ColoredCountColors.values.length))
     val question      = ColoredCountQuestion(zipped, questionColor)
-
-    (
-      this.copy(
-        currentRound = currentRound + 1,
-        difficulty = difficulty + COLORED_COUNT_DIFFICULTY_STEP,
-        lastQuestion = Some(question)
-      ),
-      question
-    )
-
-override def validateAnswer(answer: Int): Boolean =
-    lastQuestion match
-        case Some(q) => answer == q.numbersWithColor.count((_, c) => c == q.colorRequired)
-        case _       => false
+    advance(question)
 ```
 
 ## Algoritmo Brain Age

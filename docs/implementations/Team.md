@@ -42,3 +42,32 @@ case class ColoredCountQuestion(
   colorRequired: ColoredCountColors
 ) extends Question
 ```
+
+Inoltre, dato che i mini-giochi "matematici" (*Fast Calc, Count Words* e *Colored Count*) hanno la stessa modalità
+di generazione della domanda e validazione della risposta, è stato creato un trait *MathMiniGameLogic* che viene
+usato tramite *mixin*.
+
+```
+trait MathMiniGameLogic[Q <: Question]:
+  self: MiniGameLogic[Q, Int, Boolean] =>
+
+  val lastQuestion: Option[Q]
+
+  protected def difficultyStep: Int
+
+  protected def correctAnswer(question: Q): Int
+
+  protected def withNewQuestion(question: Q): MiniGameLogic[Q, Int, Boolean]
+
+  protected def advance(question: Q): (MiniGameLogic[Q, Int, Boolean], Q) =
+    (
+      withNewQuestion(question),
+      question
+    )
+
+  override def parseAnswer(answer: String): Option[Int] = answer.trim.toIntOption
+
+  override def validateAnswer(answer: Int): Boolean = lastQuestion match
+    case Some(q) => answer == correctAnswer(q)
+    case _ => false
+```
