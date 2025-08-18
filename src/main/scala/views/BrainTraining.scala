@@ -15,6 +15,7 @@ import views.panels.GamePanelMapper.*
 
 import javax.swing.*
 import java.awt.*
+import java.awt.event.ActionEvent
 
 /**
  * Represents the view of the Brain Training mode. The user can freely choose and play any mini-game
@@ -85,30 +86,31 @@ case class BrainTraining(resultPanels: ResultPanelsFactory) extends GameViewCall
       val button = UIHelper.createStyledButton(
         miniGame.displayName,
         buttonDimension,
-        PIXEL_FONT15
+        PIXEL_FONT15,
+        handler = _ => {
+          val updatedController = initialController.chooseCurrentGame(miniGame)
+          loadGamePanel(updatedController, miniGame)
+        }
       )
-      button.addActionListener(_ => {
-        val updatedController = initialController.chooseCurrentGame(miniGame)
-        loadGamePanel(updatedController, miniGame)
-      })
       button.setAlignmentX(Component.CENTER_ALIGNMENT)
       button
+
     MiniGames.values.foreach(miniGame =>
       buttonPanel.add(Box.createVerticalStrut(BUTTON_DISTANCE))
       buttonPanel.add(createGameButton(miniGame))
     )
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS))
-    val backButton                                     =
+    val backButton =
       UIHelper.createStyledButton(
         "← Home",
         new Dimension(HOME_BUTTON_W, HOME_BUTTON_H),
-        PIXEL_FONT8
+        PIXEL_FONT8,
+        handler = _ => {
+          frame.dispose()
+          if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show()
+          else BrainTraining.apply(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
+        }
       )
-    backButton.addActionListener(_ => {
-      frame.dispose()
-      if mainPanel.isAncestorOf(buttonPanel) then MenuView.apply(GameController()).show
-      else BrainTraining.apply(ResultPanelsFactoryImpl()).show(GamePanelsFactoryImpl())
-    })
     bottomPanel.add(backButton)
     mainPanel.add(buttonPanel, BorderLayout.NORTH)
     mainPanel.add(centerPanel, BorderLayout.CENTER)

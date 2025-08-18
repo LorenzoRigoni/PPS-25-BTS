@@ -6,11 +6,14 @@ import utils.enums.MiniGames
 import java.awt.Font
 import javax.swing.*
 import java.awt.*
+import java.awt.event.{ActionEvent, ActionListener}
 
 /**
  * Utility object for creating and managing common UI components.
  */
 object UIHelper:
+  private type EventHandler = ActionListener
+
   private def loadIcon(name: String, size: Int): ImageIcon =
     val url     = getClass.getResource(s"/" + name)
     val image   = new ImageIcon(url).getImage
@@ -51,6 +54,8 @@ object UIHelper:
    *   the background color of the button
    * @param foreground
    *   the foreground color of the button
+   * @param handler
+   *   the event handler to execute when the button is clicked
    * @return
    *   the button created
    */
@@ -59,7 +64,8 @@ object UIHelper:
       size: Dimension,
       font: Font,
       background: Color = CUSTOM_BLUE,
-      foreground: Color = Color.WHITE
+      foreground: Color = Color.WHITE,
+      handler: EventHandler = _ => ()
   ): JButton =
     val button = new JButton(text)
     button.setPreferredSize(size)
@@ -68,6 +74,7 @@ object UIHelper:
     button.setFont(font)
     button.setBackground(background)
     button.setForeground(foreground)
+    button.addActionListener(handler)
     button
 
   /**
