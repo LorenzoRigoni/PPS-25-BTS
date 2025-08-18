@@ -9,9 +9,6 @@ import utils.Question
 trait MathMiniGameLogic[Q <: Question]:
   self: MiniGameLogic[Q, Int, Boolean] =>
 
-  val rounds: Int
-  val currentRound: Int
-  val difficulty: Int
   val lastQuestion: Option[Q]
 
   /**
