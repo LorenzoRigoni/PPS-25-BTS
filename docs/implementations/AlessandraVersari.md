@@ -5,18 +5,25 @@ Nel corso del processo di sviluppo mi sono occupata dei seguenti componenti:
 * GUI
 
 ## Fast Calc e Word Memory 
-Durante il secondo e il terzo sprint mi sono dedicata allo sviluppo dei due mini giochi Fast Calc e Word Memory. 
-Nel gioco Fast Calc l'obiettivo principale era quello di creare un gioco basato su espressioni matematiche, ma comunque rispettando le caratteristiche base del gioco a 
-cui ci siamo ispirati: infatti ho scelto di sviluppare la logica di calcolo in modo che fosse 
-in parte estendibile, ma in modo limitato in quanto il gioco prevede sfide semplici, che l'utente possa svolgere a mente e piuttosto rapidamente. 
-Il gioco infatti si basa principalmente su espressioni generate in modo casuale scegliendo operatori e numeri  da utilizzare in base al livello di difficoltà corrente. 
-E' possibile configurare il numero di cifre utilizzabili, ma abbiamo ritenuto sufficiente utilizzare una sola cifra e solo gli operatori somma, sottrazione e moltiplicazione, 
-in quanto eventuali operatori o elementi aggiuntivi avreebbero reso le espressioni troppo complicate per lo scopo del gioco. 
+Durante il secondo e il terzo sprint mi sono dedicata allo sviluppo dei due mini giochi Fast Calc e Word Memory.
+Nel gioco Fast Calc l'obiettivo principale era quello di realizzare un sistema che generasse espressioni matematiche semplici,
+mantenendo però un livello di difficoltà crescente.
+Per rispettare lo scopo didattico e di allenamento mentale, ho scelto di limitare gli operatori disponibili a somma, 
+sottrazione e moltiplicazione, e utilizzare soltanto numeri a una cifra. In questo modo le espressioni risultano 
+abbastanza varie ma non troppo complesse, così da poter essere risolte mentalmente in tempi brevi.
+Un aspetto importante è stato rendere la logica parzialmente estendibile, ma senza introdurre un livello di generalizzazione
+eccessivo che avrebbe complicato inutilmente il codice. Ad esempio, la selezione degli operatori varia automaticamente in base al livello di difficoltà, 
+tramite pattern matching:
 
-Uno dei costrutti avanzati della programmazione funzionale che ho utilizzato con maggiore frequenza è il for - yield, 
-siccome permette di rendere porzioni di codice molto più leggibili in modo semplice. 
+    private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] =
+    difficulty match
+    case d if d < NUM_SIMPLE_ROUNDS => Seq("+")
+    case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
+    case _                          => Seq("+", "-", "*")
 
-    `
+Un costrutto di programmazione funzionale avanzata che ho usato con frequenza è il for–yield, che semplifica molto 
+la generazione di strutture dati e rende semplifica molto la lettura del codice. 
+
     private def buildExpression(
     numbers: List[String],
     operators: List[String]
@@ -25,24 +32,32 @@ siccome permette di rendere porzioni di codice molto più leggibili in modo semp
     (n, op) <- numbers.zipAll(operators, "", "")
     token   <- List(n, op) if token.nonEmpty
     yield token
+
+Nel mini-gioco Word Memory l’obiettivo era generare una lista di parole casuali, la cui lunghezza cresce con la difficoltà.
+L’utente ha 10 secondi per memorizzarle, dopodiché deve riscriverle.
+La verifica della risposta non considera l’ordine ma solo la correttezza delle parole digitate, restituendo un punteggio 
+Double tra 0.0 e 1.0. Per semplicità, consideriamo corretta una risposta con punteggio superiore a 0.6.
+
+In questa porzione di logica ho utilizzato due costrutti Scala significativi:
+* Extension methods, per aggiungere funzionalità a String senza eredità. In particolare il seguente metodo consente di 
+convertire rapidamente una stringa in un set di parole, evitando duplicazioni di codice.
+
+    `   extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
     `
 
-Nel secondo mini gioco che ho implementato, Word Memory, l'obiettivo era generare una lista di parole di lunghezza proporzionale all'aumento della difficoltà. 
-In questo caso l'utente può osservare le parole per 10 secondi, dopo di che la lista verrà nascosta e dovrà digitare tutte le parole che riesce a ricordare.
-Il metodo che controlla la correttezza della risposta, considera solo le parole scritte correttamente, indipendentemente dall'ordine e restituisce un double da 0.0 a 1.0 che indica la percentuale di correttezza della domanda. 
-Abbiamo scelto di considerare corrette tutte le risposte che ottengono un punteggio superiore alle 0.6.
-
-In WordMemoryLogic ho utilizzato un extension method per il tipo String, in modo da evitare la ripetizione del codice e renderlo più leggibile. Inoltre nel codice sotto si nota che ho utilizzato anche il costrutto 
-fold che mi ha permesso di lavorare in modo più semplice e veloce con gli Option.
-
-    `extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
-    
-    override def validateAnswer(answer: String): Double =
-    lastQuestion.fold(0.0)(question =>
-    val expectedWordsNumber = question.text.toWordSet
-    val answerWordsNumber   = answer.toWordSet
-    answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
-    )`
+* fold sugli Option in modo da gestire il caso in cui non ci sia una domanda precedente (lastQuestion), ma evitando l’uso
+di if-else o controlli manuali su None, ottenendo un codice più compatto e funzionale.
+   
+        `   override def validateAnswer(answer: String): Double =
+            lastQuestion.fold(0.0)(question =>
+            val expectedWordsNumber = question.text.toWordSet
+            val answerWordsNumber   = answer.toWordSet
+            answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
+            )
+        `
 
 ## GUI 
+
+
+
 [Torna indietro](../Implementazione.md)
