@@ -22,7 +22,7 @@ del team. Nello specifico, sono stati stabiliti i seguenti ruoli:
 - **Committente**: Alessandra Versari.
 - **Team Members**: Tutti e tre i membri del team parteciperanno attivamente come sviluppatori.
 
-Inoltre, è stato definito che gli sprint durassero una settimana, in modo che ogni sviluppatore potesse avere il tempo
+Inoltre, è stato definito che gli sprint dureranno una settimana, in modo che ogni sviluppatore potrà avere il tempo
 per implementare le feature assegnate a esso (circa 15 ore).
 
 [Torna all'indice](../index.md)

@@ -14,11 +14,6 @@ collaborazione con Alessandra Versari.
 
 I due mini-giochi che ho sviluppato usano due tipi diversi di domanda generata. Infatti, *Count Words* genera domande
 del tipo *SimpleTextQuestion* mentre *Colored Count* genera domande del tipo *ColoredCountQuestion*.
-In entrambi i casi, i mini-giochi sono implementati come *case class* che hanno i seguenti campi:
-- il numero di round totali
-- il round attuale
-- la difficoltà attuale
-- l'ultima domanda generata
 
 Nel caso di *Count Words*, le domande vengono generate aumentando il numero di parole da contare.
 
@@ -57,7 +52,7 @@ override def generateQuestion: (MiniGameLogic[ColoredCountQuestion, Int, Boolean
 ## Algoritmo Brain Age
 Per implementare l'algoritmo di calcolo dell'età è stato creato un oggetto *Singleton* che funzionasse come "helper".
 Questo algoritmo prende in ingresso una lista (immutabile) di *QuestionResult* il quale contiene i tempi di risposta
-e la correttezza delle risposte dell'utente. Il risultato viene calcolando partendo da un'età base (20 anni) a cui
+e la correttezza delle risposte dell'utente. Il risultato viene calcolato partendo da un'età base (20 anni) a cui
 vengono sommate delle penalità per tempo ed errori.
 
 ```
@@ -96,7 +91,7 @@ ha i seguenti campi:
 Una prima difficoltà incontrata è stata riguardo alla collezione delle logiche dei mini-giochi. Infatti, in
 Scala, non è possibile riempire una collezione con trait che usano i *generics* i quali vengono implementati
 in maniere differenti. Per ovviare a questo problema, non è stata creata una collezione di *MiniGameLogic* bensì
-è stata creata una collezione di *MiniGames*, ovvero del *enum* che rappresenta i mini-giochi.
+è stata creata una collezione di *MiniGames*, ovvero di tipi definiti nell'*enum* che rappresenta i mini-giochi.
 
 ```
 enum MiniGames(val displayName: String):

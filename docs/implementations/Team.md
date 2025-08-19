@@ -71,3 +71,9 @@ trait MathMiniGameLogic[Q <: Question]:
     case Some(q) => answer == correctAnswer(q)
     case _ => false
 ```
+
+Tutti i mini-giochi sono implementati come *case class* che hanno i seguenti campi:
+- il numero di round totali
+- il round attuale
+- la difficoltà attuale
+- l'ultima domanda generata

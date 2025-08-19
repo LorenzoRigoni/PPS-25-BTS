@@ -6,7 +6,7 @@ nel corso dello sviluppo.
 
 ## Andamento dello sviluppo
 Ogni sprint è durato circa 7 giorni, a esclusione dell'ultimo che abbiamo spalmato su più giorni per motivi organizzativi. 
-Al termine di ciascuno sprint abbiamo fatto una release in cui fosse visibile per gli stakeholder il risultato prodotto 
+Al termine di ciascuno sprint abbiamo fatto una release in cui fosse visibile per gli stakeholders il risultato prodotto 
 nel corso dello sprint, in particolare: 
 * Primo sprint: ci siamo dedicati all'organizzazione iniziale del progetto, alla stesura della documentazione iniziale e
 allo sviluppo di una GUI minimal che comprendeva la schermata di menù iniziale e le tre GUI per i mini giochi che avevamo 
@@ -23,11 +23,11 @@ mini giochi e al completamento del gioco Right Directions.
 ![TerzoSprint](img/thirdSprint.jpg)
 
 * Quarto sprint: l'ultimo sprint è quello che ha richiesto maggiore tempo in quanto oltre a terminare lo sviluppo, 
-fare qualche correzione e molto refactor, abbiamo avuto qualche problema con un bug relativo al mancato aggiornamento 
+fare qualche correzione e molte operazioni di refactor, abbiamo avuto qualche problema con un bug relativo al mancato aggiornamento 
 della lista dei risultati tra un mini gioco e l'altro che comprometteva la correttezza del calcolo della stima dell'età 
 celebrale. 
 
-INSERIRE PLANNING 4o SPRINT !!!
+![QuartoSprint](img/fourthSprint.png)
 
 Maggiori dettagli relativi al contenuto delle release sono stati già inseriti nei file contenuti nella folder process. 
 
@@ -39,8 +39,4 @@ Non abbiamo avuto tempo per lo sviluppo dei requisiti facoltativi in quanto abbi
 sul refactor e sulla cura dei dettagli finali. 
 Il risultato rispetta le nostre aspettative iniziali e permette l'aggiunta futura di ulteriori mini giochi. 
 
-Sicuramente il codice può essere ulteriormente migliorato, in particolare la parte di GUI in cui ci sarebbe piaciuto 
-utilizzare le monadi per mantenere immutabilità e rendere il codice componibile anche più ordinato, ma non ci siamo 
-riusciti con i tempi e anche perchè abbiamo preferito non utilizzare un meccanismo che non abbiamo ancora compreso al 100% 
-e con cui abbiamo sicuramente bisogno di più esperienza per poterlo utilizzare in modo consapevole. 
 [Torna all'indice](index.md)

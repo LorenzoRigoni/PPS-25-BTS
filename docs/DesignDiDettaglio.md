@@ -1,4 +1,5 @@
 # Design di dettaglio
+In questa sezione segue una descrizione più dettagliata della struttura del nostro sistema e dei pattern utilizzati.
 
 ## Scelte rilevanti di design
 
@@ -9,6 +10,7 @@ ed estendibile nel futuro. Inoltre, il progetto prevede un'architettura modulare
 lo stato attuale del gioco, andando così a garantire coerenza tra le diverse viste.
 
 ## Pattern di progettazione
+In questa sotto sezione vengono spiegati i pattern utilizzati nei componenti dell'MVC. 
 
 ### Model
 
@@ -67,7 +69,7 @@ pattern *Strategy* visto prima). La comunicazione con la grafica, invece, viene 
 *GameViewCallback*. Questo contratto viene implementato dalle *view* in modo che, quando il controller produce un
 nuovo evento potrà richiamare direttamente i metodi del trait. I due eventi previsti sono:
 - **onGameChanged** che si verifica quando un mini-game è finito e si passa al successivo
-- **onGameFinished** che si verifica quando il gioco (che sia Age Test o Brain Training) è finito
+- **onGameFinished** che si verifica quando la sessione di gioco (che sia Age Test o Brain Training) è finita
 
 Infine, il controller tiene traccia delle risposte dell'utente salvandole in una collezione di *QuestionResult*.
 

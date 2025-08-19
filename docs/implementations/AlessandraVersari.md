@@ -3,6 +3,7 @@ Nel corso del processo di sviluppo mi sono occupata dei seguenti componenti:
 * Logica e test del mini gioco Fast Calc
 * Logica e test del mini gioco Word Memory 
 * GUI
+
 I primi due punti sono stati svolti prevalentemente in autonomia, mentre il terzo punto è stato sviluppato in
 collaborazione con il collega Lorenzo Rigoni.
 
@@ -16,26 +17,24 @@ abbastanza varie ma non troppo complesse, così da poter essere risolte mentalme
 Un aspetto importante è stato rendere la logica parzialmente estendibile, ma senza introdurre un livello di generalizzazione
 eccessivo che avrebbe complicato inutilmente il codice. Ad esempio, la selezione degli operatori varia automaticamente in base al livello di difficoltà, 
 tramite pattern matching:
-
-    private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] =
+```
+private def getOperatorsForDifficultyLevel(difficulty: Int): Seq[String] =
     difficulty match
     case d if d < NUM_SIMPLE_ROUNDS => Seq("+")
     case d if d < NUM_MEDIUM_ROUNDS => Seq("+", "-")
     case _                          => Seq("+", "-", "*")
+```    
 
 Un costrutto di programmazione funzionale avanzata che ho usato con frequenza è il **for–yield**, che semplifica molto 
-la generazione di strutture dati e rende semplifica molto la lettura del codice. 
-
-    private def buildExpression(
-    numbers: List[String],
-    operators: List[String]
-    ): List[String] =
+la generazione di strutture dati e rende più semplice la lettura del codice. 
+```
+private def buildExpression(numbers: List[String],operators: List[String]): List[String] =
     for
     (n, op) <- numbers.zipAll(operators, "", "")
     token   <- List(n, op) if token.nonEmpty
     yield token
-
-Nel mini-gioco Word Memory l’obiettivo era generare una lista di parole casuali, la cui lunghezza cresce con la difficoltà.
+```
+Nel mini-gioco Word Memory l’obiettivo era generare una lista di parole casuali, la cui lunghezza cresca con la difficoltà.
 L’utente ha 10 secondi per memorizzarle, dopodiché deve riscriverle.
 La verifica della risposta non considera l’ordine ma solo la correttezza delle parole digitate, restituendo un punteggio 
 Double tra 0.0 e 1.0. Per semplicità, consideriamo corretta una risposta con punteggio superiore a 0.6.
@@ -43,20 +42,20 @@ Double tra 0.0 e 1.0. Per semplicità, consideriamo corretta una risposta con pu
 In questa porzione di logica ho utilizzato due costrutti Scala significativi:
 * **Extension methods**, per aggiungere funzionalità a String senza ereditarietà. In particolare il seguente metodo consente di 
 convertire rapidamente una stringa in un set di parole, evitando duplicazioni di codice.
-
+```
       extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
-    
+``` 
 
 * **fold** sugli Option in modo da gestire il caso in cui non ci sia una domanda precedente (lastQuestion), ma evitando l’uso
 di if-else o controlli manuali su None, ottenendo un codice più compatto e funzionale.
-   
-        override def validateAnswer(answer: String): Double =
+```
+override def validateAnswer(answer: String): Double =
         lastQuestion.fold(0.0)(question =>
         val expectedWordsNumber = question.text.toWordSet
         val answerWordsNumber   = answer.toWordSet
         answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
         )
-
+```
 ## GUI 
 Il design e la struttura del codice relativo alle view sono stati già esaminati nel capitolo precedente, evidenziando 
 i vari pattern utilizzati.
@@ -70,12 +69,12 @@ Per semplificare la creazione dei bottoni, è stato creato il metodo createStyle
 font, dimensioni ecc., definisce anche l’event handler da eseguire al momento del click sul bottone.
 Per maggiore chiarezza e semplicità di lettura del codice, ho scelto di utilizzare il meccanismo degli **alias**, definendo 
 il tipo EventHandler all’interno dell’object _UIHelper_:
-
+```
     private type EventHandler = ActionListener
-
+```
 Segue un esempio di creazione di un bottone utilizzando il metodo dell'helper e il costrutto **for yield** citato anche 
 precedentemente:  
-
+```
     val buttonsData     = Seq(
       (
         "Age Test",
@@ -104,5 +103,5 @@ precedentemente:
         else Box.createVerticalStrut(LAST_BUTTON_DISTANCE)
       Seq(button, strut)
 
-
+```
 [Torna indietro](../Implementazione.md)
