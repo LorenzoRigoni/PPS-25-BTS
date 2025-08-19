@@ -3,7 +3,6 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
-import utils.SimpleTextQuestion
 
 /**
  * This class tests the logic of the mini-game Count Words.

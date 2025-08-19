@@ -1,6 +1,5 @@
 package models
 
-import utils.QuestionResult
 import utils.constants.BrainAgeCalculatorConstants.{BASE_AGE, MAXIMUM_AGE}
 
 /**

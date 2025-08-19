@@ -1,7 +1,7 @@
 package views.panels
 
 import controllers.GameController
-import utils.SimpleTextQuestion
+import models.SimpleTextQuestion
 import utils.enums.MiniGames
 import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels

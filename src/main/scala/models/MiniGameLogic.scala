@@ -1,7 +1,5 @@
 package models
 
-import utils.Question
-
 /**
  * This is the basic logic of all the mini-games. Every mini-game must be able to generate the
  * question and validate the answer.

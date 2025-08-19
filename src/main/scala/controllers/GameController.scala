@@ -9,8 +9,6 @@ import utils.constants.RightDirectionsConstants.*
 import utils.constants.FastCalcConstants.*
 import utils.enums.MiniGames.*
 import utils.constants.GameControllerConstants.*
-import utils.QuestionResult
-import utils.Question
 import utils.constants.FastCalcConstants
 import utils.enums.MiniGames
 
@@ -37,7 +35,7 @@ import scala.util.Random
 case class GameController(
     currentGame: Option[(MiniGameLogic[_, _, _], MiniGames)] = None,
     remainingMiniGames: Seq[MiniGames] = MiniGames.values.toSeq,
-    results: List[utils.QuestionResult] = List.empty,
+    results: List[QuestionResult] = List.empty,
     numMiniGamesPlayed: Int = 0,
     startTime: Option[Long] = None,
     viewCallback: Option[GameViewCallback] = None
@@ -53,7 +51,7 @@ case class GameController(
     WordMemory      -> (() => WordMemoryLogic(WORD_MEMORY_TURNS))
   )
 
-  extension (results: List[utils.QuestionResult])
+  extension (results: List[QuestionResult])
     private def correctAnswers: Int     = results.count(_.isCorrect)
     private def wrongAnswers: Int       = results.count(!_.isCorrect)
     private def totalTimeInSeconds: Int = (results.map(_.responseTime).sum / SECONDS_UNITY).toInt
@@ -125,7 +123,7 @@ case class GameController(
           false
       val updatedController = this.copy(
         currentGame = Some(game),
-        results = utils.QuestionResult(elapsedTime, isAnswerCorrect) :: results
+        results = models.QuestionResult(elapsedTime, isAnswerCorrect) :: results
       )
       (updatedController, isAnswerCorrect)
 

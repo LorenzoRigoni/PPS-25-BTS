@@ -1,7 +1,6 @@
 package models
 
 import scala.util.Random
-import utils.ColoredCountQuestion
 import utils.enums.ColoredCountColors
 
 /**

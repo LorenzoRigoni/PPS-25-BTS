@@ -1,7 +1,7 @@
 package views.panels
 
 import controllers.GameController
-import utils.SimpleTextQuestion
+import models.SimpleTextQuestion
 
 import javax.swing.{JPanel, Timer}
 

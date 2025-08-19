@@ -2,7 +2,6 @@ package views
 
 import controllers.{GameController, GameViewCallback}
 import models.*
-import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
 import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
 import views.panels.{GamePanelsFactory, ResultPanelsFactory}
 import utils.constants.GUIConstants.*

@@ -3,7 +3,6 @@ package models
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import utils.constants.ColoredCountConstants.COLORED_COUNT_TURNS
-import utils.ColoredCountQuestion
 import utils.enums.ColoredCountColors
 
 /**

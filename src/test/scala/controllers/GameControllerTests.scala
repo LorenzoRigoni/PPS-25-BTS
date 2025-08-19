@@ -6,18 +6,17 @@ import models.{
   ColoredCountLogic,
   CountWordsLogic,
   FastCalcLogic,
+  QuestionResult,
+  SimpleTextQuestion,
   WordMemoryLogic
 }
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-import utils.{QuestionResult, SimpleTextQuestion}
 import utils.enums.MiniGames.CountWords
 import utils.constants.CountWordsConstants.COUNT_WORDS_TURNS
 import utils.constants.GameControllerConstants.MAX_NUMBER_OF_MINIGAMES_AGE_TEST
 import utils.constants.BrainAgeCalculatorConstants.{BASE_AGE, MAXIMUM_AGE}
 import utils.enums.MiniGames
-
-import scala.concurrent.{Await, Promise}
 
 /**
  * This class tests the game controller.

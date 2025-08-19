@@ -1,7 +1,7 @@
 package views
 
 import controllers.{GameController, GameViewCallback}
-import utils.{ColoredCountQuestion, Question, SimpleTextQuestion}
+import models.{ColoredCountQuestion, Question, SimpleTextQuestion}
 import utils.enums.MiniGames.*
 import views.panels.{
   GamePanelsFactory,

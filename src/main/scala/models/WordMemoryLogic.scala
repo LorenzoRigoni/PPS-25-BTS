@@ -2,7 +2,6 @@ package models
 
 import scala.util.Random
 import utils.constants.WordsForMiniGames.WORDS
-import utils.SimpleTextQuestion
 import utils.constants.WordMemoryConstants.MIN_WORD_NUM
 
 /**

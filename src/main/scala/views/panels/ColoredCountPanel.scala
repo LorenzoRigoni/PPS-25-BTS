@@ -1,7 +1,7 @@
 package views.panels
 
 import controllers.GameController
-import utils.ColoredCountQuestion
+import models.ColoredCountQuestion
 import utils.constants.GUIConstants.*
 import utils.enums.ColoredCountColors
 

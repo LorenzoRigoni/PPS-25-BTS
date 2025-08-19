@@ -1,4 +1,4 @@
-package utils
+package models
 
 /**
  * This case class contains the response of the user to a question.

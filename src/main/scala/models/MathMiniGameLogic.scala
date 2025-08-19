@@ -1,9 +1,8 @@
 package models
 
-import utils.Question
-
 /**
  * This trait represents the implementation of logics for the math mini-games.
+ *
  * @tparam Q
  *   The type of question
  */

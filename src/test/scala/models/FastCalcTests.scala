@@ -2,7 +2,6 @@ package models
 
 import org.scalatest.funsuite.AnyFunSuite
 import utils.constants.FastCalcConstants.{FAST_CALC_DIFFICULTY_STEP, FAST_CALC_TURNS}
-import utils.SimpleTextQuestion
 import org.scalatest.matchers.should.Matchers
 
 /**

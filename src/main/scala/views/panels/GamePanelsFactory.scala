@@ -1,7 +1,7 @@
 package views.panels
 
 import controllers.GameController
-import utils.{ColoredCountQuestion, SimpleTextQuestion}
+import models.{ColoredCountQuestion, SimpleTextQuestion}
 
 import javax.swing.*
 

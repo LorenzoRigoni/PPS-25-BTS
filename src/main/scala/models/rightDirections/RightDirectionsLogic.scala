@@ -1,10 +1,9 @@
 package models.rightDirections
 
 import models.rightDirections.structure.Token
-import models.MiniGameLogic
+import models.{MiniGameLogic, SimpleTextQuestion}
 import models.rightDirections.structure.*
 import utils.constants.RightDirectionsConstants.*
-import utils.SimpleTextQuestion
 
 import scala.annotation.tailrec
 

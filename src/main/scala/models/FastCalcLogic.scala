@@ -2,7 +2,6 @@ package models
 
 import utils.constants.FastCalcConstants.*
 import scala.util.Random
-import utils.SimpleTextQuestion
 
 /**
  * This case class manage the logic of the mini-game "Fast Calc"

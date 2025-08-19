@@ -2,7 +2,6 @@ package models
 
 import scala.util.Random
 import utils.constants.WordsForMiniGames.WORDS
-import utils.SimpleTextQuestion
 
 /**
  * This case class manage the logic of the mini-game "Count Words"

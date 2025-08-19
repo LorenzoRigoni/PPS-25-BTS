@@ -1,8 +1,8 @@
 package views.panels
 
 import controllers.GameController
+import models.{Question, SimpleTextQuestion}
 import views.*
-import utils.{Question, SimpleTextQuestion}
 import utils.constants.GUIConstants.*
 
 import java.awt.*
