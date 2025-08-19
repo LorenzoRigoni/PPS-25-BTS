@@ -1,89 +1,133 @@
 package views.panels
 
 import controllers.GameController
+import models.{Question, SimpleTextQuestion}
 import views.*
+import utils.constants.GUIConstants.*
 
 import java.awt.*
 import javax.swing.*
 
 /**
- * This trait represents the views of the mini-games that have a question and an answer.
+ * This trait represents the views of the mini-games that need simple panel that only contains a
+ * title, a question and a textfield for the answer.
  */
-trait SimpleQuestionAnswerGamePanel extends BaseView:
+trait SimpleQuestionAnswerGamePanel[Q]:
+  private val TEXTFIELD_COLS  = 40
+  private val BORDER_VALUE    = 5
+  private val FLOW_VALUE      = 10
+  protected val inputField    = new JTextField(TEXTFIELD_COLS)
+  protected val titleArea     = new JTextArea()
+  protected val questionPanel = new JPanel()
 
   /**
-   * Create the panel with a question and an answer.
-   * @param question
-   *   the question of the mini-game
-   * @param textInputLabel
-   *   the label of the input
-   * @param validate
-   *   the function to validate the answer
+   * Creates the Swing panel associated with this mini-game.
    * @return
-   *   the panel created
+   *   the constructed JPanel
+   */
+  def panel: JPanel
+
+  /**
+   * @param title
+   *   the title displayed at the top of the panel
+   * @param initialQuestion
+   *   the initial question to render
+   * @param textInputLabel
+   *   the label describing the input field
+   * @param controller
+   *   the current GameController managing game state
+   * @param onNext
+   *   callback invoked when the user submits an answer
+   * @param validate
+   *   a function to check the submitted answer
+   * @param renderQuestionContent
+   *   optional custom renderer for displaying the question content
+   * @return
+   *   a tuple containing the constructed JPanel and a function, the function is a callback that
+   *   more specialised panels can call to submit an answer
    */
   def createSimpleQuestionAnswerGamePanel(
-      question: String,
+      title: String,
+      initialQuestion: Q,
       textInputLabel: String,
-      validate: String => (String, Color),
-      controller: GameController
-  ): JPanel =
-    val panel = new JPanel(new BorderLayout())
-
-    val centerWrapper = new JPanel(new GridBagLayout())
-    centerWrapper.setBorder(BorderFactory.createEmptyBorder(5, 2, 5, 2))
-    val innerPanel    = new JPanel()
+      controller: GameController,
+      onNext: GameController => Unit,
+      validate: (GameController, String) => (GameController, Boolean),
+      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
+  ): (JPanel, String => Unit) =
+    val gbc                    = new GridBagConstraints()
+    gbc.fill = GridBagConstraints.HORIZONTAL
+    gbc.weightx = 1.0
+    gbc.gridx = 0
+    gbc.gridy = 0
+    val panel                  = new JPanel(new BorderLayout())
+    val centerWrapper          = new JPanel(new GridBagLayout())
+    centerWrapper.setBorder(
+      BorderFactory.createEmptyBorder(
+        BORDER_VALUE,
+        BORDER_VALUE,
+        BORDER_VALUE,
+        BORDER_VALUE
+      )
+    )
+    val innerPanel             = new JPanel()
     innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS))
-
-    // Question area
-    val questionArea = new JTextArea(question)
-    questionArea.setEditable(false)
-    questionArea.setFont(pixelFont25)
-    questionArea.setWrapStyleWord(true)
-    questionArea.setLineWrap(true)
-    questionArea.setAlignmentX(Component.CENTER_ALIGNMENT)
-    questionArea.setOpaque(false)
-
-    val questionPanel = new JPanel()
+    titleArea.setText(title)
+    titleArea.setEditable(false)
+    titleArea.setFont(PIXEL_FONT15)
+    titleArea.setOpaque(false)
+    val titleContainer         = new JPanel(new FlowLayout(FlowLayout.CENTER))
+    titleContainer.setOpaque(false)
+    titleContainer.add(titleArea)
+    panel.add(titleContainer, BorderLayout.NORTH)
+    val questionPanelContainer = new JPanel()
+    questionPanelContainer.setLayout(new GridBagLayout())
+    questionPanelContainer.setOpaque(false)
     questionPanel.setOpaque(false)
-    questionPanel.setLayout(new BorderLayout())
-    questionPanel.add(questionArea, BorderLayout.CENTER)
-
-    def showNewQuestion(): Unit =
-      val newQuestion = controller.lastQuestion.get
-      questionArea.setText(newQuestion)
-
-    // Input + Feedback
-    val inputField    = new JTextField(10)
-    val feedbackLabel = new JLabel("", SwingConstants.CENTER)
-    feedbackLabel.setFont(pixelFont8)
-    feedbackLabel.setPreferredSize(new Dimension(150, 30)) // TODO: avoid fixed size
-
-    def submit(): Unit =
-      val input            = inputField.getText.trim
-      val (message, color) = validate(input)
-      feedbackLabel.setVisible(true)
-      feedbackLabel.setText(message)
-      feedbackLabel.setForeground(color)
-      if message == "Correct!" then
-        showNewQuestion()
-        inputField.setText("")
-        feedbackLabel.setVisible(false)
-
-    inputField.addActionListener(_ => submit())
-
-    val inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10))
-    val inputLabel = new JLabel(textInputLabel)
-    inputLabel.setFont(pixelFont8)
+    renderQuestionContent.foreach(renderer => renderer(questionPanel, initialQuestion))
+    questionPanelContainer.add(questionPanel, gbc)
+    panel.add(questionPanelContainer, BorderLayout.CENTER)
+    inputField.addActionListener(_ => submit(controller, onNext, validate, renderQuestionContent))
+    val inputPanel             = new JPanel(new FlowLayout(FlowLayout.CENTER, FLOW_VALUE, FLOW_VALUE))
+    val inputLabel             = new JLabel(textInputLabel)
+    inputLabel.setFont(PIXEL_FONT8)
     inputPanel.add(inputLabel)
     inputPanel.add(inputField)
-    inputPanel.add(feedbackLabel)
-    inputPanel.setAlignmentX(Component.CENTER_ALIGNMENT)
+    panel.add(inputPanel, BorderLayout.SOUTH)
+    (
+      panel,
+      (input: String) => {
+        submit(controller, onNext, validate, renderQuestionContent)
+      }
+    )
 
-    innerPanel.add(questionPanel)
-    innerPanel.add(Box.createVerticalStrut(20))
-    innerPanel.add(inputPanel)
+  private def submit(
+      currentController: GameController,
+      onNext: GameController => Unit,
+      validate: (GameController, String) => (GameController, Boolean),
+      renderQuestionContent: Option[(JPanel, Q) => Unit] = None
+  ): GameController =
+    val input                          = inputField.getText.trim
+    val (updatedController, isCorrect) = validate(currentController, input)
+    onNext(updatedController)
+    updatedController
 
-    centerWrapper.add(innerPanel, new GridBagConstraints())
-    panel.add(centerWrapper, BorderLayout.CENTER)
-    panel
+  /**
+   * Default renderer for simple text questions. Adds the question text into the provided container
+   * JPanel.
+   */
+  protected def simpleLabelRenderer: (JPanel, Q) => Unit =
+    (container, questionText) =>
+      container.setLayout(new BorderLayout(BORDER_VALUE, BORDER_VALUE))
+      val questionContent = questionText match
+        case q: SimpleTextQuestion => q.text
+      val question        = new JTextArea(questionContent)
+      question.setFont(PIXEL_FONT25)
+      question.setWrapStyleWord(true)
+      question.setLineWrap(true)
+      question.setEditable(false)
+      question.setFocusable(false)
+      container.setBorder(
+        BorderFactory.createEmptyBorder(BORDER_VALUE, BORDER_VALUE, BORDER_VALUE, BORDER_VALUE)
+      )
+      container.add(question)

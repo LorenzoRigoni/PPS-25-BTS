@@ -1,51 +1,52 @@
 package models
 
 import scala.util.Random
+import utils.constants.WordsForMiniGames.WORDS
 
 /**
- * This object manage the logic of the Count Words mini-game.
+ * This case class manage the logic of the mini-game "Count Words"
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
  */
-object CountWordsLogic extends MiniGameLogic:
-  private val words         = Seq(
-    "apple",
-    "bridge",
-    "cloud",
-    "dream",
-    "forest",
-    "guitar",
-    "house",
-    "island",
-    "jungle",
-    "kangaroo",
-    "light",
-    "mountain",
-    "notebook",
-    "ocean",
-    "puzzle",
-    "quick",
-    "river",
-    "stone",
-    "train",
-    "umbrella",
-    "village",
-    "window",
-    "yellow",
-    "zebra",
-    "adventure",
-    "balance",
-    "circle",
-    "dance",
-    "energy",
-    "future"
-  )
-  private val minNumOfWords = 3
+case class CountWordsLogic(
+    rounds: Int,
+    currentRound: Int = 0,
+    difficulty: Int = 1,
+    lastQuestion: Option[SimpleTextQuestion] = None
+) extends MiniGameLogic[SimpleTextQuestion, Int, Boolean]
+    with MathMiniGameLogic[SimpleTextQuestion]:
+  private val COUNT_WORDS_DIFFICULTY_STEP = 1
+  private val MIN_NUMBER_WORDS            = 3
+  private val MIN_DIFFICULTY              = 2
 
-  override def generateQuestion(difficultyLevel: Int): String =
-    val minimumRandom = difficultyLevel - 2
-    val numOfWords    =
-      if difficultyLevel <= 2 then minNumOfWords + Random.nextInt(difficultyLevel)
-      else minNumOfWords + (minimumRandom + Random.nextInt((difficultyLevel - minimumRandom) + 1))
-    Seq.fill(numOfWords)(words(Random.nextInt(words.size))).mkString(" ")
+  override protected def difficultyStep: Int = COUNT_WORDS_DIFFICULTY_STEP
 
-  override def validateAnswer[Int](question: String, answer: Int): Boolean =
-    answer == question.split("\\s+").count(_.nonEmpty)
+  override protected def withNewQuestion(
+      question: SimpleTextQuestion
+  ): MiniGameLogic[SimpleTextQuestion, Int, Boolean] =
+    this.copy(
+      currentRound = currentRound + 1,
+      difficulty = difficulty + difficultyStep,
+      lastQuestion = Some(question)
+    )
+
+  override protected def correctAnswer(question: SimpleTextQuestion): Int =
+    question.text.split("\\s+").count(_.nonEmpty)
+
+  override def generateQuestion
+      : (MiniGameLogic[SimpleTextQuestion, Int, Boolean], SimpleTextQuestion) =
+    val minRand        = math.max(1, difficulty - 1)
+    val numOfWords     =
+      if difficulty <= MIN_DIFFICULTY then MIN_NUMBER_WORDS + Random.between(0, difficulty + 1)
+      else MIN_NUMBER_WORDS + Random.between(minRand, difficulty + 1)
+    val wordsGenerated = Seq.fill(numOfWords)(WORDS(Random.nextInt(WORDS.size))).mkString(" ")
+    val question       = SimpleTextQuestion(wordsGenerated)
+    advance(question)
+
+  override def isMiniGameFinished: Boolean = currentRound == rounds

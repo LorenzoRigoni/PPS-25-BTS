@@ -1,59 +1,49 @@
 package models
 
 import scala.util.Random
+import utils.constants.WordsForMiniGames.WORDS
+import utils.constants.WordMemoryConstants.MIN_WORD_NUM
 
+/**
+ * This case class manage the logic of the mini-game "Word Memory"
+ * @param rounds
+ *   The total number of rounds
+ * @param currentRound
+ *   The current round
+ * @param difficulty
+ *   The current difficulty
+ * @param lastQuestion
+ *   The last question generated
+ */
 case class WordMemoryLogic(
     rounds: Int,
-    currentRound: Int,
-    difficulty: Int,
-    lastQuestion: Option[String]
-) extends MultipleAnswersMiniGameLogic:
-  private val words                 = Seq(
-    "apple",
-    "bridge",
-    "cloud",
-    "dream",
-    "forest",
-    "guitar",
-    "house",
-    "island",
-    "jungle",
-    "kangaroo",
-    "light",
-    "mountain",
-    "notebook",
-    "ocean",
-    "puzzle",
-    "quick",
-    "river",
-    "stone",
-    "train",
-    "umbrella",
-    "village",
-    "window",
-    "yellow",
-    "zebra",
-    "adventure",
-    "balance",
-    "circle",
-    "dance",
-    "energy",
-    "future"
-  )
-  private def hasNextRound: Boolean =
-    currentRound < rounds
+    currentRound: Int = 0,
+    difficulty: Int = 1,
+    lastQuestion: Option[SimpleTextQuestion] = None
+) extends MiniGameLogic[SimpleTextQuestion, String, Double]:
+  override def generateQuestion
+      : (MiniGameLogic[SimpleTextQuestion, String, Double], SimpleTextQuestion) =
+    val wordsNumber    = MIN_WORD_NUM + difficulty
+    val wordsGenerated = Random.shuffle(WORDS).take(wordsNumber).mkString(" ")
+    val question       = SimpleTextQuestion(wordsGenerated)
+    (
+      this.copy(
+        currentRound = currentRound + 1,
+        difficulty = difficulty + 1,
+        lastQuestion = Some(question)
+      ),
+      question
+    )
 
-  override def generateQuestion: (MultipleAnswersMiniGameLogic, String) =
-    if !hasNextRound then throw new IllegalStateException("No more rounds")
-    else
-      val wordsNumber = 3 + difficulty
-      val newQuestion = Random.shuffle(words).take(wordsNumber).mkString(" ")
-      (
-        this.copy(rounds, currentRound + 1, difficulty + 1, lastQuestion = Some(newQuestion)),
-        newQuestion
-      )
+  extension (s: String) private def toWordSet: Set[String] = s.split(" ").filter(_.nonEmpty).toSet
 
-  override def evaluateAnswers(question: String, answer: String): Double =
-    val expectedWordsNumber = question.split(" ").toSet
-    val answerWordsNumber   = answer.split(" ").filter(_.nonEmpty).toSet
-    answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
+  override def parseAnswer(answer: String): Option[String] = Some(identity(answer))
+
+  override def validateAnswer(answer: String): Double =
+    lastQuestion.fold(0.0)(question =>
+      val expectedWordsNumber = question.text.toWordSet
+      val answerWordsNumber   = answer.toWordSet
+      answerWordsNumber.count(expectedWordsNumber.contains).toDouble / expectedWordsNumber.size
+    )
+
+  override def isMiniGameFinished: Boolean = currentRound == rounds

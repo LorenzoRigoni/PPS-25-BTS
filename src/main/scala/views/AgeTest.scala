@@ -1,112 +1,85 @@
 package views
 
 import controllers.{GameController, GameViewCallback}
-import models.{CountWordsLogic, FastCalcLogic}
-import utils.MiniGames
-import utils.MiniGames.{CountWords, FastCalc, RightDirections}
-import views.panels.{GamePanels, GamePanelsImpl, ResultPanels}
+import models.*
+import utils.enums.MiniGames.{CountWords, FastCalc, RightDirections, WordMemory}
+import views.panels.{GamePanelsFactory, ResultPanelsFactory}
+import utils.constants.GUIConstants.*
+import utils.enums.MiniGames
+import views.panels.GamePanelMapper.*
 
 import javax.swing.*
 import java.awt.*
-import java.util.{Timer, TimerTask}
-import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 
 /**
- * This class represents the view of the age test. The user will play 3 random mini-games.
+ * This class represents the view of the age test. The user will play 3 random mini-games. At the
+ * end, their brain age will be calculated and displayed.
+ * @param gamePanels
+ *   a factory that provides panels for each mini-game
+ * @param resultPanels
+ *   a factory that provides result panels for displaying final scores or test results
  */
-case class AgeTest(gamePanels: GamePanels, resultPanels: ResultPanels)
-    extends BaseView
-    with GameViewCallback:
-  private val frame       = new JFrame("Let's play!")
-  private val mainPanel   = new JPanel(new BorderLayout())
-  private val timeLabel   = new JLabel("Time left: 120 seconds", SwingConstants.CENTER)
-  private val centerPanel = new JPanel(new BorderLayout())
+case class AgeTest(gamePanels: GamePanelsFactory, resultPanels: ResultPanelsFactory)
+    extends GameViewCallback:
+  private val frame          = new JFrame("Let's play!")
+  private val mainPanel      = new JPanel(new BorderLayout())
+  private val centerPanel    = new JPanel(new BorderLayout())
+  private val simplePanelMap = simpleTextPanelMap(gamePanels)
+
+  private def updatePanel(panel: JPanel, miniGame: MiniGames): Unit =
+    SwingUtilities.invokeLater(() => UIHelper.centerPanel(centerPanel, panel, Some(miniGame)))
+
+  private def advanceGame(currentMiniGame: MiniGames)(nextController: GameController): Unit =
+    if nextController.isCurrentGameFinished then
+      val updatedController = nextController.nextGame
+      updatedController.currentGame.foreach(game => onGameChanged(game._2, updatedController))
+    else onGameChanged(currentMiniGame, nextController)
+
+  private def showGame[Q <: Question](
+      controller: GameController,
+      panelFactory: (GameController, GameController => Unit, Q) => JPanel,
+      miniGame: MiniGames,
+      question: Q
+  ): JPanel =
+    panelFactory(controller, advanceGame(miniGame), question)
+
+  private def gamePanelsForSimpleText(
+      miniGame: MiniGames
+  ): (GameController, GameController => Unit, SimpleTextQuestion) => JPanel =
+    simplePanelMap.getOrElse(
+      miniGame,
+      throw new IllegalArgumentException(s"This mini-game is not a SimpleTextQuestion: $miniGame")
+    )
 
   /**
    * Show the age test view with a mini-game.
-   * @param gamePanels
-   *   the mini-game to play
    */
   def show(): Unit =
-    frame.setBackground(whiteColor)
-    centerFrame(frame, 1.5)
-
-    timeLabel.setFont(pixelFont15)
-    mainPanel.add(timeLabel, BorderLayout.NORTH)
-
+    frame.setBackground(Color.WHITE)
+    UIHelper.centerFrame(frame, CENTER_FRAME_DIVISOR)
     mainPanel.add(centerPanel, BorderLayout.CENTER)
-
     frame.setContentPane(mainPanel)
     frame.setVisible(true)
-
-    GameController(viewCallback = Some(this)).nextGame
-
-  private def showFastCalc(controller: GameController): JPanel =
-    gamePanels.fastCalcPanel(
-      controller,
-      nextController => {
-        SwingUtilities.invokeLater(() => {
-          centerPanel.removeAll()
-          val panel = showFastCalc(nextController)
-          centerPanel.add(panel, BorderLayout.CENTER)
-          centerPanel.revalidate()
-          centerPanel.repaint()
-        })
-      }
-    )
-
-  private def showCountWords(controller: GameController): JPanel =
-    gamePanels.countWordsPanel(
-      controller,
-      nextController => {
-        SwingUtilities.invokeLater(() => {
-          centerPanel.removeAll()
-          val panel = showCountWords(nextController)
-          centerPanel.add(panel, BorderLayout.CENTER)
-          centerPanel.revalidate()
-          centerPanel.repaint()
-        })
-      }
-    )
-
-  private def showRightDirections(controller: GameController): JPanel =
-    gamePanels.rightDirectionsPanel(
-      controller,
-      nextController => {
-        SwingUtilities.invokeLater(() => {
-          centerPanel.removeAll()
-          val panel = showRightDirections(nextController)
-          centerPanel.add(panel, BorderLayout.CENTER)
-          centerPanel.revalidate()
-          centerPanel.repaint()
-        })
-      }
-    )
-
-  override def onTimerUpdate(secondsLeft: Int): Unit =
-    SwingUtilities.invokeLater(() => timeLabel.setText(s"Time left: $secondsLeft seconds"))
+    val initialController = GameController(viewCallback = Some(this)).nextGame
+    initialController.currentGame.foreach(game => onGameChanged(game._2, initialController))
 
   override def onGameChanged(miniGame: MiniGames, controller: GameController): Unit =
-    SwingUtilities.invokeLater(() => {
-      centerPanel.removeAll()
-      val panel = miniGame match
-        case FastCalc        => showFastCalc(controller)
-        case CountWords      => showCountWords(controller)
-        case RightDirections => showRightDirections(controller)
-
-      centerPanel.add(panel, BorderLayout.CENTER)
-      centerPanel.revalidate()
-      centerPanel.repaint()
-    })
+    val (questionController, question) = controller.getQuestion
+    question match
+      case q: SimpleTextQuestion   =>
+        updatePanel(
+          showGame(questionController, gamePanelsForSimpleText(miniGame), miniGame, q),
+          miniGame
+        )
+      case q: ColoredCountQuestion =>
+        updatePanel(
+          showGame(questionController, gamePanels.coloredCountPanel, miniGame, q),
+          miniGame
+        )
 
   override def onGameFinished(controller: GameController): Unit =
     SwingUtilities.invokeLater(() =>
-      mainPanel.remove(timeLabel)
-      centerPanel.removeAll()
       val brainAge = controller.calculateBrainAge
-      val panel    = resultPanels.TestResultPanel(controller, brainAge)
-      // val panel = resultPanels.GameResultPanel(controller, 4 ,1 , 115)
-      centerPanel.add(panel, BorderLayout.CENTER)
-      mainPanel.revalidate()
-      mainPanel.repaint()
+      val panel    = resultPanels.testResultPanel(controller, brainAge)
+      UIHelper.centerPanel(centerPanel, panel, Option.empty)
     )

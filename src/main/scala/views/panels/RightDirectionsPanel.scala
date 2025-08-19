@@ -1,47 +1,64 @@
 package views.panels
 
 import controllers.GameController
+import models.SimpleTextQuestion
 
 import javax.swing.*
 import java.awt.*
-import java.awt.event.{KeyAdapter, KeyEvent}
+import java.awt.event.ActionEvent
 
-class RightDirectionsPanel(controller: GameController, onNext: GameController => Unit)
-    extends SimpleQuestionAnswerGamePanel:
-
-  def panel(): JPanel =
-
-    def validateAnswer(input: String): (String, Color) =
-      if controller.checkAnswer(input) then
-        val increased = controller.increaseDifficulty()
-        onNext(increased)
-        ("Correct!", Color.GREEN)
-      else ("Wrong!", Color.RED)
-
-    val panel = createSimpleQuestionAnswerGamePanel(
-      question = controller.lastQuestion.get,
-      textInputLabel = "Your answer: ",
-      validate = validateAnswer,
-      controller = controller
+/**
+ * Class used to create the panel for the game "Right Directions"
+ * @param controller
+ *   the controller that manages the game logic and state
+ * @param onNext
+ *   callback invoked when the player completes the current question
+ * @param question
+ *   the question to display
+ */
+class RightDirectionsPanel(
+    controller: GameController,
+    onNext: GameController => Unit,
+    question: SimpleTextQuestion
+) extends SimpleQuestionAnswerGamePanel[SimpleTextQuestion]:
+  override def panel: JPanel =
+    val (panel, externalSubmit) = createSimpleQuestionAnswerGamePanel(
+      "Follow directions",
+      question,
+      "Your answer:",
+      controller,
+      onNext,
+      (ctrl, input) => ctrl.checkAnswer(input).get,
+      Some(simpleLabelRenderer)
     )
-
-    panel.addKeyListener(new KeyAdapter {
-      override def keyPressed(e: KeyEvent): Unit = {
-        val answerOpt: Option[String] = e.getKeyCode match
-          case KeyEvent.VK_W => Some("up")
-          case KeyEvent.VK_A => Some("left")
-          case KeyEvent.VK_S => Some("down")
-          case KeyEvent.VK_D => Some("right")
-          case KeyEvent.VK_J => Some("")
-          case _             => None
-
-        answerOpt.foreach { answer =>
-          val (message, color) = validateAnswer(answer)
-        }
-      }
-    })
-
     panel.setFocusable(true)
-    SwingUtilities.invokeLater(() => panel.requestFocusInWindow())
+    panel.requestFocusInWindow()
+    val actionMap               = panel.getActionMap
+    val inputMap                = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
 
+    /**
+     * @param key
+     *   The key that, when pressed, will trigger the callback function
+     * @param direction
+     *   the direction that, as text, will be passed to the callback function
+     */
+    def bindKey(key: String, direction: String): Unit =
+      inputMap.put(KeyStroke.getKeyStroke(key), key)
+      actionMap.put(
+        key,
+        new AbstractAction {
+          override def actionPerformed(e: ActionEvent): Unit =
+            inputField.setText(direction)
+            externalSubmit(direction)
+        }
+      )
+    bindKey("W", "up")
+    bindKey("UP", "up")
+    bindKey("A", "left")
+    bindKey("LEFT", "left")
+    bindKey("S", "down")
+    bindKey("DOWN", "down")
+    bindKey("D", "right")
+    bindKey("RIGHT", "right")
+    bindKey("N", "")
     panel

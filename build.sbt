@@ -13,6 +13,7 @@ lazy val root = (project in file("."))
     assembly / assemblyJarName := "Brain-Training-Scala.jar",
 
     wartremoverErrors ++= Seq(
+      Wart.Var,
       Wart.Null,
       Wart.PublicInference
     ),
@@ -29,5 +30,4 @@ lazy val root = (project in file("."))
 
 // sbt scalafmtCheckAll (Scalafmt tests)
 // sbt compile (Wartremover tests)
-// sbt scalafixAll --rules OrganizeImports (Scalafix tests)
 // sbt test (Scalatest)

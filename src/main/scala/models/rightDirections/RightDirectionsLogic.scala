@@ -1,16 +1,54 @@
 package models.rightDirections
-import models.rightDirections.structure.Symbol
-import models.MiniGameLogic
-import models.rightDirections.structure.{EvaluateOperation, SyntaxTreeBuilder}
-object RightDirectionsLogic extends MiniGameLogic:
-  override def generateQuestion(difficult: Int): String =
-    SyntaxTreeBuilder.buildOperationFromComplexity(difficult).toString
 
-  override def validateAnswer[A](question: String, answer: A): Boolean = answer match {
-    case s: String =>
-      val normalizedAnswer = s.toLowerCase.trim
-      val correctAnswer    = EvaluateOperation.evaluateOperationFromString(question, List())
-      correctAnswer.contains(
-        Symbol.fromString(normalizedAnswer).get
-      ) || (correctAnswer.isEmpty && normalizedAnswer.equals(""))
-  }
+import models.rightDirections.structure.Token
+import models.{MiniGameLogic, SimpleTextQuestion}
+import models.rightDirections.structure.*
+import utils.constants.RightDirectionsConstants.*
+
+import scala.annotation.tailrec
+
+case class RightDirectionsLogic(
+    rounds: Int,
+    difficulty: Float = 0,
+    lastQuestion: Option[SimpleTextQuestion] = None,
+    currentRound: Int = 0
+) extends MiniGameLogic[SimpleTextQuestion, String, Boolean]:
+  private val DIFFICULTY_STEP: Float        = 0.25
+  private val CAN_GENERATE_WRONG_OPERATIONS = false
+
+  override def generateQuestion
+      : (MiniGameLogic[SimpleTextQuestion, String, Boolean], SimpleTextQuestion) =
+    val question = SimpleTextQuestion(trimQuestion(generateOperation))
+    (
+      this.copy(
+        currentRound = currentRound + 1,
+        difficulty = difficulty + DIFFICULTY_STEP,
+        lastQuestion = Some(question)
+      ),
+      question
+    )
+
+  override def parseAnswer(answer: String): Option[String] = Some(identity(answer))
+
+  override def validateAnswer(answer: String): Boolean =
+    val trimmedAnswer         = answer.toLowerCase.trim
+    val correctAnswer         = EvaluateOperation.evaluateOperationFromString(lastQuestion.get.text, Seq())
+    val answerAsToken: Token  = Token.fromString(trimmedAnswer)
+    val noAnswerCase: Boolean = correctAnswer.isEmpty && answerAsToken.equals(Token.Empty)
+    correctAnswer.contains(answerAsToken) || noAnswerCase
+
+  override def isMiniGameFinished: Boolean =
+    currentRound == rounds
+
+  @tailrec
+  private def generateOperation: String =
+    val question       = DirectionsTreeBuilder
+      .buildOperationFromComplexity(difficulty.toInt)
+      .toString
+    val containsAnswer = EvaluateOperation.evaluateOperationFromString(question, Seq()).nonEmpty
+    if containsAnswer || CAN_GENERATE_WRONG_OPERATIONS then question else generateOperation
+
+  private def trimQuestion(question: String): String =
+    question
+      .replaceAll("\\(", "")
+      .replaceAll("\\)", "")
