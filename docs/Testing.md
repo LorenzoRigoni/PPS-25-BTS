@@ -5,6 +5,7 @@ Come già specificato nelle precedenti sezioni, il progetto è stato sviluppato 
 ## Tecnologie usate
 
 Per la scrittura e l'esecuzione dei test è stato utilizzato **ScalaTest**, uno dei framework di testing più diffusi nell’ecosistema Scala. Questo ha permesso di definire in maniera semplice e leggibile suite di test per ciascun modulo logico sviluppato.
+Sono stati utilizzati i matchers per la scrittura dei test, in modo da renderli più leggibili, espressivi e manutenibili rispetto all’uso di semplici assert.
 
 ## Metodologia usata
 
@@ -14,14 +15,6 @@ Ogni funzionalità è stata implementata seguendo l’approccio TDD:
 - Esecuzione dei test per verificarne il fallimento iniziale.
 - Implementazione della logica fino al superamento dei test.
 - Refactoring del codice mantenendo i test verdi.
-
-Le suite di test coprono tutte le principali funzionalità:
-
-- **FastCalc**: verifica della correttezza delle risposte generate e della validazione di risposte corrette e scorrette.
-- **RightDirections**: test sulle operazioni logiche (Not, And, Or) e sulla corretta valutazione degli alberi.
-- **CountWords**: verifica del numero di parole in frasi generate e della corretta validazione delle risposte.
-- **ColoredCount**: verifica del numero di parole in frasi generate e della corretta validazione delle risposte.
-- **Word Memory**: verifica del grado di correttezza della risposta e della generazione delle domande.
 
 ## Grado di copertura
 
