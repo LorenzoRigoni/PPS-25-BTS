@@ -173,3 +173,4 @@ object Token:
   def fromString(str: String): Token =
     all.find(_.toString.equals(str.trim)).getOrElse(Empty)
 ```
+[Torna indietro](../Implementazione.md)

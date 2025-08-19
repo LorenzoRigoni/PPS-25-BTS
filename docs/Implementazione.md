@@ -4,6 +4,7 @@ Durante lo sviluppo del progetto, ogni componente del gruppo ha visionato il cod
 di fine sprint in modo che ognuno avesse una panoramica generale del lavoro svolto. Per ogni membro del gruppo di
 lavoro riportiamo una sezione che riporta le *feature* implementate.
 
+- [Team](implementations/Team.md)
 - [Alessandra Versari](implementations/AlessandraVersari.md)
 - [Lorenzo Rigoni](implementations/LorenzoRigoni.md)
 - [Riccardo Moretti](implementations/RiccardoMoretti.md)
