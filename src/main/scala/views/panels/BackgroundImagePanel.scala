@@ -14,9 +14,11 @@ import javax.swing.JPanel
  */
 class BackgroundImagePanel(imagePath: String) extends JPanel:
   private val image: BufferedImage =
-    val file = new File(imagePath)
-    if !file.exists() then throw new RuntimeException(s"File not found: ${file.getAbsolutePath}")
-    ImageIO.read(file)
+    val stream = getClass.getResourceAsStream(imagePath)
+    if stream == null then
+      throw new RuntimeException(s"Resource not found: $imagePath")
+    try ImageIO.read(stream)
+    finally stream.close()
 
   override def paintComponent(g: Graphics): Unit =
     super.paintComponent(g)

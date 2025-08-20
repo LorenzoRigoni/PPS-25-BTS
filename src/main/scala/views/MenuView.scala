@@ -45,7 +45,7 @@ class MenuView(controller: GameController):
         (frame.getSize.width * MENU_BUTTON_W_SCALE_FACTOR).toInt,
         (frame.getSize.height * MENU_BUTTON_H_SCALE_FACTOR).toInt
       )
-    val backgroundPanel = new BackgroundImagePanel("src\\main\\resources\\MenuBackgroundImage.png")
+    val backgroundPanel = new BackgroundImagePanel("/MenuBackgroundImage.png")
     backgroundPanel.setLayout(new BorderLayout())
     val buttonPanel     = new JPanel()
     buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT))

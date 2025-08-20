@@ -16,27 +16,21 @@ object GUIConstants:
   val SCREEN_WIDTH: Int           = Toolkit.getDefaultToolkit.getScreenSize.width
   val SCREEN_HEIGHT: Int          = Toolkit.getDefaultToolkit.getScreenSize.height
   val CUSTOM_BLUE                 = new Color(120, 180, 210)
-  val PIXEL_FONT70: Font          =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(70f)
 
-  val PIXEL_FONT25: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(25f)
+  private def loadFont(resourcePath: String, size: Float): Font =
+    val is = getClass.getResourceAsStream(resourcePath)
+    require(is != null, s"Font resource not found: $resourcePath")
+    Font.createFont(Font.TRUETYPE_FONT, is).deriveFont(size)
 
-  val PIXEL_FONT15: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(15f)
+  val PIXEL_FONT70: Font = loadFont("/font/PixelFont.ttf", 70f)
 
-  val PIXEL_FONT8: Font =
-    Font
-      .createFont(Font.TRUETYPE_FONT, new File("src\\main\\resources\\font\\PixelFont.ttf"))
-      .deriveFont(8f)
+  val PIXEL_FONT25: Font = loadFont("/font/PixelFont.ttf", 25f)
 
-  val RULES =
+  val PIXEL_FONT15: Font = loadFont("/font/PixelFont.ttf", 15f)
+
+  val PIXEL_FONT8: Font = loadFont("/font/PixelFont.ttf", 8f)
+
+  val RULES: String =
     """
     | --GAME RULES--
     |

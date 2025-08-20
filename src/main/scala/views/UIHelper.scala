@@ -15,8 +15,9 @@ object UIHelper:
   private type EventHandler = ActionListener
 
   private def loadIcon(name: String, size: Int): ImageIcon =
-    val url     = getClass.getResource(s"/" + name)
-    val image   = new ImageIcon(url).getImage
+    val url = getClass.getResource("/" + name)
+    require(url != null, s"Icon resource not found: /$name")
+    val image = new ImageIcon(url).getImage
     val resized = image.getScaledInstance(size, size, Image.SCALE_SMOOTH)
     new ImageIcon(resized)
 

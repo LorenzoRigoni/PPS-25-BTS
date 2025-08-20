@@ -51,7 +51,7 @@ class ResultPanelsFactoryImpl extends ResultPanelsFactory:
   private val GRID_V_GAP                                                                   = 20
   private val ICON_SIZE_DIVISOR                                                            = 20
   private def createBaseResultPanel(controller: GameController, titleText: String): JPanel =
-    val panel       = new BackgroundImagePanel("src\\main\\resources\\AgeTestResultBackgroundImage.png")
+    val panel       = new BackgroundImagePanel("/AgeTestResultBackgroundImage.png")
     panel.setLayout(new BorderLayout())
     panel.setBorder(new EmptyBorder(BORDER_INSET, BORDER_INSET, BORDER_INSET, BORDER_INSET))
     val title       = new JLabel(titleText)
